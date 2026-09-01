@@ -427,9 +427,12 @@ img{display:block;max-width:100%}
     grid-template-rows:auto minmax(0,1fr);
     align-items:center;justify-items:stretch;
     gap:clamp(.8rem,2.5svh,1.6rem);
-    /* no side padding here: the figure below runs to both edges of the
-       screen, and the verse carries its own inset instead */
-    padding:clamp(1.2rem,3.4svh,2rem) 0 calc(var(--rail) + .6rem);
+    /* No side padding: the figure below runs to both edges of the
+       screen, and the verse carries its own inset instead. No bottom
+       padding either — the figure runs under the links rather than
+       stopping above them, and the feather below is what keeps them
+       readable. */
+    padding:clamp(1.2rem,3.4svh,2rem) 0 0;
   }
   #about .verse{padding-inline:var(--inset)}
   #about .verse img{max-height:34svh}
@@ -463,9 +466,25 @@ img{display:block;max-width:100%}
      natural ratio, 0px clipped) but the top 18% was faded to black and
      read as a cut-off head. It runs from the foot now, so what
      dissolves is the floor under her feet. */
+  /* The foot of the photograph does not end, it dissolves — and it
+     never reaches full black, so the floor stays faintly present
+     behind the links instead of the picture stopping in a line above
+     them. .58 at the very bottom, which is gentler than it sounds: that
+     part of the frame is dark floor, median 2/255, so the scrim is not
+     there to make the picture legible-proof but to hold back the few
+     bright pixels in it — her legs and the catch-light, up around
+     40-180/255. Cream type over the result measures 16:1, so
+     legibility was never the constraint; taking it to .86, as a first
+     pass did, only flattened her legs to nothing.
+
+     A gradient rather than backdrop-filter: a blurred backdrop
+     re-rasterises a full-width layer on every scrolled frame, and the
+     earlier build of this site measured 16fps doing exactly that. This
+     costs nothing. */
   #about .beside::before{
-    background:linear-gradient(to top,#000 0%,rgba(0,0,0,.72) 6%,
-                               rgba(0,0,0,.30) 13%,rgba(0,0,0,0) 24%);
+    background:linear-gradient(to top,
+      rgba(0,0,0,.58) 0%,rgba(0,0,0,.55) 9%,rgba(0,0,0,.40) 17%,
+      rgba(0,0,0,.18) 27%,rgba(0,0,0,0) 40%);
   }
   /* and if a screen is ever short enough that something must go, it is
      taken off the bottom: the top of the frame is pinned */
