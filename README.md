@@ -3,20 +3,23 @@
 A single self-contained `index.html`. No build step, no dependencies —
 open it in a browser, or drop the folder on any host.
 
-One page, four sections — **amor**, **about**, **artists**, **attend** —
-each one exactly one screen tall.
+One page, three sections — **amor**, **about**, **artists** — each one
+exactly one screen tall, plus a **Tickets** button that leaves the site.
 
 ## Editing it
 
 Everything you need to change is marked `<!-- EDIT -->` in `index.html`,
 and there is a checklist at the top of that file. In order:
 
-1. **Attend** — the venue and address, the ticket price, the doors time,
-   **and the Kickstarter URL** (search for `kickstarter.com` — it's the
-   `href` on the button), then Instagram and email below it.
+1. **The ticket URL** — search for `kickstarter.com`. It is the `href`
+   on the Tickets button, which lives in the `<template id="jump-tpl">`
+   near the top of the body, so changing it once changes it in all
+   three copies.
+2. **Instagram and email** — at the foot of the artists section.
 
 The title, the subtitle, the dates, the verse and all ten artists are
-already set.
+already set. There is no venue/price section: those details live on the
+ticket page, which is where anyone reading them is going anyway.
 
 ## What the design holds to
 
@@ -37,10 +40,21 @@ made for the layout rather than to the picture: it turns each figure's
 reach towards the words instead of away from them. Three `--flip` lines
 in the stylesheet do it, and deleting one undoes it.
 
-**One shape, four times.** A photograph filling the screen, the words
-over the black beside or beneath it, the same row of links along the
-foot. `amor` and `attend` use the same photograph, mirrored, so the page
-ends where it began.
+**One frame.** Every section insets its words by the same `--inset` —
+the gutter on a narrow screen, half the slack beside `--measure` on a
+wide one — so the first letter of every section lands on the same
+vertical line at any width. Measured at 1440px: 160px on all three.
+
+**One shape, three times.** A photograph filling the screen, the words
+over the black beside or beneath it, the same row along the foot.
+
+**One thing on the page is not navigation, and it is shaped
+differently.** The Tickets button leaves the site, so it is the only
+enclosed, gold-edged thing in the rail, set apart from the three
+section links with real space and carrying the arrow that means "away
+from here". The rail reads as: here are the parts, and here is how you
+come. It is never marked as the current section, and the script that
+tracks scrolling only ever touches `a.to`.
 
 **The navigation is identical everywhere, by construction.** The row of
 section links is written once, as a `<template>`, and stamped into each
@@ -66,11 +80,22 @@ that is the ceiling to stay under.
 
 ### The lettering
 
-Two families, and no more. **Jost** — a geometric, in the Futura line —
-carries the display: set in capitals at 0.22em tracking it is what the
-lettering on the live site reads as. **IBM Plex Mono Light** carries
-every small line: the subtitle, the dates, the artists' names, the
-links. It never appears above 0.9rem, which is the point of it.
+Two families, and no more. **Bodoni Moda** carries the display: a
+didone, whose thick-to-thin is the same drama the photographs have, set
+in capitals at 0.16em. A geometric sans was here first and was too
+even-toned to sit against these pictures. **Inter** carries every small
+line — the subtitle, the dates, the artists' names, the links — and it
+never appears above 0.9rem, which is the point of it: at that size you
+want a face with no opinion.
+
+Both are **self-hosted**, in `fonts/`. Nothing is fetched from Google,
+so the page does not depend on a third party being up, no visitor's
+request for it reaches one, and the display face is there on the first
+paint rather than a beat later. Only the latin and latin-ext subsets
+are included — latin-ext is not optional, it carries the ć in Amina
+Avdić's name. To change a face: drop the `.woff2` files in `fonts/`,
+edit the `@font-face` blocks at the top of the stylesheet, and set
+`--display` or `--micro`.
 
 The one hand-lettered thing on the page is the verse, and that is the
 company's own artwork rather than a font. An earlier build set "Vallerie
@@ -97,9 +122,6 @@ Any static host works:
 
 ## Notes
 
-- Fonts come from Google Fonts, loaded without blocking the first paint,
-  so the page appears immediately and the serif swaps in a moment later.
-  It falls back to system serif/sans gracefully with no connection at all.
 - The title waits for the display face before it rises, capped at 1.2s.
   It is a width measurement rather than `document.fonts`: `fonts.check()`
   answers "can this be rendered", true from the first frame because the

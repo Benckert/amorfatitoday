@@ -32,13 +32,40 @@
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23d9a441' stroke-width='1'/%3E%3Ccircle cx='16' cy='16' r='1.6' fill='%23f6e3bd'/%3E%3C/svg%3E">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap">
-<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap"></noscript>
 
 <style>
+/* ───────────────────────────  the faces  ────────────────────────────
+   Self-hosted rather than fetched from Google. Three reasons: the page
+   no longer depends on a third party being up, no visitor's request
+   for this page reaches one, and the display face is present on the
+   very first paint instead of arriving a beat later. Only the latin
+   and latin-ext subsets are here — latin-ext is not optional, it
+   carries the c-acute in Amina Avdic's name. */
+@font-face{font-family:"Bodoni Moda";font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/bodoni-400-normal-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Bodoni Moda";font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/bodoni-400-normal-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Bodoni Moda";font-style:normal;font-weight:500;font-display:swap;
+  src:url(fonts/bodoni-500-normal-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Bodoni Moda";font-style:normal;font-weight:500;font-display:swap;
+  src:url(fonts/bodoni-500-normal-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Inter";font-style:normal;font-weight:300;font-display:swap;
+  src:url(fonts/inter-300-normal-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Inter";font-style:normal;font-weight:300;font-display:swap;
+  src:url(fonts/inter-300-normal-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Inter";font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/inter-400-normal-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Inter";font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/inter-400-normal-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
 /* ─────────────────────────────  tokens  ───────────────────────────── */
 :root{
   --ink:#000;
@@ -47,14 +74,19 @@
   --gold:#d9a441;                  /* 39°, the candle in the photographs */
   --mist:rgba(246,227,189,.58);
 
-  /* Jost is geometric — a Futura, which is what the lettering on the
-     live site reads as once it is set in capitals and opened up. The
-     mono carries every small line: the subtitle, the date, the names.
-     Two families, and the second one only ever appears at 0.6-0.8rem. */
-  --display:"Jost","Futura","Century Gothic",-apple-system,"Helvetica Neue",Arial,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  /* A didone against the photographs: Bodoni Moda's thick-to-thin is
+     the same drama the pictures have, and in tracked capitals over
+     black it reads as the poster this evening deserves rather than as
+     a website header. Inter carries every small line — it has no
+     opinion, which at 0.6rem is the whole job. */
+  --display:"Bodoni Moda","Didot","Bodoni MT","Times New Roman",serif;
+  --micro:"Inter",-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
 
   --gutter:clamp(1.25rem,5vw,5rem);
+  /* The widest the words are ever allowed. Below it the gutter decides
+     the inset; above it the frame does, and every section's first
+     letter lands on the same vertical line however wide the screen. */
+  --measure:1120px;
   --ease:cubic-bezier(.22,.61,.36,1);
   /* the room the section links keep at the foot of every screen */
   --rail:clamp(3.2rem,7svh,4.6rem);
@@ -73,7 +105,7 @@ html{
 body{
   background:var(--ink);
   color:var(--paper);
-  font-family:var(--display);
+  font-family:var(--micro);
   font-weight:300;
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
@@ -90,6 +122,9 @@ img{display:block;max-width:100%}
    screens and the snap is honest. Anything that would not fit is
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
+  /* the frame's own edge, which is the gutter on a narrow screen and
+     half the slack beside the measure on a wide one */
+  --inset:max(var(--gutter),calc((100% - var(--measure)) / 2));
   position:relative;
   height:100svh;
   overflow:hidden;
@@ -122,7 +157,7 @@ img{display:block;max-width:100%}
 /* Mirroring is the one edit the layout makes to a photograph, and it is
    made for the words rather than to the picture: it turns each figure's
    reach towards them. Delete a line to undo it. */
-#amor .shot img,#attend .shot img{--flip:scaleX(-1)}
+#amor .shot img{--flip:scaleX(-1)}
 
 /* the dark that buys the words their legibility, without lightening the
    photograph: it is heavy only where text sits and clears quickly */
@@ -132,27 +167,32 @@ img{display:block;max-width:100%}
     rgba(0,0,0,.94) 0%,rgba(0,0,0,.86) 18%,rgba(0,0,0,.60) 38%,
     rgba(0,0,0,.22) 58%,rgba(0,0,0,0) 78%);
 }
+/* This was doing far too much. At .92 falling to .30 across most of the
+   frame it was not buying legibility off the photograph, it was
+   painting over it — the candlelight is the point of that picture. It
+   is now a third of what it was, and the words are carried by their
+   own shadow instead, which darkens only the pixels behind the letters
+   rather than the whole left half of the room. */
 .veil-left{
   background:
-    linear-gradient(to right,rgba(0,0,0,.92) 0%,rgba(0,0,0,.74) 34%,
-                    rgba(0,0,0,.30) 60%,rgba(0,0,0,0) 82%),
-    linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,0) 34%);
+    linear-gradient(to right,rgba(0,0,0,.58) 0%,rgba(0,0,0,.30) 28%,
+                    rgba(0,0,0,.08) 52%,rgba(0,0,0,0) 70%),
+    linear-gradient(to top,rgba(0,0,0,.62) 0%,rgba(0,0,0,0) 24%);
 }
 
 .says{position:relative;z-index:2;min-width:0}
 
 /* ────────────────────────  I. amor  (landing)  ─────────────────────── */
 #amor{align-content:end;justify-items:center;text-align:center;
-      padding:0 var(--gutter) calc(var(--rail) + clamp(1rem,4svh,3rem))}
+      padding:0 var(--inset) calc(var(--rail) + clamp(1rem,4svh,3rem))}
 
 .title{
   font-family:var(--display);
-  font-weight:500;                 /* the lettering on the live site is a
-                                      medium, not a book weight */
+  font-weight:500;
   font-size:clamp(2.1rem,8.2vw,5.4rem);
   line-height:1;
-  letter-spacing:.22em;
-  text-indent:.22em;              /* the tracking is added to the right of
+  letter-spacing:.16em;
+  text-indent:.16em;              /* the tracking is added to the right of
                                      the last letter too; this re-centres it */
   text-transform:uppercase;
   color:var(--cream);
@@ -163,7 +203,7 @@ img{display:block;max-width:100%}
 .title .word{display:inline-block;white-space:nowrap}
 
 .subtitle{
-  font-family:var(--mono);font-weight:300;
+  font-family:var(--micro);font-weight:300;
   font-size:clamp(.68rem,1.9vw,.92rem);
   letter-spacing:.28em;text-indent:.28em;
   color:var(--paper);
@@ -171,7 +211,7 @@ img{display:block;max-width:100%}
   text-shadow:0 1px 14px rgba(0,0,0,.9);
 }
 .when{
-  font-family:var(--mono);font-weight:300;
+  font-family:var(--micro);font-weight:300;
   font-size:clamp(.66rem,1.7vw,.84rem);
   letter-spacing:.2em;text-indent:.2em;
   color:var(--gold);
@@ -186,10 +226,10 @@ img{display:block;max-width:100%}
 #about{
   grid-template-columns:1fr;
   align-items:center;
-  padding:clamp(2rem,5svh,4rem) 44% var(--rail) var(--gutter);
+  padding:clamp(2rem,5svh,4rem) 44% var(--rail) var(--inset);
 }
 #about .verse{display:flex;align-items:center;justify-content:center}
-#about .verse img{max-height:min(62svh,660px);max-width:100%;width:auto;height:auto}
+#about .verse img{max-height:min(72svh,700px);max-width:100%;width:auto;height:auto}
 /* Pinned to the panel rather than sized by a grid track: a grid item's
    height is decided by its content, so max-height:100% had nothing to
    resolve against and the figure was capped on width while its height
@@ -208,74 +248,32 @@ img{display:block;max-width:100%}
 }
 
 /* ────────────────────────────  III. artists  ───────────────────────── */
-#artists{align-content:center;padding:clamp(2rem,6svh,4rem) var(--gutter) calc(var(--rail) + 1rem)}
+#artists{align-content:center;padding:clamp(2rem,6svh,4rem) var(--inset) calc(var(--rail) + 1rem)}
 .section-title{
   font-family:var(--display);font-weight:400;
   font-size:clamp(1.5rem,4.4vw,2.9rem);
-  letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;
+  letter-spacing:.18em;text-indent:.18em;text-transform:uppercase;
   color:var(--cream);margin:0 0 clamp(1.6rem,5svh,3.2rem);
-  text-shadow:0 2px 24px rgba(0,0,0,.85);
+  text-shadow:0 1px 4px rgba(0,0,0,1),0 2px 24px rgba(0,0,0,.9);
 }
 .roster{list-style:none;margin:0;padding:0}
 .roster li{
-  font-family:var(--mono);font-weight:300;
+  font-family:var(--micro);font-weight:300;
   font-size:clamp(.66rem,1.55vw,.88rem);
-  letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;
+  letter-spacing:.18em;text-indent:.18em;text-transform:uppercase;
   color:var(--cream);
   line-height:1;
   padding:clamp(.42rem,1.5svh,.72rem) 0;
-  text-shadow:0 1px 12px rgba(0,0,0,.95);
+  text-shadow:0 1px 3px rgba(0,0,0,1),0 2px 14px rgba(0,0,0,.95);
 }
 
 /* ────────────────────────  IV. attend  (tickets)  ──────────────────── */
-#attend{align-content:center;padding:clamp(2rem,6svh,4rem) var(--gutter) calc(var(--rail) + 1rem)}
-.facts{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:clamp(1.1rem,3.2svh,2.2rem) clamp(1.5rem,4vw,3rem);
-  margin:0;max-width:34rem;
-}
-.fact dt{
-  font-family:var(--mono);font-size:.6rem;font-weight:300;
-  letter-spacing:.26em;text-indent:.26em;text-transform:uppercase;color:var(--mist);
-}
-.fact dd{
-  margin:.5rem 0 0;font-family:var(--display);font-weight:300;
-  font-size:clamp(1rem,2.4vw,1.45rem);line-height:1.3;color:var(--cream);
-}
-.fact dd small{
-  display:block;font-family:var(--mono);font-size:.6rem;font-weight:300;
-  letter-spacing:.16em;color:var(--mist);margin-top:.4rem;text-transform:uppercase;
-}
 
-.cta{
-  position:relative;display:inline-flex;align-items:center;gap:.9rem;
-  margin-top:clamp(1.6rem,5svh,3rem);
-  padding:1em 2.3em;
-  border:1px solid rgba(246,227,189,.34);border-radius:999px;
-  font-family:var(--mono);font-weight:300;
-  font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--cream);
-  transform:translate3d(0,0,0);backface-visibility:hidden;
-  transition:border-color .6s var(--ease),transform .6s var(--ease);
-}
-/* the glow is its own layer, so hovering never re-rasterises the pill */
-.cta::before{
-  content:"";position:absolute;z-index:-1;
-  left:-9%;right:-9%;top:-55%;bottom:-75%;
-  background:radial-gradient(closest-side,
-    rgba(217,164,65,.34),rgba(217,164,65,.12) 44%,transparent 76%);
-  opacity:.5;transform:translate3d(0,14%,0) scale(.94);
-  transition:opacity .7s var(--ease),transform .7s var(--ease);
-}
-.cta:hover,.cta:focus-visible{border-color:rgba(246,227,189,.62);transform:translate3d(0,-2px,0)}
-.cta:hover::before,.cta:focus-visible::before{opacity:1;transform:translate3d(0,4%,0) scale(1.06)}
-.cta:hover,.cta:focus-visible,.cta:hover::before,.cta:focus-visible::before{will-change:transform,opacity}
-.cta .arrow{transition:transform .6s var(--ease)}
-.cta:hover .arrow{transform:translate3d(5px,0,0)}
 
 .reach{
   margin:clamp(1.2rem,4svh,2.2rem) 0 0;
   display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;
-  font-family:var(--mono);font-size:.6rem;font-weight:300;
+  font-family:var(--micro);font-size:.6rem;font-weight:300;
   letter-spacing:.22em;text-transform:uppercase;color:var(--mist);
 }
 .reach a{border-bottom:1px solid rgba(246,227,189,.22);padding-bottom:.15rem;transition:color .45s var(--ease),border-color .45s var(--ease)}
@@ -289,23 +287,47 @@ img{display:block;max-width:100%}
 .jump{
   position:absolute;left:0;right:0;bottom:0;z-index:4;
   display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
-  padding:0 var(--gutter) clamp(1.1rem,3svh,1.8rem);
-  font-family:var(--mono);font-weight:300;
+  padding:0 var(--inset) clamp(1.1rem,3svh,1.8rem);
+  font-family:var(--micro);font-weight:300;
   font-size:clamp(.58rem,1.4vw,.68rem);
   letter-spacing:.2em;text-transform:uppercase;
 }
-.jump a{
+.jump a.to{
   position:relative;
   padding:.4rem clamp(.7rem,2vw,1.15rem);
   color:rgba(246,227,189,.72);
   border-bottom:1px solid rgba(246,227,189,.34);
   transition:color .45s var(--ease),border-color .45s var(--ease);
 }
-.jump a + a{border-left:1px solid rgba(246,227,189,.20)}
-.jump a:hover{color:var(--cream);border-bottom-color:var(--cream)}
+.jump a.to + a.to{border-left:1px solid rgba(246,227,189,.20)}
+.jump a.to:hover{color:var(--cream);border-bottom-color:var(--cream)}
 /* the section you are in is named, not hidden — it just stops leading
    anywhere else */
-.jump a[aria-current="true"]{color:var(--gold);border-bottom-color:var(--gold)}
+.jump a.to[aria-current="true"]{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* The one thing on the page that is not navigation: it leaves the site.
+   So it is the one thing shaped like a button rather than a link —
+   enclosed, gold-edged, with the arrow that means "away from here" —
+   and it sits apart from the three section links with real space
+   between, so the rail reads as "here are the parts, and here is how
+   you come". */
+.jump .ticket{
+  display:inline-flex;align-items:center;gap:.5em;
+  margin-left:clamp(.8rem,3vw,2rem);
+  padding:.62em 1.5em;
+  border:1px solid rgba(217,164,65,.55);
+  border-radius:999px;
+  color:var(--gold);
+  letter-spacing:.2em;
+  transition:color .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease);
+}
+.jump .ticket:hover,.jump .ticket:focus-visible{
+  color:#0b0b0d;background:var(--gold);border-color:var(--gold);
+}
+.jump .ticket .out{font-size:.9em;line-height:1}
+/* named for a screen reader, silent for everyone else */
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+    clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 
 /* ────────────────────────  side navigation  ───────────────────────── */
 .dots{
@@ -329,7 +351,7 @@ img{display:block;max-width:100%}
   appearance:none;background:none;border:0;cursor:pointer;
   display:flex;align-items:center;gap:.55rem;
   color:rgba(246,227,189,.5);
-  font-family:var(--mono);font-size:.56rem;font-weight:300;
+  font-family:var(--micro);font-size:.56rem;font-weight:300;
   letter-spacing:.24em;text-transform:uppercase;
   transition:color .5s var(--ease);
 }
@@ -371,7 +393,7 @@ img{display:block;max-width:100%}
   /* the landing's words move off the photograph's centre and sit under
      it, over the black, where nothing has to be read through a picture */
   #amor{padding-bottom:calc(var(--rail) + 1rem)}
-  .title{font-size:clamp(1.9rem,10.5vw,3.2rem);letter-spacing:.18em;text-indent:.18em}
+  .title{font-size:clamp(1.9rem,10.5vw,3.2rem);letter-spacing:.12em;text-indent:.12em}
   .subtitle{font-size:.7rem;letter-spacing:.22em;text-indent:.22em}
   .when{font-size:.68rem}
 
@@ -382,21 +404,18 @@ img{display:block;max-width:100%}
     grid-template-rows:auto minmax(0,1fr);
     align-items:center;justify-items:center;
     gap:clamp(.8rem,2.5svh,1.6rem);
-    padding:clamp(1.5rem,4svh,2.5rem) var(--gutter) calc(var(--rail) + .6rem);
+    padding:clamp(1.5rem,4svh,2.5rem) var(--inset) calc(var(--rail) + .6rem);
   }
-  #about .verse img{max-height:36svh}
+  #about .verse img{max-height:40svh}
   #about .beside{position:static;justify-content:center;width:100%;min-height:0}
   #about .beside img{max-height:100%;max-width:100%}
   #about .beside::before{
     background:linear-gradient(to bottom,#000 0%,rgba(0,0,0,.4) 8%,rgba(0,0,0,0) 18%);
   }
 
-  .section-title{font-size:clamp(1.3rem,7vw,1.9rem);letter-spacing:.2em;text-indent:.2em;margin-bottom:clamp(1rem,3svh,1.8rem)}
+  .section-title{font-size:clamp(1.3rem,7vw,1.9rem);letter-spacing:.14em;text-indent:.14em;margin-bottom:clamp(1rem,3svh,1.8rem)}
   .roster li{font-size:.66rem;letter-spacing:.18em;text-indent:.18em;padding:clamp(.32rem,1.15svh,.6rem) 0}
 
-  .facts{grid-template-columns:1fr 1fr;gap:clamp(.9rem,2.4svh,1.6rem) 1rem}
-  .fact dd{font-size:1.02rem}
-  .cta{padding:.95em 1.9em;font-size:.62rem;letter-spacing:.2em}
 
   /* the links wrap out to the screen edges here, so the toggle cannot
      keep the bottom-left corner */
@@ -430,7 +449,6 @@ img{display:block;max-width:100%}
   <button type="button" data-to="amor" aria-label="Amor fati"><i></i></button>
   <button type="button" data-to="about" aria-label="About"><i></i></button>
   <button type="button" data-to="artists" aria-label="Artists"><i></i></button>
-  <button type="button" data-to="attend" aria-label="Attend"><i></i></button>
 </nav>
 
 <button class="sound" id="sound" type="button" aria-pressed="false" aria-label="Play ambient sound" hidden>
@@ -443,10 +461,14 @@ img{display:block;max-width:100%}
      section, so the four rows are identical by construction. -->
 <template id="jump-tpl">
   <nav class="jump" aria-label="Sections">
-    <a href="#amor">Amor</a>
-    <a href="#about">About</a>
-    <a href="#artists">Artists</a>
-    <a href="#attend">Attend</a>
+    <a class="to" href="#amor">Amor</a>
+    <a class="to" href="#about">About</a>
+    <a class="to" href="#artists">Artists</a>
+    <!-- EDIT — the ticket page's URL goes in href -->
+    <a class="ticket" href="https://www.kickstarter.com/" target="_blank" rel="noopener noreferrer">
+      Tickets<span class="out" aria-hidden="true">↗</span>
+      <span class="sr">(opens in a new tab)</span>
+    </a>
   </nav>
 </template>
 
@@ -472,7 +494,7 @@ img{display:block;max-width:100%}
        text, so screen readers and link previews still get them. -->
   <section class="panel" id="about">
     <div class="says verse" data-reveal>
-      <img src="images/text.jpg" width="1186" height="1186"
+      <img src="images/text-cropped.png" width="1001" height="854"
            alt="Each moment of all time gifted us movement, music, togetherness. Come bask with us in this aliveness! We honour your attention. — Vallerie with Company">
     </div>
     <div class="beside" data-reveal style="--d:.2s">
@@ -502,47 +524,8 @@ img{display:block;max-width:100%}
         <li data-reveal style="--d:.58s">Kristoffer Benckert</li>
         <li data-reveal style="--d:.64s">Elias Ljungberg Photography</li>
       </ul>
-    </div>
-  </section>
 
-  <!-- ══════════════════  IV. attend  ══════════════════ -->
-  <section class="panel" id="attend">
-    <div class="shot">
-      <img src="images/hero.jpg" width="720" height="1080" alt="">
-    </div>
-    <div class="veil veil-left"></div>
-
-    <div class="says">
-      <h2 class="section-title" data-reveal>Attend</h2>
-
-      <dl class="facts">
-        <div class="fact" data-reveal style="--d:.1s">
-          <dt>Dates</dt>
-          <dd>September 16–17<small>two evenings</small></dd>
-        </div>
-        <div class="fact" data-reveal style="--d:.2s">
-          <dt>Time</dt>
-          <dd>7–9 pm<small>doors 6:30 pm</small></dd><!-- EDIT — doors -->
-        </div>
-        <div class="fact" data-reveal style="--d:.3s">
-          <dt>Place</dt>
-          <dd>Venue Name<small>Street 1, Stockholm</small></dd><!-- EDIT -->
-        </div>
-        <div class="fact" data-reveal style="--d:.4s">
-          <dt>Tickets</dt>
-          <dd>350 kr<small>limited seating</small></dd><!-- EDIT -->
-        </div>
-      </dl>
-
-      <div data-reveal style="--d:.5s">
-        <!-- EDIT — the Kickstarter URL goes in href -->
-        <a class="cta" href="https://www.kickstarter.com/" target="_blank" rel="noopener noreferrer">
-          <span>Come bask with us</span>
-          <span class="arrow" aria-hidden="true">→</span>
-        </a>
-      </div>
-
-      <p class="reach" data-reveal style="--d:.62s">
+      <p class="reach" data-reveal style="--d:.72s">
         <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a><!-- EDIT -->
         <a href="mailto:hello@example.com">Email</a><!-- EDIT -->
       </p>
@@ -626,11 +609,11 @@ img{display:block;max-width:100%}
     probe.style.cssText = "position:absolute;left:-9999px;top:0;visibility:hidden;" +
       "white-space:pre;font-size:100px;font-weight:500;text-transform:uppercase";
     document.body.appendChild(probe);
-    var fallback = '"Century Gothic",Arial,sans-serif';
+    var fallback = 'Didot,"Times New Roman",serif';
     function ready(){
       probe.style.fontFamily = fallback;
       var without = probe.getBoundingClientRect().width;
-      probe.style.fontFamily = '"Jost",' + fallback;
+      probe.style.fontFamily = '"Bodoni Moda",' + fallback;
       return Math.abs(probe.getBoundingClientRect().width - without) > 0.5;
     }
     function go(){
@@ -684,7 +667,7 @@ img{display:block;max-width:100%}
     dots.forEach(function(b, d){ b.setAttribute("aria-current", d === i ? "true" : "false"); });
     /* the same state in every copy of the link row */
     jumps.forEach(function(row){
-      var links = row.querySelectorAll("a");
+      var links = row.querySelectorAll("a.to");
       for (var k = 0; k < links.length; k++) {
         links[k].setAttribute("aria-current", k === i ? "true" : "false");
       }
@@ -737,7 +720,7 @@ img{display:block;max-width:100%}
   }
   dots.forEach(function(b, i){ b.addEventListener("click", function(){ goTo(i); }); });
   jumps.forEach(function(row){
-    Array.prototype.forEach.call(row.querySelectorAll("a"), function(a){
+    Array.prototype.forEach.call(row.querySelectorAll("a.to"), function(a){
       a.addEventListener("click", function(e){
         var i = ids.indexOf((a.getAttribute("href") || "").slice(1));
         if (i < 0) return;
