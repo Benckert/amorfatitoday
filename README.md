@@ -72,11 +72,28 @@ letters it has.** They were measured in a browser at the real tracking:
 wider, and "Eliot Charoff" sets narrower than "Lova Hellberg" though
 both are thirteen. Counted rather than measured, three of the nine sit
 in the wrong place and the ramp has kinks in it. Vallerie is outside
-that order — she leads, so she is set apart above it in gold with a
-short rule, rather than made loud within it.
+that order — she leads, so she is set apart above it in gold rather
+than made loud within it. The mark beneath her is a hairline drawn the
+width of the names that arrives out of nothing and leaves into
+nothing; it was a short gold stub anchored to the left, which read as
+an underline someone had cut off.
 
-**One shape, three times.** A photograph filling the screen, the words
-over the black beside or beneath it, the same row along the foot.
+**`about` and `artists` are literally the same layout.** Both carry
+the class `.split`, and one rule set positions both: the words in a
+column at the frame's left edge, the photograph standing the full
+height of the screen at the right, filling the half the words do not.
+They cannot drift apart, because there is nothing to drift — and it is
+what fixed `artists` reading left-heavy, since its photograph used to
+sit centred behind the names with the right third of the frame empty.
+Each section only says where its own subject sits in its frame, through
+`--focus`: the top on `about` so a phone crop takes her legs and never
+her head, just below centre on `artists` where the candle is.
+
+On a phone both stack the same way too — words first, photograph
+running full-bleed beneath them to the foot of the screen and under the
+links. The words come first in the markup for that reason: stacked in
+source order, a photograph placed first pushes ten names off a phone
+screen, which is exactly what happened before they were reordered.
 
 **One thing on the page is not navigation, and it is shaped
 differently.** The Tickets button leaves the site, so it is the only
@@ -110,20 +127,34 @@ that is the ceiling to stay under.
 
 ### The lettering
 
-Two families, and no more. **Bodoni Moda** carries the display: a
-didone, whose thick-to-thin is the same drama the photographs have, set
-in capitals at 0.16em. A geometric sans was here first and was too
-even-toned to sit against these pictures. **Inter** carries every small
-line — the subtitle, the dates, the artists' names, the links — and it
-never appears above 0.9rem, which is the point of it: at that size you
-want a face with no opinion.
+Two families, and no more, chosen against four words: ethereal,
+mystical, playful, minimal. No single face gets all four, so they are
+split between the two.
 
-Both are **self-hosted**, in `fonts/`. Nothing is fetched from Google,
+**Cormorant Light** carries the display — an old-style with very fine
+hairlines, opened right up to 0.30em, at which point a word stops being
+a word and becomes a row of marks. That is the ethereal and mystical
+half, and it is minimal by construction because there is so little ink
+in it.
+
+**Josefin Sans Light** carries every small line — the subtitle, the
+dates, the artists' names, the links — and is the playful half: a
+geometric with a deco cast, round and light, which keeps a page this
+dark from turning solemn. It never appears above 0.9rem.
+
+The tension between a delicate seriffed display and a round geometric
+micro is the whole idea. Earlier passes used a geometric for the
+display (too even-toned against these photographs) and then a didone
+(handsome, but it made the page a fashion editorial rather than an
+invitation).
+
+Both are **self-hosted**, in `fonts/` — 192K, six files. Nothing is fetched from Google,
 so the page does not depend on a third party being up, no visitor's
 request for it reaches one, and the display face is there on the first
-paint rather than a beat later. Only the latin and latin-ext subsets
-are included — latin-ext is not optional, it carries the ć in Amina
-Avdić's name. To change a face: drop the `.woff2` files in `fonts/`,
+paint rather than a beat later. Only the latin and latin-ext subsets are
+included — latin-ext is not optional, it carries the Ć in Amina Avdić's
+name, and every candidate face was checked for that glyph (`fontTools`,
+`cmap`, U+0106) before being considered. To change a face: drop the `.woff2` files in `fonts/`,
 edit the `@font-face` blocks at the top of the stylesheet, and set
 `--display` or `--micro`.
 
