@@ -92,13 +92,15 @@ column at the frame's left edge, the photograph standing the full
 height of the screen at the right, filling the half the words do not.
 They cannot drift apart, because there is nothing to drift.
 
-`artists` has since taken its photograph back out of the right-hand
-column and centred it in the frame: that picture is a room with a
-figure in the middle of it, and held to one edge it lost the room. The
-names cross its left third, which is the darkest part of the frame —
-the doorway — so they need no scrim, only their own shadow. The two
-sections still share `.split` for everything else, and still stack
-identically on a phone.
+`artists` no longer uses that two-part shape at all. It is three
+columns — her name on the left, the company on the right, the
+photograph centred between them — because that picture is a room with
+someone in the middle of it, and pushed to either edge it loses the
+room. Its side columns take the `--gutter` rather than the 1120px
+measure: at the measure there is not enough width left beside a 600px
+figure to set a name in. On a phone it stacks like `about` does, words
+before picture, which is why both text columns come first in the
+markup. It still shares `.split` for the narrow-screen behaviour.
 
 That shape has one hazard, and `artists` hit it. A whole 2:3 photograph
 standing the full height of a 1440x900 screen is 600px wide and no
@@ -132,10 +134,7 @@ under it keeps it off the photographs.
 differently.** The ticket button leaves the site, so it is the only
 enclosed, warm, gold-edged thing there, set apart from the three
 section links with real space and carrying the arrow that means "away
-from here". It says **Come bask** rather than "Tickets" — the verse's
-own words, and an invitation rather than a transaction. If you would
-rather it be literal, the word is in the `<a class="ticket">` and its
-accessible name already says "tickets". It is never marked as the
+from here". It is never marked as the
 current section, and the script that tracks scrolling only ever touches
 `a.to`.
 
@@ -163,26 +162,19 @@ that is the ceiling to stay under.
 
 ### The lettering
 
-Two families, and no more, chosen against four words: ethereal,
-mystical, playful, minimal. No single face gets all four, so they are
-split between the two.
+One family, in two cuts. **Alegreya Sans SC** sets the display in real
+small capitals; **Alegreya Sans**, the same design without them,
+carries every other line — so nothing on the page speaks in a different
+voice. Both are humanist, so the letterforms keep a little of the hand
+in them rather than being drawn with a compass, which is where the
+warmth at this size comes from.
 
-**Cormorant Light** carries the display — an old-style with very fine
-hairlines, opened to 0.17em. It was 0.30em, which pushed the title past
-airy into scattered. That is the ethereal and mystical
-half, and it is minimal by construction because there is so little ink
-in it.
-
-**Josefin Sans Light** carries every small line — the subtitle, the
-dates, the artists' names, the links — and is the playful half: a
-geometric with a deco cast, round and light, which keeps a page this
-dark from turning solemn. It never appears above 0.9rem.
-
-The tension between a delicate seriffed display and a round geometric
-micro is the whole idea. Earlier passes used a geometric for the
-display (too even-toned against these photographs) and then a didone
-(handsome, but it made the page a fashion editorial rather than an
-invitation).
+Alegreya Sans SC is a small-caps **family**, not a font with an `smcp`
+feature: its lowercase glyphs *are* the small capitals. So the title is
+written `Amor Fati` in the markup and left alone — no
+`text-transform`, because uppercasing it would throw the small caps
+away and hand back plain capitals. If you edit that text, keep the
+capitalisation you want to see.
 
 Both are **self-hosted**, in `fonts/` — 192K, six files. Nothing is fetched from Google,
 so the page does not depend on a third party being up, no visitor's
@@ -225,6 +217,19 @@ Any static host works:
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
+- `align-self:stretch` on a figure inside a centred grid is
+  load-bearing, and it has had to be added twice — once on `about`,
+  once on `artists`. Without it the box is sized by its content,
+  `height:100%` resolves to `auto`, and the photograph lays out at its
+  natural 720x1080: overflowing a 900px panel and being silently
+  clipped by `overflow:hidden`. It looks nearly right in a screenshot.
+- An `id` outranks a class, so every `#artists` rule written for the
+  wide layout also lands in the narrow one unless it is given back
+  there. Three separate defects came from this: a figure 22px short of
+  the right edge, a full-bleed figure 146px wide because it kept
+  `grid-column:2` and fell into an implicit second column, and roster
+  sizes collapsing together. If you add an `#artists` rule, check the
+  phone.
 - `--inset` is declared on `:root`, not on `.panel`. The link rail is
   fixed to the viewport and lives outside every panel, and a `var()`
   that resolves to nothing makes the entire shorthand it sits in
