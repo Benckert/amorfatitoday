@@ -1,8 +1,9 @@
 What the page uses, and how:
 
-  hero.jpg      the reaching dancer. Fills the screen on `amor`.
-                Mirrored (--flip:scaleX(-1)) so her reach carries
-                towards the words rather than away from them.
+  hero.jpg      the reaching dancer. Fills the screen on `amor`, and
+                is NOT mirrored: her reach opens to the right, across
+                the frame, with the words sitting under her. It was
+                mirrored while the words were in a column beside it.
 
   text-cropped.png
                 the verse, in the company's own hand — the cropped
@@ -70,9 +71,8 @@ camera EXIF.
 rather than a change to the picture: scaleX(-1) mirrors an image, none
 leaves it alone. It lives in the stylesheet, NOT as an inline style on
 the element — an inline style outranks a stylesheet and would silently
-beat the narrow-screen rules. Two lines set it, one for hero.jpg and
-one for dancer.jpg; delete a line and that photograph faces the way
-its file does.
+beat the narrow-screen rules. One line sets it, for dancer.jpg. hero.jpg is
+left as its file is.
 
 Sizes, for reference:
 

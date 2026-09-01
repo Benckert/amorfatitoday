@@ -61,6 +61,12 @@ made for the layout rather than to the picture: it turns each figure's
 reach towards the words instead of away from them. Three `--flip` lines
 in the stylesheet do it, and deleting one undoes it.
 
+**The landing sits off the foot of the frame**, not on it — the title
+lands around three-fifths of the way down, and the space beneath it is
+what makes the photograph read as a room rather than a backdrop. The
+hero is unmirrored there, so her reach opens rightward across the
+frame.
+
 **One frame.** Every section insets its words by the same `--inset` —
 the gutter on a narrow screen, half the slack beside `--measure` on a
 wide one — so the first letter of every section lands on the same
@@ -82,9 +88,19 @@ an underline someone had cut off.
 the class `.split`, and one rule set positions both: the words in a
 column at the frame's left edge, the photograph standing the full
 height of the screen at the right, filling the half the words do not.
-They cannot drift apart, because there is nothing to drift — and it is
-what fixed `artists` reading left-heavy, since its photograph used to
-sit centred behind the names with the right third of the frame empty.
+They cannot drift apart, because there is nothing to drift.
+
+That shape has one hazard, and `artists` hit it. A whole 2:3 photograph
+standing the full height of a 1440x900 screen is 600px wide and no
+wider — so if the words do not reach across their own half, the middle
+of the frame is simply empty. At the first attempt the longest name
+ended at x=490 and the photograph began at x=840: a 350px hole down
+the centre, a quarter of the frame. The fix is not to move anything but
+to set the names large enough to occupy the column they were given —
+they run about 50% larger now, which closes it to ~200px and reads as
+a margin. The same arithmetic applies to any section put in this
+layout: give it words wide enough for its half, or it will hollow out
+in the middle.
 Each section only says where its own subject sits in its frame, through
 `--focus`: the top on `about` so a phone crop takes her legs and never
 her head, just below centre on `artists` where the candle is.
@@ -132,8 +148,8 @@ mystical, playful, minimal. No single face gets all four, so they are
 split between the two.
 
 **Cormorant Light** carries the display — an old-style with very fine
-hairlines, opened right up to 0.30em, at which point a word stops being
-a word and becomes a row of marks. That is the ethereal and mystical
+hairlines, opened to 0.17em. It was 0.30em, which pushed the title past
+airy into scattered. That is the ethereal and mystical
 half, and it is minimal by construction because there is so little ink
 in it.
 
