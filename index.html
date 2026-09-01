@@ -179,17 +179,30 @@ img{display:block;max-width:100%}
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
   position:relative;
-  /* svh, deliberately, and not dvh. dvh is the viewport as it is right
-     now, so every panel RESIZES each time a phone moves its toolbar —
-     the document changes height under the reader and the scroll offset
-     shifts to compensate, which is a jump this page caused itself. svh
-     is the viewport with the browser's UI at its largest, so a panel is
-     one height for the whole visit and nothing moves. The cost is that
-     when the bar retracts the screen is taller than a panel and an edge
-     of the neighbouring section can show; that is a smaller fault than
-     the page moving under you, and it is the arrangement this site had
-     before any of it was touched. */
+  /* The panel must equal the screen it is on, or snapping cannot work.
+     svh is the viewport with the browser's UI at its largest, so on a
+     phone whose bar has retracted every panel is SHORTER than the
+     screen — and then the document is shorter than it needs to be and
+     the last section's snap point sits beyond the furthest the page can
+     scroll. Measured on a 375x812 screen: with 629px panels the page
+     stops at 1075 while `artists` begins at 1258, so it can never
+     align; drag towards it, let go, and snapping falls back to the only
+     point it can reach, which is upwards. That is the "scrolls back up
+     when I release".
+
+           panel 629 -> max scroll 1075, snap point 1258   unreachable
+           panel 660 -> max scroll 1168, snap point 1320   unreachable
+           panel 812 -> max scroll 1624, snap point 1624   exact
+
+     dvh is the viewport actually on screen, so panel and screen agree
+     at every moment, the document is exactly three screens, and every
+     snap point is reachable. It was removed once on the suspicion that
+     it caused a jump; the jump was afterwards traced, frame by frame,
+     to a timer in goTo() that fired 1.00s after every scroll, and that
+     timer is gone. svh stays first as the fallback for anything without
+     dvh. */
   height:100svh;
+  height:100dvh;
   overflow:hidden;
   scroll-snap-align:start;
   display:grid;

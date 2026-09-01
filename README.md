@@ -250,19 +250,30 @@ presentation.
   itself out at its natural 716x1074. Landscape phones are wide, so
   three columns fit them; everything is simply set smaller. Checked at
   844x390, 932x430 and 780x360.
-- **Scroll snapping is `mandatory`, panels are `100svh`, and that is
-  deliberately the plainest arrangement that works.** A run of attempts
-  to improve it all made things worse and were reverted: `proximity`
-  snapping (removes the scroll lock), `scroll-snap-stop` (no measured
-  effect), an `lvh - svh` spacer, `100dvh` panels (they resize whenever
-  a phone moves its toolbar, so the document changes height under the
-  reader and the scroll offset shifts — a jump the page causes itself),
-  and moving the scroll into a nested container (broke the site).
-  `svh` means a panel is one height for the whole visit and nothing
-  moves; the cost is that when the browser's bar retracts, the screen
-  is taller than a panel and an edge of the neighbouring section can
-  show. That is the accepted trade. **Before changing any of this,
-  note that it has been tried.**
+- **Panels are `100dvh`, with `100svh` above it as a fallback, and this
+  is what makes snapping work at all.** A snap point is only usable if
+  the page can scroll far enough to reach it. `svh` is the viewport with
+  the browser's UI at its largest, so on a phone whose bar has retracted
+  every panel is *shorter* than the screen, the document is
+  correspondingly short, and the last section's snap point lands beyond
+  the furthest the page can scroll. Measured on a 375x812 screen:
+
+        panel 629 -> max scroll 1075, snap point 1258   unreachable
+        panel 660 -> max scroll 1168, snap point 1320   unreachable
+        panel 812 -> max scroll 1624, snap point 1624   exact
+
+  With an unreachable snap point you can drag the last section into
+  place, but on release snapping falls back to the nearest point it can
+  actually reach — upwards. `dvh` keeps panel and screen equal at every
+  moment, so the document is exactly three screens and every snap point
+  is reachable.
+- Things tried here that did not work, so they are not tried again:
+  `proximity` snapping (removes the scroll lock), `scroll-snap-stop`
+  (no measured effect), an `lvh - svh` spacer (fixes reachability but
+  leaves panels shorter than the screen), and moving the scroll into a
+  nested container (broke the site). `dvh` was also removed once on the
+  suspicion that it caused a jump — it did not; the jump was traced
+  frame by frame to a timer in `goTo()`.
 - **There is no "did we arrive?" correction in `goTo()`, and there must
   not be one.** There was: a timer comparing the scroll position to a
   section's `offsetTop` a beat after a click, forcing the page onto it
