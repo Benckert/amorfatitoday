@@ -239,15 +239,31 @@ presentation.
   so a section covers it exactly and the document is always exactly as
   many screens as there are sections. Do not "fix" this back to `svh`
   for stability; it is what caused the instability.
-- **Scroll snapping is `mandatory` everywhere, with
-  `scroll-snap-stop:always` on each panel.** That is the scroll-lock
-  this site is built around: a scroll of any size advances exactly one
-  section and lands it square. A short-lived attempt to soften this to
-  `proximity` on touch was a mistake — under proximity a 180px scroll
-  simply stays 180px in, leaving the reader between two sections, which
-  is the opposite of what the layout wants. `scroll-snap-stop` is what
-  keeps a hard fling from carrying past a snap point and landing two
-  sections away.
+- **Scroll snapping is `mandatory`, panels are `100svh`, and that is
+  deliberately the plainest arrangement that works.** A run of attempts
+  to improve it all made things worse and were reverted: `proximity`
+  snapping (removes the scroll lock), `scroll-snap-stop` (no measured
+  effect), an `lvh - svh` spacer, `100dvh` panels (they resize whenever
+  a phone moves its toolbar, so the document changes height under the
+  reader and the scroll offset shifts — a jump the page causes itself),
+  and moving the scroll into a nested container (broke the site).
+  `svh` means a panel is one height for the whole visit and nothing
+  moves; the cost is that when the browser's bar retracts, the screen
+  is taller than a panel and an edge of the neighbouring section can
+  show. That is the accepted trade. **Before changing any of this,
+  note that it has been tried.**
+- **There is no "did we arrive?" correction in `goTo()`, and there must
+  not be one.** There was: a timer comparing the scroll position to a
+  section's `offsetTop` a beat after a click, forcing the page onto it
+  if they disagreed. On a phone they always disagree — panels are one
+  height and the screen another — so the last section's `offsetTop` can
+  sit past the furthest the page can scroll. Measured at 390x902 with
+  844px panels: `offsetTop` 1688, furthest reachable 1630. The browser
+  stopped at 1630, the timer hauled the page to 1688, and it landed as
+  a single 58px lurch a second after everything came to rest. Chrome
+  clamps the same call and shows nothing, so it passes every headless
+  test; it was only ever visible on the device. Mandatory snapping
+  already guarantees landing on a section.
 - The `goTo()` fallback that corrects a cancelled smooth scroll now
   stands down if the reader starts scrolling themselves. Correcting a
   scroll someone is in the middle of is itself a jump, and a worse one,

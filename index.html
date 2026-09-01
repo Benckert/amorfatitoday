@@ -179,20 +179,19 @@ img{display:block;max-width:100%}
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
   position:relative;
-  /* dvh, not svh. svh is the viewport with the browser's UI at its
-     LARGEST — but iOS shrinks its bar to a pill as soon as you scroll,
-     so the screen is then taller than svh and every panel came up
-     short by that difference: a strip of the next section showing
-     under the links, and a strip of the previous one above the
-     heading. dvh is the viewport that is actually on screen, so a
-     section always covers it exactly. */
-  height:100dvh;
+  /* svh, deliberately, and not dvh. dvh is the viewport as it is right
+     now, so every panel RESIZES each time a phone moves its toolbar —
+     the document changes height under the reader and the scroll offset
+     shifts to compensate, which is a jump this page caused itself. svh
+     is the viewport with the browser's UI at its largest, so a panel is
+     one height for the whole visit and nothing moves. The cost is that
+     when the bar retracts the screen is taller than a panel and an edge
+     of the neighbouring section can show; that is a smaller fault than
+     the page moving under you, and it is the arrangement this site had
+     before any of it was touched. */
+  height:100svh;
   overflow:hidden;
   scroll-snap-align:start;
-  /* one section per gesture: without this a fling can carry past a
-     snap point and land two sections away, which reads as being
-     thrown rather than as locking */
-  scroll-snap-stop:always;
   display:grid;
 }
 
