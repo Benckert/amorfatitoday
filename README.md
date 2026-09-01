@@ -37,6 +37,11 @@ made for the layout rather than to the picture: it turns each figure's
 reach towards the words instead of away from them. Three `--flip` lines
 in the stylesheet do it, and deleting one undoes it.
 
+**One frame.** Every section insets its words by the same `--inset` —
+the gutter on a narrow screen, half the slack beside `--measure` on a
+wide one — so the first letter of every section lands on the same
+vertical line at any width. Measured at 1440px: 160px on all four.
+
 **One shape, four times.** A photograph filling the screen, the words
 over the black beside or beneath it, the same row of links along the
 foot. `amor` and `attend` use the same photograph, mirrored, so the page
@@ -66,11 +71,22 @@ that is the ceiling to stay under.
 
 ### The lettering
 
-Two families, and no more. **Jost** — a geometric, in the Futura line —
-carries the display: set in capitals at 0.22em tracking it is what the
-lettering on the live site reads as. **IBM Plex Mono Light** carries
-every small line: the subtitle, the dates, the artists' names, the
-links. It never appears above 0.9rem, which is the point of it.
+Two families, and no more. **Bodoni Moda** carries the display: a
+didone, whose thick-to-thin is the same drama the photographs have, set
+in capitals at 0.16em. A geometric sans was here first and was too
+even-toned to sit against these pictures. **Inter** carries every small
+line — the subtitle, the dates, the artists' names, the links — and it
+never appears above 0.9rem, which is the point of it: at that size you
+want a face with no opinion.
+
+Both are **self-hosted**, in `fonts/`. Nothing is fetched from Google,
+so the page does not depend on a third party being up, no visitor's
+request for it reaches one, and the display face is there on the first
+paint rather than a beat later. Only the latin and latin-ext subsets
+are included — latin-ext is not optional, it carries the ć in Amina
+Avdić's name. To change a face: drop the `.woff2` files in `fonts/`,
+edit the `@font-face` blocks at the top of the stylesheet, and set
+`--display` or `--micro`.
 
 The one hand-lettered thing on the page is the verse, and that is the
 company's own artwork rather than a font. An earlier build set "Vallerie
@@ -97,9 +113,6 @@ Any static host works:
 
 ## Notes
 
-- Fonts come from Google Fonts, loaded without blocking the first paint,
-  so the page appears immediately and the serif swaps in a moment later.
-  It falls back to system serif/sans gracefully with no connection at all.
 - The title waits for the display face before it rises, capped at 1.2s.
   It is a width measurement rather than `document.fonts`: `fonts.check()`
   answers "can this be rendered", true from the first frame because the

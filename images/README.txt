@@ -5,11 +5,19 @@ What the page uses, and how:
                 Mirrored (--flip:scaleX(-1)) so her reach carries
                 towards the words rather than away from them.
 
-  text.jpg      the verse, in the company's own hand. Shown whole. It
+  text-cropped.png
+                the verse, in the company's own hand — the cropped
+                artwork, which holds far more of the frame than the
+                original did and so is readable at a glance. This is
+                the one the page uses. Shown whole, like everything
+                else: the crop came from you, the page adds none. It
                 is black to its own edges, so it has no visible frame
                 on the page's black — the words simply stand there.
                 The verse also lives in the image's alt text, so screen
                 readers and link previews still get it.
+
+  text.jpg      the original, uncropped artwork. No longer used; kept
+                because it is the source the cropped one came from.
 
   dancer.jpg    the figure alone, standing the full height of the
                 screen at the outer edge of `about`, beside the verse.
