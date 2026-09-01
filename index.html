@@ -240,7 +240,11 @@ img{display:block;max-width:100%}
   position:absolute;top:0;right:0;bottom:0;width:42%;z-index:0;
   display:flex;align-items:center;justify-content:flex-end;
 }
-#about .beside img{max-height:100%;max-width:100%;width:auto;height:auto}
+#about .beside img{
+  max-height:100%;max-width:100%;width:auto;height:auto;
+  transform:var(--flip,none);
+}
+#about .beside img{--flip:scaleX(-1)}
 /* the inner edge dissolves rather than starting */
 #about .beside::before{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
@@ -257,6 +261,21 @@ img{display:block;max-width:100%}
   text-shadow:0 1px 4px rgba(0,0,0,1),0 2px 24px rgba(0,0,0,.9);
 }
 .roster{list-style:none;margin:0;padding:0}
+/* She leads the evening, so she is set apart from the list rather than
+   made loud within it: the gold the page already uses for anything that
+   leads, a little air beneath, and a short rule that stops before it
+   becomes a divider. */
+.roster li.lead{
+  color:var(--gold);
+  position:relative;
+  padding-bottom:clamp(.9rem,2.8svh,1.4rem);
+  margin-bottom:clamp(.6rem,2svh,1.1rem);
+}
+.roster li.lead::after{
+  content:"";position:absolute;left:0;bottom:0;
+  width:2.6rem;height:1px;
+  background:linear-gradient(to right,rgba(217,164,65,.65),rgba(217,164,65,0));
+}
 .roster li{
   font-family:var(--micro);font-weight:300;
   font-size:clamp(.66rem,1.55vw,.88rem);
@@ -409,9 +428,17 @@ img{display:block;max-width:100%}
   #about .verse img{max-height:40svh}
   #about .beside{position:static;justify-content:center;width:100%;min-height:0}
   #about .beside img{max-height:100%;max-width:100%}
+  /* This fade used to run from the TOP, which is where her head is —
+     nothing was ever cropped (the photograph measures at its exact
+     natural ratio, 0px clipped) but the top 18% was faded to black and
+     read as a cut-off head. It runs from the foot now, so what
+     dissolves is the floor under her feet. */
   #about .beside::before{
-    background:linear-gradient(to bottom,#000 0%,rgba(0,0,0,.4) 8%,rgba(0,0,0,0) 18%);
+    background:linear-gradient(to top,#000 0%,rgba(0,0,0,.35) 7%,rgba(0,0,0,0) 16%);
   }
+  /* and if a screen is ever short enough that something must go, it is
+     taken off the bottom: the top of the frame is pinned */
+  #about .beside{align-items:flex-start}
 
   .section-title{font-size:clamp(1.3rem,7vw,1.9rem);letter-spacing:.14em;text-indent:.14em;margin-bottom:clamp(1rem,3svh,1.8rem)}
   .roster li{font-size:.66rem;letter-spacing:.18em;text-indent:.18em;padding:clamp(.32rem,1.15svh,.6rem) 0}
@@ -513,16 +540,16 @@ img{display:block;max-width:100%}
     <div class="says">
       <h2 class="section-title" data-reveal>Artists</h2>
       <ul class="roster">
-        <li data-reveal style="--d:.10s">Vallerie O</li>
-        <li data-reveal style="--d:.16s">Carl Backman</li>
-        <li data-reveal style="--d:.22s">Lova Hellberg</li>
-        <li data-reveal style="--d:.28s">Amina Avdić</li>
-        <li data-reveal style="--d:.34s">Yazz Meavis</li>
-        <li data-reveal style="--d:.40s">Zean Farence Diaz</li>
-        <li data-reveal style="--d:.46s">Eliot Charoff</li>
-        <li data-reveal style="--d:.52s">Joakim Benckert</li>
-        <li data-reveal style="--d:.58s">Kristoffer Benckert</li>
-        <li data-reveal style="--d:.64s">Elias Ljungberg Photography</li>
+        <li class="lead" data-reveal style="--d:.10s">Vallerie O</li>
+        <li data-reveal style="--d:.18s">Yazz Meavis</li>
+        <li data-reveal style="--d:.24s">Amina Avdić</li>
+        <li data-reveal style="--d:.30s">Carl Backman</li>
+        <li data-reveal style="--d:.36s">Eliot Charoff</li>
+        <li data-reveal style="--d:.42s">Lova Hellberg</li>
+        <li data-reveal style="--d:.48s">Joakim Benckert</li>
+        <li data-reveal style="--d:.54s">Zean Farence Diaz</li>
+        <li data-reveal style="--d:.60s">Kristoffer Benckert</li>
+        <li data-reveal style="--d:.66s">Elias Ljungberg Photography</li>
       </ul>
 
       <p class="reach" data-reveal style="--d:.72s">

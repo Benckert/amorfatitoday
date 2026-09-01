@@ -45,6 +45,15 @@ the gutter on a narrow screen, half the slack beside `--measure` on a
 wide one — so the first letter of every section lands on the same
 vertical line at any width. Measured at 1440px: 160px on all three.
 
+**The roster is ordered by how wide each name is set, not by how many
+letters it has.** They were measured in a browser at the real tracking:
+"Amina Avdić" is the same eleven characters as "Yazz Meavis" but sets
+wider, and "Eliot Charoff" sets narrower than "Lova Hellberg" though
+both are thirteen. Counted rather than measured, three of the nine sit
+in the wrong place and the ramp has kinks in it. Vallerie is outside
+that order — she leads, so she is set apart above it in gold with a
+short rule, rather than made loud within it.
+
 **One shape, three times.** A photograph filling the screen, the words
 over the black beside or beneath it, the same row along the foot.
 

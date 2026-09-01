@@ -20,8 +20,16 @@ What the page uses, and how:
 
   dancer.jpg    the figure alone, standing the full height of the
                 screen at the outer edge of `about`, beside the verse.
-                Not mirrored: the file already turns her towards the
-                words.
+                Mirrored (--flip:scaleX(-1)).
+
+                On a phone the verse sits above her and she fills the
+                width below it. The soft edge there runs from the FOOT
+                of the frame, not the top — her head is at the top, and
+                a fade over it reads as a cut-off head even though
+                nothing is cropped. Her box is also top-aligned on a
+                phone, so if a screen is ever short enough that
+                something has to give, it is taken off the floor under
+                her feet.
 
   artists.jpeg  candlelight. Fills the screen on `artists`, with the
                 names over the dark of its left side.
@@ -52,11 +60,11 @@ camera EXIF.
 
 --flip is the one edit the design makes, and it is a layout decision
 rather than a change to the picture: scaleX(-1) mirrors an image, none
-leaves it alone. It lives in the stylesheet next to the .shot img rule,
-NOT as an inline style on the element — an inline style outranks a
-stylesheet and would silently beat the narrow-screen rules. One line
-sets it, for hero.jpg on both the sections that use it; delete that
-line and the photograph faces the way the file does.
+leaves it alone. It lives in the stylesheet, NOT as an inline style on
+the element — an inline style outranks a stylesheet and would silently
+beat the narrow-screen rules. Two lines set it, one for hero.jpg and
+one for dancer.jpg; delete a line and that photograph faces the way
+its file does.
 
 Sizes, for reference:
 
