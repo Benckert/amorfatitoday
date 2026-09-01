@@ -111,6 +111,13 @@
   --micro:"Josefin Sans","Century Gothic","Helvetica Neue",Arial,sans-serif;
 
   --gutter:clamp(1.25rem,5vw,5rem);
+  /* On :root, not on .panel: the link rail is fixed to the viewport and
+     lives outside every panel, and a var() that resolves to nothing
+     makes the whole shorthand it sits in invalid — which silently took
+     all the padding off the rail and put the button against the very
+     bottom edge of the screen. Declared here it resolves everywhere,
+     and 100% means the viewport in both places that use it. */
+  --inset:max(var(--gutter),calc((100% - var(--measure)) / 2));
   /* The widest the words are ever allowed. Below it the gutter decides
      the inset; above it the frame does, and every section's first
      letter lands on the same vertical line however wide the screen. */
@@ -150,9 +157,6 @@ img{display:block;max-width:100%}
    screens and the snap is honest. Anything that would not fit is
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
-  /* the frame's own edge, which is the gutter on a narrow screen and
-     half the slack beside the measure on a wide one */
-  --inset:max(var(--gutter),calc((100% - var(--measure)) / 2));
   position:relative;
   height:100svh;
   overflow:hidden;
@@ -205,12 +209,11 @@ img{display:block;max-width:100%}
 .says{position:relative;z-index:2;min-width:0}
 
 /* ────────────────────────  I. amor  (landing)  ─────────────────────── */
-/* The words sit off the foot of the frame rather than on it: the title
-   lands around three-fifths of the way down, which is where the eye
-   goes anyway, and the space beneath it is what makes the photograph
-   feel like a room rather than a backdrop. */
+/* The title lands across her waist — below the lit torso, where the
+   photograph has already fallen into shadow, so the words sit on the
+   dark of the picture rather than across the light of it. */
 #amor{align-content:end;justify-items:center;text-align:center;
-      padding:0 var(--inset) calc(var(--rail) + clamp(2rem,12svh,9rem))}
+      padding:0 var(--inset) calc(var(--rail) + clamp(1rem,4.5svh,3.4rem))}
 
 .title{
   font-family:var(--display);
@@ -287,6 +290,17 @@ img{display:block;max-width:100%}
 
 /* ────────────────────────────  III. artists  ───────────────────────── */
 #artists{--focus:50% 38%}   /* the candle and the turning figure, not the ceiling */
+/* Centred rather than held to the right edge: this photograph is a room
+   with the figure in the middle of it, and pushed into a right-hand
+   column it lost the room. The names cross its left third, which is
+   the darkest part of the frame — the doorway — so they need no scrim,
+   only their own shadow. */
+#artists .beside{left:0;right:0;width:auto;justify-content:center}
+#artists .beside::before{
+  background:linear-gradient(to right,
+    rgba(0,0,0,.42) 0%,rgba(0,0,0,.22) 26%,rgba(0,0,0,0) 48%);
+}
+#artists{padding-right:var(--inset)}
 .section-title{
   font-family:var(--display);font-weight:400;
   font-size:clamp(1.6rem,5.2vw,3.4rem);
@@ -302,9 +316,20 @@ img{display:block;max-width:100%}
    names, arriving out of nothing and leaving into nothing, in the
    page's cream rather than its gold so it separates without competing
    with her. */
+.roster li:not(.lead){
+  /* a step below her, not a different thing: same face, same tracking,
+     about seven-eighths the size, and set in from her by an em or two
+     so the list reads as hers */
+  font-size:clamp(.66rem,1.88vw,1.16rem);
+  padding-left:clamp(1rem,2.2vw,2rem);
+}
 .roster li.lead{
   color:var(--gold);
   position:relative;
+  /* she is centred on the rule beneath her rather than starting where
+     it starts: the name and its horizon share a mid-point */
+  width:min(19rem,100%);
+  text-align:center;
   padding-bottom:clamp(.8rem,2.4svh,1.2rem);
   margin-bottom:clamp(.7rem,2.2svh,1.2rem);
 }
@@ -343,12 +368,22 @@ img{display:block;max-width:100%}
    site. It is written once as a <template> and stamped into each
    section by script, so the four copies cannot drift apart. */
 .jump{
-  position:absolute;left:0;right:0;bottom:0;z-index:4;
+  /* Fixed, not stamped into each section. It used to be one <template>
+     cloned into all three panels so the copies could not drift; one
+     element that never moves cannot drift either, and it means the
+     links stay put while the page scrolls rather than riding up and
+     down with whatever section is passing. */
+  position:fixed;left:0;right:0;bottom:0;z-index:8;
   display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
   padding:0 var(--inset) clamp(1.1rem,3svh,1.8rem);
   font-family:var(--micro);font-weight:300;
   font-size:clamp(.58rem,1.4vw,.68rem);
   letter-spacing:.2em;text-transform:uppercase;
+}
+.jump::before{
+  content:"";position:absolute;left:0;right:0;bottom:0;top:-70%;z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%);
 }
 .jump a.to{
   position:relative;
@@ -364,24 +399,40 @@ img{display:block;max-width:100%}
 .jump a.to[aria-current="true"]{color:var(--gold);border-bottom-color:var(--gold)}
 
 /* The one thing on the page that is not navigation: it leaves the site.
-   So it is the one thing shaped like a button rather than a link —
-   enclosed, gold-edged, with the arrow that means "away from here" —
-   and it sits apart from the three section links with real space
-   between, so the rail reads as "here are the parts, and here is how
-   you come". */
+   So it is the one thing shaped like a button, the one thing carrying
+   warmth rather than only outline, and it says what the verse says
+   rather than naming a transaction. The glow is a separate layer, so
+   hovering never re-rasterises the pill itself. */
 .jump .ticket{
-  display:inline-flex;align-items:center;gap:.5em;
+  position:relative;isolation:isolate;
+  display:inline-flex;align-items:center;gap:.55em;
   margin-left:clamp(.8rem,3vw,2rem);
-  padding:.62em 1.5em;
-  border:1px solid rgba(217,164,65,.55);
+  padding:.78em 1.9em;
+  border:1px solid rgba(217,164,65,.72);
   border-radius:999px;
-  color:var(--gold);
+  background:rgba(217,164,65,.10);
+  color:var(--cream);
   letter-spacing:.2em;
-  transition:color .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease);
+  transition:color .45s var(--ease),border-color .45s var(--ease),
+             background-color .45s var(--ease),transform .45s var(--ease);
+}
+.jump .ticket::before{
+  content:"";position:absolute;z-index:-1;
+  left:-12%;right:-12%;top:-70%;bottom:-90%;
+  background:radial-gradient(closest-side,
+    rgba(217,164,65,.42),rgba(217,164,65,.14) 46%,transparent 76%);
+  opacity:.6;transform:translate3d(0,10%,0) scale(.94);
+  transition:opacity .6s var(--ease),transform .6s var(--ease);
 }
 .jump .ticket:hover,.jump .ticket:focus-visible{
   color:#0b0b0d;background:var(--gold);border-color:var(--gold);
+  transform:translate3d(0,-2px,0);
 }
+.jump .ticket:hover::before,.jump .ticket:focus-visible::before{
+  opacity:1;transform:translate3d(0,2%,0) scale(1.08);
+}
+.jump .ticket:hover,.jump .ticket:focus-visible,
+.jump .ticket:hover::before,.jump .ticket:focus-visible::before{will-change:transform,opacity}
 .jump .ticket .out{font-size:.9em;line-height:1}
 /* named for a screen reader, silent for everyone else */
 .sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
@@ -470,6 +521,10 @@ img{display:block;max-width:100%}
     padding:clamp(1.2rem,3.4svh,2rem) 0 0;
   }
   .split .says,.split .verse{padding-inline:var(--inset)}
+  /* #artists sets a right inset for its centred figure on a wide
+     screen; an id outranks .split, so it has to be given back here or
+     the full-bleed figure comes up short of the right edge */
+  #artists{padding-right:0}
   #about .verse img{max-height:34svh}
   /* align-self, and it is load-bearing: .split centres its items, which
      leaves this box sized by its content rather than by its row. With
@@ -526,7 +581,9 @@ img{display:block;max-width:100%}
   .split .beside{align-items:flex-start}
 
   .section-title{font-size:clamp(1.3rem,7vw,1.9rem);letter-spacing:.18em;text-indent:.18em;margin-bottom:clamp(1rem,3svh,1.8rem)}
-  .roster li{font-size:.66rem;letter-spacing:.18em;text-indent:.18em;padding:clamp(.32rem,1.15svh,.6rem) 0}
+  .roster li{letter-spacing:.18em;text-indent:.18em;padding:clamp(.32rem,1.15svh,.6rem) 0}
+  .roster li.lead{font-size:.78rem}
+  .roster li:not(.lead){font-size:.68rem;padding-left:1rem}
 
 
   /* the links wrap out to the screen edges here, so the toggle cannot
@@ -569,20 +626,17 @@ img{display:block;max-width:100%}
 </button>
 <audio id="ambient" src="audio/ambient.mp3" loop preload="metadata"></audio>
 
-<!-- The one copy of the section links. The script stamps it into every
-     section, so the four rows are identical by construction. -->
-<template id="jump-tpl">
-  <nav class="jump" aria-label="Sections">
-    <a class="to" href="#amor">Amor</a>
-    <a class="to" href="#about">About</a>
-    <a class="to" href="#artists">Artists</a>
-    <!-- EDIT — the ticket page's URL goes in href -->
-    <a class="ticket" href="https://www.kickstarter.com/" target="_blank" rel="noopener noreferrer">
-      Tickets<span class="out" aria-hidden="true">↗</span>
-      <span class="sr">(opens in a new tab)</span>
-    </a>
-  </nav>
-</template>
+<!-- One nav, fixed to the foot of the viewport for the whole page. -->
+<nav class="jump" aria-label="Sections">
+  <a class="to" href="#amor">Amor</a>
+  <a class="to" href="#about">About</a>
+  <a class="to" href="#artists">Artists</a>
+  <!-- EDIT — the ticket page's URL goes in href -->
+  <a class="ticket" href="https://www.kickstarter.com/" target="_blank" rel="noopener noreferrer">
+    Come bask<span class="out" aria-hidden="true">↗</span>
+    <span class="sr">— tickets, opens in a new tab</span>
+  </a>
+</nav>
 
 <main>
 
@@ -661,13 +715,8 @@ img{display:block;max-width:100%}
   if (spent || reduce.matches) root.classList.add("settled");
   function markSeen(){ try { window.sessionStorage.setItem(SEEN, "1"); } catch (e) {} }
 
-  /* ── the same section links in every section ── */
-  var tpl = document.getElementById("jump-tpl");
   var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
-  if (tpl && "content" in tpl) {
-    panels.forEach(function(p){ p.appendChild(tpl.content.cloneNode(true)); });
-  }
-  var jumps = Array.prototype.slice.call(document.querySelectorAll(".jump"));
+  var jumpLinks = Array.prototype.slice.call(document.querySelectorAll(".jump a.to"));
 
   /* ── the title arrives letter by letter, words kept unbroken ── */
   var title = document.querySelector("[data-split]");
@@ -775,12 +824,8 @@ img{display:block;max-width:100%}
     if (i === lit || i < 0) return;
     lit = i;
     dots.forEach(function(b, d){ b.setAttribute("aria-current", d === i ? "true" : "false"); });
-    /* the same state in every copy of the link row */
-    jumps.forEach(function(row){
-      var links = row.querySelectorAll("a.to");
-      for (var k = 0; k < links.length; k++) {
-        links[k].setAttribute("aria-current", k === i ? "true" : "false");
-      }
+    jumpLinks.forEach(function(a, k){
+      a.setAttribute("aria-current", k === i ? "true" : "false");
     });
   }
   /* Which section fills the screen is a question of scroll position —
@@ -829,14 +874,12 @@ img{display:block;max-width:100%}
     }, 900);
   }
   dots.forEach(function(b, i){ b.addEventListener("click", function(){ goTo(i); }); });
-  jumps.forEach(function(row){
-    Array.prototype.forEach.call(row.querySelectorAll("a.to"), function(a){
-      a.addEventListener("click", function(e){
-        var i = ids.indexOf((a.getAttribute("href") || "").slice(1));
-        if (i < 0) return;
-        e.preventDefault();
-        goTo(i);
-      });
+  jumpLinks.forEach(function(a){
+    a.addEventListener("click", function(e){
+      var i = ids.indexOf((a.getAttribute("href") || "").slice(1));
+      if (i < 0) return;
+      e.preventDefault();
+      goTo(i);
     });
   });
 

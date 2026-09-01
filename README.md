@@ -79,7 +79,9 @@ wider, and "Eliot Charoff" sets narrower than "Lova Hellberg" though
 both are thirteen. Counted rather than measured, three of the nine sit
 in the wrong place and the ramp has kinks in it. Vallerie is outside
 that order — she leads, so she is set apart above it in gold rather
-than made loud within it. The mark beneath her is a hairline drawn the
+than made loud within it, a step larger than the rest, and centred on
+the rule beneath her so the name and its horizon share a mid-point. The
+company is set in from her by an em or two, so the list reads as hers. The mark beneath her is a hairline drawn the
 width of the names that arrives out of nothing and leaves into
 nothing; it was a short gold stub anchored to the left, which read as
 an underline someone had cut off.
@@ -89,6 +91,14 @@ the class `.split`, and one rule set positions both: the words in a
 column at the frame's left edge, the photograph standing the full
 height of the screen at the right, filling the half the words do not.
 They cannot drift apart, because there is nothing to drift.
+
+`artists` has since taken its photograph back out of the right-hand
+column and centred it in the frame: that picture is a room with a
+figure in the middle of it, and held to one edge it lost the room. The
+names cross its left third, which is the darkest part of the frame —
+the doorway — so they need no scrim, only their own shadow. The two
+sections still share `.split` for everything else, and still stack
+identically on a phone.
 
 That shape has one hazard, and `artists` hit it. A whole 2:3 photograph
 standing the full height of a 1440x900 screen is 600px wide and no
@@ -111,13 +121,23 @@ links. The words come first in the markup for that reason: stacked in
 source order, a photograph placed first pushes ten names off a phone
 screen, which is exactly what happened before they were reordered.
 
-**One thing on the page is not navigation, and it is shaped
-differently.** The Tickets button leaves the site, so it is the only
-enclosed, gold-edged thing in the rail, set apart from the three
+**The link rail is fixed to the viewport**, not stamped into each
+section. It used to be one `<template>` cloned into all three panels so
+the copies could not drift apart; one element that never moves cannot
+drift either, and the links now stay put while the page scrolls instead
+of riding up and down with whatever section is passing. A gradient
+under it keeps it off the photographs.
+
+**One thing in that rail is not navigation, and it is shaped
+differently.** The ticket button leaves the site, so it is the only
+enclosed, warm, gold-edged thing there, set apart from the three
 section links with real space and carrying the arrow that means "away
-from here". The rail reads as: here are the parts, and here is how you
-come. It is never marked as the current section, and the script that
-tracks scrolling only ever touches `a.to`.
+from here". It says **Come bask** rather than "Tickets" — the verse's
+own words, and an invitation rather than a transaction. If you would
+rather it be literal, the word is in the `<a class="ticket">` and its
+accessible name already says "tickets". It is never marked as the
+current section, and the script that tracks scrolling only ever touches
+`a.to`.
 
 **The navigation is identical everywhere, by construction.** The row of
 section links is written once, as a `<template>`, and stamped into each
@@ -205,6 +225,12 @@ Any static host works:
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
+- `--inset` is declared on `:root`, not on `.panel`. The link rail is
+  fixed to the viewport and lives outside every panel, and a `var()`
+  that resolves to nothing makes the entire shorthand it sits in
+  invalid — which silently stripped all the padding off the rail and
+  put the ticket button flush against the bottom edge of the screen.
+  Nothing errored; the padding simply computed to zero.
 - Scroll snapping is `mandatory`, which is honest here because every
   section really is exactly one screen. The one exception is a phone
   held sideways, where there is so little height that the sections are
