@@ -228,25 +228,17 @@ presentation.
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
-- **The page scrolls inside `<main>`, not inside the document**, and
-  that is the fix for a whole class of mobile trouble rather than a
-  preference. While the document itself scrolls, a phone browser
-  expands and retracts its own toolbar as you go and the viewport
-  changes height underneath the layout: sections sized to one viewport
-  stop matching the screen, a strip of the neighbouring section shows
-  above or below, and the last snap point can end up beyond the
-  furthest the page can reach, so snapping retries a move it can never
-  finish. `svh`, `lvh` and `dvh` each *describe* that moving target;
-  none of them stops it moving, and three separate attempts to pick the
-  right one all failed on a real phone. Browsers only drive the toolbar
-  from document-level scrolling, so with `html,body{height:100%;
-  overflow:hidden}` and the scrolling moved into `main`, the viewport
-  is one size for the whole visit, `height:100%` is a real number, and
-  every section is exactly the screen it is on. The cost is that the
-  toolbar stays visible. **Everything in the script asks `main` about
-  scrolling — `scrollTop`, `clientHeight`, its own scroll event, and
-  the IntersectionObserver's `root`. If you reintroduce
-  `window.scrollY` anywhere, it will read zero forever.**
+- **Panels are `100dvh`, and that unit is the whole answer to a class
+  of mobile bug.** `svh` is the viewport with the browser's UI at its
+  *largest*; iOS shrinks its bar to a pill the moment you scroll, so
+  the screen is then taller than `svh` and every panel came up short by
+  that difference — a strip of the next section under the links, a
+  strip of the previous one above the heading, and, because the
+  document was then shorter than the last snap point needed, a jump
+  that never settled. `dvh` is the viewport that is actually on screen,
+  so a section covers it exactly and the document is always exactly as
+  many screens as there are sections. Do not "fix" this back to `svh`
+  for stability; it is what caused the instability.
 - **Scroll snapping is `mandatory` everywhere, with
   `scroll-snap-stop:always` on each panel.** That is the scroll-lock
   this site is built around: a scroll of any size advances exactly one
