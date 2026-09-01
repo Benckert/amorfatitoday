@@ -22,24 +22,32 @@ What the page uses, and how:
                 screen at the outer edge of `about`, beside the verse.
                 Mirrored (--flip:scaleX(-1)).
 
-                On a phone the verse sits above her and she fills the
-                width below it. The soft edge there runs from the FOOT
-                of the frame, not the top — her head is at the top, and
-                a fade over it reads as a cut-off head even though
-                nothing is cropped. Her box is also top-aligned on a
-                phone, so if a screen is ever short enough that
-                something has to give, it is taken off the floor under
-                her feet.
+                On a phone the verse sits above her and she runs edge
+                to edge below it — the one photograph on the page that
+                is cropped, and the one place object-fit appears. See
+                below. The soft edge there runs from the FOOT of the
+                frame, not the top: her head is at the top, and a fade
+                over it reads as a cut-off head even when nothing is
+                cropped at all. It doubles as the blend behind the
+                links along the bottom.
 
   artists.jpeg  candlelight. Fills the screen on `artists`, with the
                 names over the dark of its left side.
 
-EVERY PHOTOGRAPH IS SHOWN WHOLE.
+EVERY PHOTOGRAPH IS SHOWN WHOLE, WITH ONE EXCEPTION.
 
-There is no object-fit in the stylesheet and no object-position. Each
-image is given max-width:100% and max-height:100% with its width and
-height left auto, so it takes the largest size that fits the screen at
-its own aspect ratio and no pixel of any file is ever cut off.
+The exception is dancer.jpg on a phone, where she runs the full width
+of the screen: a 2:3 photograph that wide is taller than the room left
+under the verse, so object-fit:cover crops her, and object-position
+pins the top of the frame so it is her legs that go and never her
+head. Roughly three-quarters of the photograph survives on a normal
+phone. That is the only object-fit and the only object-position in the
+stylesheet, both inside the narrow-screen block.
+
+Everywhere else there is neither. Each image is given max-width:100%
+and max-height:100% with its width and height left auto, so it takes
+the largest size that fits the screen at its own aspect ratio and no
+pixel of any file is cut off.
 
 That is also what lets a section fill the screen without cropping. A
 2:3 photograph inside a landscape viewport is limited by its HEIGHT, so

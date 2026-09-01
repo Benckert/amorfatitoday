@@ -140,8 +140,12 @@ img{display:block;max-width:100%}
    side — which is the shape the live site has. On a phone the screen is
    narrower than the photograph is tall, so the same rule limits it by
    width instead and it is letterboxed rather than cropped. Either way
-   no pixel of any file is ever cut off, and object-fit — which would
-   crop — appears nowhere in this stylesheet. */
+   no pixel of any file is cut off here.
+
+   There is exactly one exception on the page, and it is not this rule:
+   the figure on `about`, on a phone, where she runs edge to edge and
+   is cropped from the foot. It lives in the narrow-screen block near
+   the bottom of this stylesheet and is the only object-fit in it. */
 .shot{
   position:absolute;inset:0;z-index:0;
   display:flex;align-items:center;justify-content:center;
@@ -421,20 +425,47 @@ img{display:block;max-width:100%}
   #about{
     grid-template-columns:1fr;
     grid-template-rows:auto minmax(0,1fr);
-    align-items:center;justify-items:center;
+    align-items:center;justify-items:stretch;
     gap:clamp(.8rem,2.5svh,1.6rem);
-    padding:clamp(1.5rem,4svh,2.5rem) var(--inset) calc(var(--rail) + .6rem);
+    /* no side padding here: the figure below runs to both edges of the
+       screen, and the verse carries its own inset instead */
+    padding:clamp(1.2rem,3.4svh,2rem) 0 calc(var(--rail) + .6rem);
   }
-  #about .verse img{max-height:40svh}
-  #about .beside{position:static;justify-content:center;width:100%;min-height:0}
-  #about .beside img{max-height:100%;max-width:100%}
+  #about .verse{padding-inline:var(--inset)}
+  #about .verse img{max-height:34svh}
+  /* align-self, and it is load-bearing: #about centres its items, which
+     leaves this box sized by its content rather than by its row. With
+     no definite height, height:100% on the image below resolves to
+     auto, the image lays out at its natural ratio and the panel's
+     overflow:hidden silently clips whatever hangs past the bottom. The
+     crop then happens by accident, off-screen, and changes with every
+     screen size. Stretched, the box is exactly the row and the crop
+     below is the one this stylesheet asks for. */
+  #about .beside{position:static;justify-content:center;width:100%;
+                 align-self:stretch;height:100%;min-height:0;overflow:hidden}
+
+  /* THE ONE PLACE ANYTHING IS CROPPED.
+     Everywhere else on this page a photograph is shown whole. Here, on
+     a phone only, the figure runs edge to edge — and a 2:3 photograph
+     at the full width of a phone is taller than the room left under
+     the verse, so something has to go. object-position pins the TOP of
+     the frame, so what goes is the floor and her legs, never her head.
+     Undo it by deleting this rule: she goes back to being whole, with
+     the page's black either side of her. */
+  #about .beside img{
+    width:100%;height:100%;
+    max-width:none;max-height:none;
+    object-fit:cover;
+    object-position:50% 0%;
+  }
   /* This fade used to run from the TOP, which is where her head is —
      nothing was ever cropped (the photograph measures at its exact
      natural ratio, 0px clipped) but the top 18% was faded to black and
      read as a cut-off head. It runs from the foot now, so what
      dissolves is the floor under her feet. */
   #about .beside::before{
-    background:linear-gradient(to top,#000 0%,rgba(0,0,0,.35) 7%,rgba(0,0,0,0) 16%);
+    background:linear-gradient(to top,#000 0%,rgba(0,0,0,.72) 6%,
+                               rgba(0,0,0,.30) 13%,rgba(0,0,0,0) 24%);
   }
   /* and if a screen is ever short enough that something must go, it is
      taken off the bottom: the top of the frame is pinned */

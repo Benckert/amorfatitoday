@@ -23,17 +23,37 @@ ticket page, which is where anyone reading them is going anyway.
 
 ## What the design holds to
 
-**Every section is exactly one screen, and no photograph is ever
-cropped.** Those two are usually a trade, and the way out is that a 2:3
-photograph in a landscape viewport is limited by *height*: it stands the
-full height of the screen at its own proportions, with the page's black
-either side, and the section is filled without the picture being cut.
-`max-width` and `max-height` together, with `width` and `height` left
-`auto`, do the whole job — `object-fit`, which would crop, appears
-nowhere in this stylesheet. On a phone the screen is narrower than the
-photograph is tall, so the same one rule limits it by width instead and
-it is letterboxed rather than cropped. The files in `images/` are the
-originals, untouched and unre-encoded.
+**Every section is exactly one screen, and photographs are shown
+whole** — with one deliberate exception, below. Those two are usually a
+trade, and the way out is that a 2:3 photograph in a landscape viewport
+is limited by *height*: it stands the full height of the screen at its
+own proportions, with the page's black either side, and the section is
+filled without the picture being cut. `max-width` and `max-height`
+together, with `width` and `height` left `auto`, do the whole job. On a
+phone the screen is narrower than the photograph is tall, so the same
+one rule limits it by width instead and it is letterboxed rather than
+cropped. The files in `images/` are the originals, untouched and
+unre-encoded.
+
+**The exception: the figure on `about`, on a phone only.** There she
+runs edge to edge, and a 2:3 photograph at the full width of a phone is
+taller than the room left under the verse — so something has to go.
+`object-fit:cover` with `object-position:50% 0%` pins the top of the
+frame, so what goes is the floor and her legs, never her head. Between
+77% and 79% of the photograph survives on a typical phone, 60% on a
+short 360x640 one. This is the only `object-fit` in the stylesheet, it
+is inside the narrow-screen block, and deleting that one rule returns
+her to being whole with black either side.
+
+That crop has to be *asked for* rather than allowed to happen. `#about`
+centres its items, which leaves the figure's box sized by its content
+instead of by its row; with no definite height, `height:100%` on the
+image resolves to `auto`, the image lays out at its natural ratio, and
+the panel's `overflow:hidden` quietly clips whatever hangs past the
+bottom. The crop then happens by accident, off-screen, and moves with
+every screen size — it measured 9px on one phone and 48px on another.
+`align-self:stretch` on that box is what makes it exactly its row, so
+the crop is the one the stylesheet describes.
 
 The one edit the design makes to a photograph is mirroring, and it is
 made for the layout rather than to the picture: it turns each figure's
