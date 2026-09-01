@@ -266,9 +266,20 @@ presentation.
   so the page still reads a section at a time; the browser simply is not
   steering. Desktop keeps the lock — no moving toolbar there, and it has
   always worked.
-- Panels are `100dvh` with `100svh` before it as a fallback, so a
-  section matches the screen it is on rather than the screen with the
-  browser's UI at its largest.
+- **A panel's height is measured, not asked for:
+  `height:max(100dvh, var(--screen,0px))`, where `--screen` is set from
+  `window.innerHeight` and re-set on resize, orientationchange and
+  visualViewport resize.** Every viewport unit lets this page down on a
+  phone. `svh` is the screen with the browser's UI at its largest, so
+  panels come up short the moment the bar retracts; and iOS reports
+  `dvh` lagging its own toolbar, handing back a height smaller than the
+  screen actually is. A short panel means the document is short by that
+  much per section, the page runs out of scroll before the last section
+  reaches the top, and a strip of the section before it stays on screen
+  at the bottom of the page. Simulated with the unit reporting 629px on
+  an 812px screen: without the measured height, a 183px strip; with it,
+  none. The `max()` means whichever number is larger wins, so a panel
+  can never be shorter than the screen.
 - **There is no "did we arrive?" correction in `goTo()`, and there must
   not be one.** There was: a timer comparing the scroll position to a
   section's `offsetTop` a beat after a click, forcing the page onto it

@@ -201,8 +201,12 @@ img{display:block;max-width:100%}
      to a timer in goTo() that fired 1.00s after every scroll, and that
      timer is gone. svh stays first as the fallback for anything without
      dvh. */
-  height:100svh;
-  height:100dvh;
+  height:100svh;                          /* anything without dvh */
+  height:100dvh;                          /* modern browsers */
+  /* Whichever is larger: the unit the browser reports, or the height
+     measured from window.innerHeight. A panel is then never shorter
+     than the screen, which is the condition that was failing. */
+  height:max(100dvh,var(--screen,0px));
   overflow:hidden;
   scroll-snap-align:start;
   display:grid;
@@ -900,6 +904,28 @@ img{display:block;max-width:100%}
   "use strict";
   var root = document.documentElement;
   root.classList.add("js");
+
+  /* The panel height is measured rather than asked for. Every viewport
+     unit lets us down on a phone: svh is the screen with the browser's
+     UI at its largest, so panels come up short as soon as the bar
+     retracts; and iOS reports dvh lagging behind its own toolbar, so it
+     too can hand back a height smaller than the screen actually is.
+     When a panel is shorter than the screen the document is short by
+     that much per section, the page runs out of scroll before the last
+     section reaches the top, and a strip of the section before it stays
+     on screen at the bottom of the page — which is exactly what it did.
+     window.innerHeight is the one number that is never smaller than
+     what is on screen, so the panels are set from it and re-set
+     whenever it changes. */
+  function fitScreen(){
+    root.style.setProperty("--screen", window.innerHeight + "px");
+  }
+  fitScreen();
+  window.addEventListener("resize", fitScreen, { passive: true });
+  window.addEventListener("orientationchange", fitScreen, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", fitScreen, { passive: true });
+  }
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   /* ── has this visit already seen the opening? ──
