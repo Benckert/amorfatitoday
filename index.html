@@ -969,7 +969,6 @@ img{display:block;max-width:100%}
   which();
 
   /* ── going to a section ── */
-  var arrive;
   function goTo(i){
     var panel = panels[i];
     if (!panel) return;
@@ -979,24 +978,22 @@ img{display:block;max-width:100%}
     } catch (e) {
       window.scrollTo(0, target);          // older browsers take two numbers
     }
-    /* A smooth scroll can be cancelled mid-flight — snapping and touch
-       both do it — and the click then looks like it did nothing, so we
-       put the page there ourselves a beat later. But only if the reader
-       has not taken over in the meantime: correcting a scroll someone
-       is in the middle of is itself a jump, and a worse one, because
-       they caused it and it fought them. */
-    clearTimeout(arrive);
-    var settled = false;
-    function tookOver(){ settled = true; }
-    window.addEventListener("wheel", tookOver, { passive: true, once: true });
-    window.addEventListener("touchstart", tookOver, { passive: true, once: true });
-    arrive = setTimeout(function(){
-      window.removeEventListener("wheel", tookOver);
-      window.removeEventListener("touchstart", tookOver);
-      if (settled) return;
-      var here = window.scrollY || window.pageYOffset || 0;
-      if (Math.abs(here - target) > 4) window.scrollTo(0, target);
-    }, 900);
+    /* There is deliberately no "did we arrive?" correction here.
+       There was one: a timer that, a beat after the click, compared the
+       scroll position against this target and forced the page onto it
+       if they disagreed. On a phone they always disagree. The panels
+       are one height and the screen is another, because the browser's
+       bar takes the difference — so a section's position in the layout
+       can sit past the furthest the page can scroll, the browser stops
+       short of it, and the timer then hauls the page the rest of the
+       way. Whether it can depends on whether the bar has since
+       collapsed, which is why it fires as a single lurch a second after
+       everything came to rest rather than as part of the scroll.
+       Measured from the reported device: 58px, in one frame, with the
+       fixed links and the browser's own chrome staying put.
+       Mandatory snapping already guarantees the page lands on a
+       section, so nothing was being fixed and something was being
+       broken. */
   }
   dots.forEach(function(b, i){ b.addEventListener("click", function(){ goTo(i); }); });
   jumpLinks.forEach(function(a){
