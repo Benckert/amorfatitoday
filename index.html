@@ -326,8 +326,14 @@ img{display:block;max-width:100%}
   padding:clamp(2rem,5svh,4rem) var(--gutter) var(--rail);
 }
 #artists .who-lead{grid-column:1;grid-row:1;text-align:right}
-/* .reach is a flexbox, so text-align does not reach it */
-#artists .who-lead .reach{justify-content:flex-end}
+/* .reach is a flexbox, so text-align does not reach it — and this is
+   driven by a custom property rather than by a second, more specific
+   selector further down. Overriding an id-plus-two-class rule from the
+   narrow-screen block needs a selector at least as specific, which is
+   an arms race that has already been lost four times in this file. A
+   property is set once and read once. */
+#artists{--reach-align:flex-end}
+#artists .who-lead .reach{justify-content:var(--reach-align)}
 #artists .beside{
   grid-column:2;grid-row:1;
   position:static;width:auto;
@@ -471,7 +477,11 @@ img{display:block;max-width:100%}
 }
 .jump .ticket:hover,.jump .ticket:focus-visible,
 .jump .ticket:hover::before,.jump .ticket:focus-visible::before{will-change:transform,opacity}
-.jump .ticket .out{font-size:.9em;line-height:1}
+/* An SVG, not the character U+2197: iOS and Android render that arrow
+   from a colour emoji font, which put a blue emoji in the middle of
+   this button. Drawn here it inherits currentColor and turns dark with
+   the label on hover. */
+.jump .ticket .out{width:.74em;height:.74em;flex:none;overflow:visible}
 /* named for a screen reader, silent for everyone else */
 .sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
     clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
@@ -625,17 +635,29 @@ img{display:block;max-width:100%}
      text blocks come first in the markup for exactly this */
   #artists{
     grid-template-columns:1fr;
-    grid-template-rows:auto auto minmax(22svh,1fr);
+    grid-template-rows:auto auto auto auto minmax(20svh,1fr);
     gap:clamp(.4rem,1.4svh,1rem);
     padding:clamp(1.2rem,3.4svh,2rem) 0 0;
   }
-  #artists .who-lead,#artists .who-company{grid-column:1;text-align:left}
-  #artists .who-lead{grid-row:1}
-  #artists .who-company{grid-row:2}
+  /* display:contents dissolves the left column into the grid, so its
+     three parts can be ordered independently here: the socials belong
+     at the end of the words, not wedged between her name and the
+     company. Inherited properties still pass through, but the box's
+     own padding does not, so the parts carry their own inset. */
+  #artists .who-lead{display:contents}
+  #artists .section-title,#artists .lead-name,
+  #artists .reach,#artists .who-company{grid-column:1;text-align:left}
+  #artists .section-title,#artists .lead-name,#artists .reach{padding-inline:var(--inset)}
+  #artists .section-title{grid-row:1}
+  #artists .lead-name{grid-row:2}
+  #artists .who-company{grid-row:3}
+  #artists .reach{grid-row:4}
+  /* one property, no specificity contest */
+  #artists{--reach-align:flex-start}
   /* grid-column too, not just the row: left at the desktop value it
      lands in an implicit second column sized to its own content, which
      is how a full-bleed figure came out 146px wide */
-  #artists .beside{grid-column:1;grid-row:3;align-self:stretch;height:100%;min-height:0}
+  #artists .beside{grid-column:1;grid-row:5;align-self:stretch;height:100%;min-height:0}
   /* an id outranks .split, so the desktop rule for this figure would
      otherwise win here too and it would sit small and centred instead
      of running the full width like the one on `about` */
@@ -649,7 +671,12 @@ img{display:block;max-width:100%}
   .lead-name{font-size:.92rem;padding-bottom:.6rem}
   .lead-name::after{right:auto;left:0;width:min(11rem,100%)}
   .company-label{margin-bottom:clamp(.4rem,1.4svh,.8rem)}
-  .who-lead .reach{margin-top:clamp(.5rem,1.6svh,1rem)}
+  .who-lead .reach{
+    margin-top:clamp(.5rem,1.7svh,1rem);
+    gap:1.4rem;
+  }
+  /* a real target to hit with a thumb, without the text growing */
+  .reach a{padding:.55rem 0;border-bottom-width:1px}
 
 
   /* the links wrap out to the screen edges here, so the toggle cannot
@@ -668,6 +695,18 @@ img{display:block;max-width:100%}
   .panel{height:auto;min-height:100svh;padding-block:2.5rem}
   .split{padding-right:46%}
   #about .verse img{max-height:52svh}
+}
+
+/* On a touch device the browser's toolbar collapses as you scroll, which
+   changes the viewport height mid-gesture — and under mandatory snapping
+   the page is then forced back onto the nearest snap point instead of
+   holding where the finger left it. Measured at 390x844: growing the
+   viewport by 70px moved the scroll position 140px in one step. That is
+   the jump. Proximity keeps the snap where it helps and lets go when the
+   viewport moves underneath it. Pointer-based, not width-based: a narrow
+   desktop window has no collapsing toolbar and can keep the firm snap. */
+@media (hover:none) and (pointer:coarse){
+  html{scroll-snap-type:y proximity}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -699,7 +738,9 @@ img{display:block;max-width:100%}
   <a class="to" href="#artists">Artists</a>
   <!-- EDIT — the ticket page's URL goes in href -->
   <a class="ticket" href="https://www.kickstarter.com/" target="_blank" rel="noopener noreferrer">
-    Tickets<span class="out" aria-hidden="true">↗</span>
+    Tickets<svg class="out" viewBox="0 0 12 12" aria-hidden="true" fill="none"
+      stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"
+    ><path d="M3.6 8.4 8.4 3.6"/><path d="M4.7 3.6h3.7v3.7"/></svg>
     <span class="sr">(opens in a new tab)</span>
   </a>
 </nav>
@@ -938,10 +979,21 @@ img{display:block;max-width:100%}
     } catch (e) {
       window.scrollTo(0, target);          // older browsers take two numbers
     }
-    /* a smooth scroll can be cancelled mid-flight — snapping and touch
-       both do it — and the click then looks like it did nothing */
+    /* A smooth scroll can be cancelled mid-flight — snapping and touch
+       both do it — and the click then looks like it did nothing, so we
+       put the page there ourselves a beat later. But only if the reader
+       has not taken over in the meantime: correcting a scroll someone
+       is in the middle of is itself a jump, and a worse one, because
+       they caused it and it fought them. */
     clearTimeout(arrive);
+    var settled = false;
+    function tookOver(){ settled = true; }
+    window.addEventListener("wheel", tookOver, { passive: true, once: true });
+    window.addEventListener("touchstart", tookOver, { passive: true, once: true });
     arrive = setTimeout(function(){
+      window.removeEventListener("wheel", tookOver);
+      window.removeEventListener("touchstart", tookOver);
+      if (settled) return;
       var here = window.scrollY || window.pageYOffset || 0;
       if (Math.abs(here - target) > 4) window.scrollTo(0, target);
     }, 900);

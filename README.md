@@ -209,6 +209,17 @@ Any static host works:
 - **Vercel** — `npx vercel` in this folder.
 - **GitHub Pages** — push, then Settings → Pages → deploy from this branch.
 
+## House rules
+
+**No emoji anywhere on this page** — not in the markup, not in the
+favicon, not as a bullet or an arrow. The arrow on the ticket button is
+an inline SVG for exactly this reason: written as the character `↗`
+(U+2197) it has emoji presentation on iOS and Android, and the system
+substitutes a colour emoji font, which put a blue emoji in the middle
+of the button. Any glyph in U+2190–21FF, U+2600–27BF or U+2B00–2BFF is
+liable to the same thing. Draw it, or pick a character with no emoji
+presentation.
+
 ## Notes
 
 - The title waits for the display face before it rises, capped at 1.2s.
@@ -217,6 +228,28 @@ Any static host works:
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
+- **Scroll snapping is `proximity` on touch devices, `mandatory`
+  elsewhere.** Under `mandatory` a phone turns any small scroll into a
+  full-section jump: measured at 390x844, a deliberate 180px scroll was
+  yanked the whole 844px to the next section. Proximity leaves it at
+  180px. The switch is on `(hover:none) and (pointer:coarse)` rather
+  than on width, because a narrow desktop window has no dynamic toolbar
+  and can keep the firmer snap.
+- The `goTo()` fallback that corrects a cancelled smooth scroll now
+  stands down if the reader starts scrolling themselves. Correcting a
+  scroll someone is in the middle of is itself a jump, and a worse one,
+  because they caused it and it fought them.
+- **Alignment inside `#artists` is driven by a custom property**
+  (`--reach-align`), not by adding a more specific selector in the
+  narrow-screen block. Overriding an id-plus-two-class rule needs a
+  selector at least as specific, and that arms race has already been
+  lost four separate times in this file. Set the property, read it once.
+- On a phone the left column uses `display:contents` so its three
+  parts become grid items in their own right and can be ordered
+  independently — the socials belong at the end of the words, not
+  wedged between her name and the company. Inherited properties still
+  pass through a `display:contents` box, but its own padding does not,
+  so the parts carry their own inset.
 - `align-self:stretch` on a figure inside a centred grid is
   load-bearing, and it has had to be added twice — once on `about`,
   once on `artists`. Without it the box is sized by its content,
