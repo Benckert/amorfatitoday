@@ -8,66 +8,56 @@
   ═══════════════════════════════════════════════════════════════════
   amor fati — Vallerie with Company
 
-  One page, four sections. No build step, no dependencies.
+  One page, four sections, each exactly one screen tall.
 
   Everything that still needs your words is marked EDIT.
   (An HTML comment ends at the first close marker — never nest one.)
 
-  Still needed:  date · time · doors · venue + address · ticket price
-                 · the Kickstarter URL · instagram · email
-                 · the artists' names and what each of them does
+  Still needed:  venue + address · ticket price · the Kickstarter URL
+                 · instagram · email
 
-  Photographs are shown WHOLE. Nothing is cropped, nothing is
-  re-encoded — the files are the originals. Two are mirrored, which
-  is the one edit the design makes, and it is undone by deleting a
-  --flip line. See images/README.txt.
+  Photographs are shown WHOLE — see images/README.txt. A photograph is
+  scaled to the full height of the screen at its own aspect ratio, so
+  the section fills the screen without the picture being cut.
   ═══════════════════════════════════════════════════════════════════
 -->
 
 <title>amor fati — Vallerie with Company</title>
-<meta name="description" content="Live immersion in sound, movement, and togetherness. One night only.">
-<meta property="og:title" content="amor fati">
-<meta property="og:description" content="Live immersion in sound, movement, and togetherness.">
+<meta name="description" content="Live immersion in sound, movement, and togetherness. September 16–17.">
+<meta property="og:title" content="AMOR FATI">
+<meta property="og:description" content="Vallerie live with company. September 16–17, 7–9 pm.">
 <meta property="og:image" content="images/hero.jpg">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#08080b">
+<meta name="theme-color" content="#000000">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308080b'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23d9a441' stroke-width='1'/%3E%3Ccircle cx='16' cy='16' r='1.6' fill='%23f2ece1'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23d9a441' stroke-width='1'/%3E%3Ccircle cx='16' cy='16' r='1.6' fill='%23f6e3bd'/%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@200;300;400&family=La+Belle+Aurore&display=swap">
-<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@200;300;400&family=La+Belle+Aurore&display=swap">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@200;300;400&family=La+Belle+Aurore&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap"></noscript>
 
 <style>
-/* ─────────────────────────────  tokens  ─────────────────────────────
-   The palette is taken from the photographs rather than chosen for
-   them: their lit parts measure 33-42° hue, and --gold sits at 39°,
-   the same candlelight. Nothing here is more saturated than the
-   photographs are. If you add a colour, that is the ceiling.        */
+/* ─────────────────────────────  tokens  ───────────────────────────── */
 :root{
-  --ink:#08080b;
-  --paper:#f2ece1;
-  --gold:#d9a441;
+  --ink:#000;
+  --cream:#f6e3bd;                 /* the title, and everything that leads */
+  --paper:rgba(246,227,189,.86);
+  --gold:#d9a441;                  /* 39°, the candle in the photographs */
+  --mist:rgba(246,227,189,.58);
 
-  --mist:rgba(242,236,225,.56);
-  --hairline:rgba(242,236,225,.14);
+  /* Jost is geometric — a Futura, which is what the lettering on the
+     live site reads as once it is set in capitals and opened up. The
+     mono carries every small line: the subtitle, the date, the names.
+     Two families, and the second one only ever appears at 0.6-0.8rem. */
+  --display:"Jost","Futura","Century Gothic",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 
-  --serif:"Cormorant Garamond",Cormorant,Garamond,"Times New Roman",serif;
-  --sans:"Jost","Helvetica Neue",Helvetica,Arial,sans-serif;
-  --script:"La Belle Aurore","Snell Roundhand","Brush Script MT",cursive;
-
-  --gutter:clamp(1.5rem,5vw,5rem);
+  --gutter:clamp(1.25rem,5vw,5rem);
   --ease:cubic-bezier(.22,.61,.36,1);
-
-  /* how tall a photograph may stand. One token, so every photograph on
-     the page is held to the same measure — that is most of what makes
-     the sections read as one site. */
-  --shot:min(74svh,760px);
-  /* the room kept at the foot of every panel for the section links, so
-     no photograph or word ever runs into them */
-  --footrail:clamp(3.6rem,8svh,5.2rem);
+  /* the room the section links keep at the foot of every screen */
+  --rail:clamp(3.2rem,7svh,4.6rem);
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -76,350 +66,359 @@ html,body{margin:0;padding:0}
 html{
   background:var(--ink);
   scroll-behavior:smooth;
-  scroll-snap-type:y proximity;   /* proximity, not mandatory: a panel
-                                     that outgrows a short screen must
-                                     stay reachable */
+  scroll-snap-type:y mandatory;   /* every section is exactly one screen,
+                                     so nothing can be snapped past */
   -webkit-text-size-adjust:100%;
 }
 body{
   background:var(--ink);
   color:var(--paper);
-  font-family:var(--sans);
+  font-family:var(--display);
   font-weight:300;
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
 }
 
-::selection{background:rgba(217,164,65,.35);color:var(--paper)}
+::selection{background:rgba(217,164,65,.35);color:var(--cream)}
 a{color:inherit;text-decoration:none}
-:focus-visible{outline:1px solid var(--gold);outline-offset:6px;border-radius:2px}
+:focus-visible{outline:1px solid var(--gold);outline-offset:5px;border-radius:2px}
 img{display:block;max-width:100%}
 
-/* the only atmosphere left: a corner darkening, painted once. The film
-   grain and the drifting motes are gone — over this much black they
-   were the loudest thing on a page that is meant to be quiet. */
-.vignette{
-  position:fixed;inset:0;z-index:6;pointer-events:none;
-  background:radial-gradient(120% 100% at 50% 50%,transparent 52%,rgba(5,5,7,.55) 100%);
-}
-
-/* ─────────────────────────────  panels  ─────────────────────────────
-   Four sections, one shape: a photograph on one side, words on the
-   other, and the same row of links along the foot. The sides
-   alternate; nothing else about the shape changes.               */
+/* ─────────────────────────────  sections  ───────────────────────────
+   Each one is exactly one screen and never more, so the page is four
+   screens and the snap is honest. Anything that would not fit is
+   sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
   position:relative;
-  min-height:100svh;
+  height:100svh;
+  overflow:hidden;
   scroll-snap-align:start;
   display:grid;
-  grid-template-columns:1fr 1fr;
-  align-items:center;
-  gap:clamp(1.5rem,4vw,4rem);
-  padding:clamp(2.5rem,6svh,4.5rem) var(--gutter) var(--footrail);
-  padding-left:max(var(--gutter),env(safe-area-inset-left));
-  padding-right:max(var(--gutter),env(safe-area-inset-right));
 }
 
-/* the photograph, whole. object-fit is deliberately absent: the image
-   is simply allowed its own aspect ratio inside a box it may not
-   exceed, so no pixel of any file is ever cut off. */
-.shot{display:flex;align-items:center;justify-content:center;min-width:0}
+/* ─── the photograph, whole and full-screen ───
+   max-height and max-width together, with width and height left auto:
+   the picture takes the largest size that fits the screen at its own
+   aspect ratio. On a desktop a 2:3 photograph is limited by height and
+   so stands the full height of the screen with the page's black either
+   side — which is the shape the live site has. On a phone the screen is
+   narrower than the photograph is tall, so the same rule limits it by
+   width instead and it is letterboxed rather than cropped. Either way
+   no pixel of any file is ever cut off, and object-fit — which would
+   crop — appears nowhere in this stylesheet. */
+.shot{
+  position:absolute;inset:0;z-index:0;
+  display:flex;align-items:center;justify-content:center;
+}
 .shot img{
   width:auto;height:auto;
-  max-width:100%;
-  max-height:var(--shot);
+  max-width:100%;max-height:100%;
   transform:var(--flip,none);
-  background:linear-gradient(160deg,#141419,#0a0a0d);  /* a shape, not a
-                                     broken-image icon, if a path is wrong */
+  background:linear-gradient(160deg,#141419,#000);  /* a shape, not a
+                                broken-image icon, if a path is wrong */
   color:transparent;
 }
-/* Mirroring is the one edit made to any photograph, and it is made for
-   the layout rather than to the picture: it turns each figure's reach
-   towards the words instead of away from them. Delete a line to undo it. */
-#top .shot img,#details .shot img{--flip:scaleX(-1)}
-#words .shot-dancer img{--flip:scaleX(-1)}
+/* Mirroring is the one edit the layout makes to a photograph, and it is
+   made for the words rather than to the picture: it turns each figure's
+   reach towards them. Delete a line to undo it. */
+#amor .shot img,#attend .shot img{--flip:scaleX(-1)}
 
-.said{min-width:0;max-width:38rem}
-/* The opening and the closing hold the photograph on the same side, so
-   the page ends where it began; the artists panel turns the other way,
-   which is the only variation in the shape. */
-#artists .shot{order:-1}
-
-/* ────────────────────────────  landing  ───────────────────────────── */
-.title{
-  font-family:var(--serif);
-  font-weight:300;
-  font-size:clamp(2.7rem,6.6vw,5.8rem);
-  line-height:.94;
-  letter-spacing:.045em;
-  width:max-content;max-width:100%;
-  margin:0;
-  position:relative;isolation:isolate;
+/* the dark that buys the words their legibility, without lightening the
+   photograph: it is heavy only where text sits and clears quickly */
+.veil{position:absolute;inset:0;z-index:1;pointer-events:none}
+.veil-foot{
+  background:linear-gradient(to top,
+    rgba(0,0,0,.94) 0%,rgba(0,0,0,.86) 18%,rgba(0,0,0,.60) 38%,
+    rgba(0,0,0,.22) 58%,rgba(0,0,0,0) 78%);
 }
-/* one painted-once gradient rather than a text-shadow */
-.title::before{
-  content:"";position:absolute;z-index:-1;
-  left:50%;top:50%;width:205%;height:355%;
-  transform:translate(-50%,-50%);
+.veil-left{
   background:
-    radial-gradient(closest-side,rgba(217,164,65,.17),rgba(214,162,74,.08) 34%,
-                    rgba(206,152,74,.025) 58%,transparent 80%),
-    radial-gradient(closest-side,rgba(242,236,225,.07),transparent 52%);
-  pointer-events:none;
+    linear-gradient(to right,rgba(0,0,0,.92) 0%,rgba(0,0,0,.74) 34%,
+                    rgba(0,0,0,.30) 60%,rgba(0,0,0,0) 82%),
+    linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,0) 34%);
+}
+
+.says{position:relative;z-index:2;min-width:0}
+
+/* ────────────────────────  I. amor  (landing)  ─────────────────────── */
+#amor{align-content:end;justify-items:center;text-align:center;
+      padding:0 var(--gutter) calc(var(--rail) + clamp(1rem,4svh,3rem))}
+
+.title{
+  font-family:var(--display);
+  font-weight:500;                 /* the lettering on the live site is a
+                                      medium, not a book weight */
+  font-size:clamp(2.1rem,8.2vw,5.4rem);
+  line-height:1;
+  letter-spacing:.22em;
+  text-indent:.22em;              /* the tracking is added to the right of
+                                     the last letter too; this re-centres it */
+  text-transform:uppercase;
+  color:var(--cream);
+  margin:0;
+  text-shadow:0 2px 30px rgba(0,0,0,.85);
 }
 .title .ch{display:inline-block;white-space:pre}
 .title .word{display:inline-block;white-space:nowrap}
 
-.company{
-  font-family:var(--script);
-  font-size:clamp(1.2rem,2.2vw,1.5rem);
+.subtitle{
+  font-family:var(--mono);font-weight:300;
+  font-size:clamp(.68rem,1.9vw,.92rem);
+  letter-spacing:.28em;text-indent:.28em;
+  color:var(--paper);
+  margin:clamp(1rem,3svh,1.9rem) 0 0;
+  text-shadow:0 1px 14px rgba(0,0,0,.9);
+}
+.when{
+  font-family:var(--mono);font-weight:300;
+  font-size:clamp(.66rem,1.7vw,.84rem);
+  letter-spacing:.2em;text-indent:.2em;
   color:var(--gold);
-  margin:clamp(.7rem,1.6svh,1.1rem) 0 0;
-  letter-spacing:.03em;
-}
-.tagline{
-  font-family:var(--serif);font-style:italic;font-weight:300;
-  font-size:clamp(1rem,1.9vw,1.25rem);
-  color:rgba(242,236,225,.78);
-  margin:clamp(.9rem,2.2svh,1.3rem) 0 0;
-  max-width:34ch;
-}
-.stamp{
-  margin-top:clamp(1.2rem,3svh,1.9rem);
-  display:flex;align-items:center;flex-wrap:wrap;gap:.6rem 1.1rem;
-  font-size:clamp(.62rem,1.5vw,.72rem);
-  letter-spacing:.32em;text-transform:uppercase;color:var(--mist);
-}
-.stamp .dot{width:3px;height:3px;border-radius:50%;background:var(--gold);opacity:.9}
-
-/* ─────────────────────────  eyebrow, shared  ──────────────────────── */
-.eyebrow{
-  display:inline-block;
-  font-size:.66rem;letter-spacing:.4em;text-transform:uppercase;
-  color:rgba(242,236,225,.66);
-  margin:0 0 clamp(1.4rem,4svh,2.4rem);
+  margin:clamp(.9rem,2.6svh,1.6rem) 0 0;
+  text-shadow:0 1px 14px rgba(0,0,0,.9);
 }
 
-/* ──────────────────────────  the words  ───────────────────────────── */
-/* The verse is the company's own lettering, shown whole on the black it
-   was made on. The words live in the alt text, so screen readers and
-   link previews still get them. */
-#words .shot-text img{max-height:min(58svh,620px)}
-
-/* ────────────────────────────  artists  ───────────────────────────── */
-.roster ul{
-  list-style:none;margin:0;padding:0;
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:clamp(1rem,2.4svh,1.7rem) clamp(1.4rem,3vw,2.6rem);
+/* ─────────────────────────  II. about  (verse)  ───────────────────── */
+/* The verse in the company's own hand beside the figure. Both whole:
+   the verse is square and sized by height, the photograph is 2:3 and
+   stands the full height of the screen at the outer edge. */
+#about{
+  grid-template-columns:1fr;
+  align-items:center;
+  padding:clamp(2rem,5svh,4rem) 44% var(--rail) var(--gutter);
 }
+#about .verse{display:flex;align-items:center;justify-content:center}
+#about .verse img{max-height:min(62svh,660px);max-width:100%;width:auto;height:auto}
+/* Pinned to the panel rather than sized by a grid track: a grid item's
+   height is decided by its content, so max-height:100% had nothing to
+   resolve against and the figure was capped on width while its height
+   ran free — 719x1079 rendered 575x1079, visibly squashed. Against the
+   panel, which is exactly one screen, both limits resolve and the
+   photograph keeps its own proportions at full height. */
+#about .beside{
+  position:absolute;top:0;right:0;bottom:0;width:42%;z-index:0;
+  display:flex;align-items:center;justify-content:flex-end;
+}
+#about .beside img{max-height:100%;max-width:100%;width:auto;height:auto}
+/* the inner edge dissolves rather than starting */
+#about .beside::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(to right,#000 0%,rgba(0,0,0,.45) 6%,rgba(0,0,0,0) 14%);
+}
+
+/* ────────────────────────────  III. artists  ───────────────────────── */
+#artists{align-content:center;padding:clamp(2rem,6svh,4rem) var(--gutter) calc(var(--rail) + 1rem)}
+.section-title{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(1.5rem,4.4vw,2.9rem);
+  letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;
+  color:var(--cream);margin:0 0 clamp(1.6rem,5svh,3.2rem);
+  text-shadow:0 2px 24px rgba(0,0,0,.85);
+}
+.roster{list-style:none;margin:0;padding:0}
 .roster li{
-  font-family:var(--serif);
-  font-size:clamp(1rem,1.6vw,1.25rem);
-  color:rgba(242,236,225,.92);
-  line-height:1.25;
-}
-/* :not(.who) matters — the lead's name is a span too, and without it
-   she would be set in 9px small caps, smaller than everyone she leads */
-.roster li span:not(.who){
-  display:block;font-family:var(--sans);
-  font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--mist);margin-top:.35rem;
-}
-.roster li.lead{
-  grid-column:1 / -1;
-  font-size:clamp(1.5rem,2.5vw,1.9rem);
-  color:var(--gold);line-height:1.1;
-}
-.roster li.lead .who{position:relative;isolation:isolate;display:inline-block}
-.roster li.lead .who::before{
-  content:"";position:absolute;z-index:-1;
-  left:50%;top:50%;width:190%;height:300%;
-  transform:translate(-50%,-50%);
-  background:radial-gradient(closest-side,rgba(217,164,65,.20),rgba(217,164,65,.06) 46%,transparent 74%);
-  pointer-events:none;
-}
-.roster li.lead span:not(.who){
-  color:rgba(217,164,65,.78);
-  font-size:.6rem;letter-spacing:.34em;margin-top:.5rem;
+  font-family:var(--mono);font-weight:300;
+  font-size:clamp(.66rem,1.55vw,.88rem);
+  letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;
+  color:var(--cream);
+  line-height:1;
+  padding:clamp(.42rem,1.5svh,.72rem) 0;
+  text-shadow:0 1px 12px rgba(0,0,0,.95);
 }
 
-/* ─────────────────────────────  details  ──────────────────────────── */
-.grid{
+/* ────────────────────────  IV. attend  (tickets)  ──────────────────── */
+#attend{align-content:center;padding:clamp(2rem,6svh,4rem) var(--gutter) calc(var(--rail) + 1rem)}
+.facts{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:clamp(1.4rem,3svh,2.4rem) clamp(1.5rem,3vw,2.6rem);
-  margin:0;
+  gap:clamp(1.1rem,3.2svh,2.2rem) clamp(1.5rem,4vw,3rem);
+  margin:0;max-width:34rem;
 }
-.detail{display:flex;flex-direction:column;gap:.6rem}
-.detail dt{font-size:.62rem;letter-spacing:.34em;text-transform:uppercase;color:var(--mist)}
-.detail dd{
-  margin:0;font-family:var(--serif);
-  font-size:clamp(1.15rem,2.2vw,1.5rem);line-height:1.35;
-  color:rgba(242,236,225,.94);
+.fact dt{
+  font-family:var(--mono);font-size:.6rem;font-weight:300;
+  letter-spacing:.26em;text-indent:.26em;text-transform:uppercase;color:var(--mist);
 }
-.detail dd small{
-  display:block;font-family:var(--sans);font-size:.66rem;letter-spacing:.14em;
-  color:var(--mist);margin-top:.4rem;text-transform:uppercase;
+.fact dd{
+  margin:.5rem 0 0;font-family:var(--display);font-weight:300;
+  font-size:clamp(1rem,2.4vw,1.45rem);line-height:1.3;color:var(--cream);
+}
+.fact dd small{
+  display:block;font-family:var(--mono);font-size:.6rem;font-weight:300;
+  letter-spacing:.16em;color:var(--mist);margin-top:.4rem;text-transform:uppercase;
 }
 
-.cta-wrap{margin-top:clamp(1.8rem,5svh,3rem);display:flex;flex-direction:column;align-items:flex-start;gap:.9rem}
-/* layered so both the glow and the border are the compositor's work and
-   neither touches the pill's raster */
 .cta{
-  position:relative;display:inline-flex;align-items:center;gap:1rem;
-  padding:1.1em 2.4em;
-  border:1px solid rgba(242,236,225,.34);
-  border-radius:999px;
-  font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--paper);
+  position:relative;display:inline-flex;align-items:center;gap:.9rem;
+  margin-top:clamp(1.6rem,5svh,3rem);
+  padding:1em 2.3em;
+  border:1px solid rgba(246,227,189,.34);border-radius:999px;
+  font-family:var(--mono);font-weight:300;
+  font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--cream);
   transform:translate3d(0,0,0);backface-visibility:hidden;
   transition:border-color .6s var(--ease),transform .6s var(--ease);
 }
+/* the glow is its own layer, so hovering never re-rasterises the pill */
 .cta::before{
   content:"";position:absolute;z-index:-1;
   left:-9%;right:-9%;top:-55%;bottom:-75%;
   background:radial-gradient(closest-side,
     rgba(217,164,65,.34),rgba(217,164,65,.12) 44%,transparent 76%);
-  opacity:.55;transform:translate3d(0,14%,0) scale(.94);
+  opacity:.5;transform:translate3d(0,14%,0) scale(.94);
   transition:opacity .7s var(--ease),transform .7s var(--ease);
 }
-.cta:hover,.cta:focus-visible{border-color:rgba(242,236,225,.6);transform:translate3d(0,-2px,0)}
+.cta:hover,.cta:focus-visible{border-color:rgba(246,227,189,.62);transform:translate3d(0,-2px,0)}
 .cta:hover::before,.cta:focus-visible::before{opacity:1;transform:translate3d(0,4%,0) scale(1.06)}
-.cta:active{transform:translate3d(0,0,0) scale(.985)}
 .cta:hover,.cta:focus-visible,.cta:hover::before,.cta:focus-visible::before{will-change:transform,opacity}
 .cta .arrow{transition:transform .6s var(--ease)}
 .cta:hover .arrow{transform:translate3d(5px,0,0)}
-.cta-note{font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:var(--mist)}
 
 .reach{
-  margin:clamp(1.6rem,4svh,2.4rem) 0 0;
-  display:flex;flex-wrap:wrap;gap:.6rem 1.6rem;
-  font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;
-  color:rgba(242,236,225,.62);
+  margin:clamp(1.2rem,4svh,2.2rem) 0 0;
+  display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;
+  font-family:var(--mono);font-size:.6rem;font-weight:300;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--mist);
 }
-.reach a{transition:color .5s var(--ease)}
-.reach a:hover{color:var(--paper)}
+.reach a{border-bottom:1px solid rgba(246,227,189,.22);padding-bottom:.15rem;transition:color .45s var(--ease),border-color .45s var(--ease)}
+.reach a:hover{color:var(--cream);border-bottom-color:rgba(246,227,189,.6)}
 
-/* ───────────────────  section links, on every panel  ────────────────
-   The same row, in the same place, in every section — this is the
-   thing that is supposed to feel identical wherever you are. It is
-   one template in the markup below, stamped into each panel by
-   script, so the four copies cannot drift apart.               */
+/* ────────────────  the section links, on every screen  ───────────────
+   The same row, in the same place, in all four sections — centred at
+   the foot, underlined, divided by a rule, exactly as on the live
+   site. It is written once as a <template> and stamped into each
+   section by script, so the four copies cannot drift apart. */
 .jump{
   position:absolute;left:0;right:0;bottom:0;z-index:4;
-  display:flex;justify-content:center;flex-wrap:wrap;
-  gap:.5rem clamp(1.2rem,3vw,2.4rem);
-  padding:0 var(--gutter) clamp(1.3rem,3svh,2rem);
-  font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;
+  display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
+  padding:0 var(--gutter) clamp(1.1rem,3svh,1.8rem);
+  font-family:var(--mono);font-weight:300;
+  font-size:clamp(.58rem,1.4vw,.68rem);
+  letter-spacing:.2em;text-transform:uppercase;
 }
 .jump a{
-  color:rgba(242,236,225,.50);
-  padding:.35rem 0;
-  border-bottom:1px solid transparent;
+  position:relative;
+  padding:.4rem clamp(.7rem,2vw,1.15rem);
+  color:rgba(246,227,189,.72);
+  border-bottom:1px solid rgba(246,227,189,.34);
   transition:color .45s var(--ease),border-color .45s var(--ease);
 }
-.jump a:hover{color:var(--paper)}
-/* the section you are in is named, not hidden — it just stops being a
-   place to go */
-.jump a[aria-current="true"]{color:var(--gold);border-bottom-color:rgba(217,164,65,.45)}
+.jump a + a{border-left:1px solid rgba(246,227,189,.20)}
+.jump a:hover{color:var(--cream);border-bottom-color:var(--cream)}
+/* the section you are in is named, not hidden — it just stops leading
+   anywhere else */
+.jump a[aria-current="true"]{color:var(--gold);border-bottom-color:var(--gold)}
 
 /* ────────────────────────  side navigation  ───────────────────────── */
 .dots{
-  position:fixed;z-index:8;right:clamp(.9rem,2.4vw,2rem);top:50%;
+  position:fixed;z-index:8;right:clamp(.7rem,2vw,1.7rem);top:50%;
   transform:translateY(-50%);
-  display:flex;flex-direction:column;gap:1.1rem;
+  display:flex;flex-direction:column;gap:1rem;
 }
 .dots button{appearance:none;background:none;border:0;padding:.4rem;cursor:pointer;display:block}
 .dots i{
   display:block;width:6px;height:6px;border-radius:50%;
-  background:rgba(242,236,225,.28);
+  background:rgba(246,227,189,.26);
   transition:background .5s var(--ease),transform .5s var(--ease);
 }
-.dots button:hover i{background:rgba(242,236,225,.6)}
+.dots button:hover i{background:rgba(246,227,189,.6)}
 .dots button[aria-current="true"] i{background:var(--gold);transform:scale(1.5)}
 
 /* ──────────────────────────  sound toggle  ────────────────────────── */
 .sound{
-  position:fixed;z-index:8;left:clamp(.9rem,2.4vw,2rem);
-  /* above the link rail, so the two never sit on each other on a narrow
-     screen where the links wrap out to the edge */
-  bottom:calc(var(--footrail) + .3rem);
+  position:fixed;z-index:8;left:clamp(.8rem,2vw,1.7rem);
+  bottom:calc(var(--rail) + .2rem);
   appearance:none;background:none;border:0;cursor:pointer;
-  display:flex;align-items:center;gap:.6rem;
-  color:rgba(242,236,225,.5);
-  font-family:var(--sans);font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;
+  display:flex;align-items:center;gap:.55rem;
+  color:rgba(246,227,189,.5);
+  font-family:var(--mono);font-size:.56rem;font-weight:300;
+  letter-spacing:.24em;text-transform:uppercase;
   transition:color .5s var(--ease);
 }
+/* display:flex on the button outranks the UA's [hidden]{display:none},
+   so without this the toggle stays on screen with nothing to play */
 .sound[hidden]{display:none}
-.sound:hover{color:var(--paper)}
-.sound .bars{display:flex;align-items:flex-end;gap:2px;height:10px}
+.sound:hover{color:var(--cream)}
+.sound .bars{display:flex;align-items:flex-end;gap:2px;height:9px}
 .sound .bars b{width:2px;height:3px;background:currentColor;transition:height .3s var(--ease)}
-.sound[aria-pressed="true"] .bars b:nth-child(1){height:6px}
-.sound[aria-pressed="true"] .bars b:nth-child(2){height:10px}
-.sound[aria-pressed="true"] .bars b:nth-child(3){height:5px}
-
-/* ─────────────────────────  the scroll cue  ───────────────────────── */
-.cue{
-  position:absolute;left:50%;bottom:calc(var(--footrail) + .2rem);
-  transform:translateX(-50%);z-index:3;
-  display:flex;align-items:center;justify-content:center;
-  width:48px;height:48px;color:rgba(242,236,225,.55);
-  -webkit-tap-highlight-color:transparent;
-  transition:color .5s var(--ease),opacity .6s var(--ease);
-}
-.cue:hover{color:var(--paper)}
-.cue svg{width:24px;height:24px;animation:cueBeckon 3.2s var(--ease) infinite}
-.cue:hover svg{animation-play-state:paused}
-@keyframes cueBeckon{
-  0%,100%{transform:translateY(-3px);opacity:.55}
-  50%{transform:translateY(4px);opacity:1}
-}
+.sound[aria-pressed="true"] .bars b:nth-child(1){height:5px}
+.sound[aria-pressed="true"] .bars b:nth-child(2){height:9px}
+.sound[aria-pressed="true"] .bars b:nth-child(3){height:4px}
 
 /* ───────────────────────────  the opening  ──────────────────────────
-   The title arrives letter by letter and the blocks under it rise, and
-   that happens once a visit. On any later load in the same tab the
-   page is simply already there — .settled is set before the first
-   paint, so nothing flickers into place.                        */
-.js [data-reveal]{opacity:0;transform:translateY(14px)}
+   The title arrives letter by letter and the lines under it rise, once
+   a visit. On any later load in the same tab .settled is set before the
+   first paint, so the page is simply already there. */
+.js [data-reveal]{opacity:0;transform:translateY(12px)}
 .js [data-reveal].in{
   opacity:1;transform:none;
   transition:opacity 1.1s var(--ease) var(--d,0s),transform 1.1s var(--ease) var(--d,0s);
 }
-.js .title .ch{opacity:0;transform:translateY(.4em)}
+.js .title .ch{opacity:0;transform:translateY(.35em)}
 .js .title.in .ch{
   opacity:1;transform:none;
-  transition:opacity 1.1s var(--ease) var(--d,0s),transform 1.1s var(--ease) var(--d,0s);
+  transition:opacity 1s var(--ease) var(--d,0s),transform 1s var(--ease) var(--d,0s);
 }
-/* the whole opening, skipped */
 .js.settled [data-reveal],
 .js.settled .title .ch{opacity:1!important;transform:none!important;transition:none!important}
 
-/* ──────────────────────────  narrow screens  ──────────────────────── */
-/* One column: the photograph above, the words beneath it. The
-   photograph gives up height so that a section still fits one screen —
-   it is never cropped to do it, only made smaller. */
-@media (max-width:900px),(orientation:portrait){
-  :root{--shot:min(44svh,420px)}
-  .panel{
+/* ══════════════════════════  narrow screens  ═══════════════════════════
+   A phone is narrower than these photographs are tall, so the same
+   whole-photograph rule letterboxes them by width instead of standing
+   them by height. Everything else goes to one column and every size is
+   in svh, so a section is still exactly one screen and still fits. */
+@media (max-width:820px),(orientation:portrait){
+  :root{--gutter:1.4rem;--rail:3.1rem}
+
+  /* the landing's words move off the photograph's centre and sit under
+     it, over the black, where nothing has to be read through a picture */
+  #amor{padding-bottom:calc(var(--rail) + 1rem)}
+  .title{font-size:clamp(1.9rem,10.5vw,3.2rem);letter-spacing:.18em;text-indent:.18em}
+  .subtitle{font-size:.7rem;letter-spacing:.22em;text-indent:.22em}
+  .when{font-size:.68rem}
+
+  /* the verse above, the figure below — both whole, both within the
+     one screen the section is allowed */
+  #about{
     grid-template-columns:1fr;
-    align-content:center;
-    gap:clamp(1.2rem,3svh,2rem);
+    grid-template-rows:auto minmax(0,1fr);
+    align-items:center;justify-items:center;
+    gap:clamp(.8rem,2.5svh,1.6rem);
+    padding:clamp(1.5rem,4svh,2.5rem) var(--gutter) calc(var(--rail) + .6rem);
   }
-  #artists .shot{order:0}
-  .said{max-width:none}
-  #words .shot-text img{max-height:min(34svh,340px)}
-  .roster ul{gap:.9rem 1.4rem}
-  .cue{display:none}   /* the links at the foot already say where to go */
+  #about .verse img{max-height:36svh}
+  #about .beside{position:static;justify-content:center;width:100%;min-height:0}
+  #about .beside img{max-height:100%;max-width:100%}
+  #about .beside::before{
+    background:linear-gradient(to bottom,#000 0%,rgba(0,0,0,.4) 8%,rgba(0,0,0,0) 18%);
+  }
+
+  .section-title{font-size:clamp(1.3rem,7vw,1.9rem);letter-spacing:.2em;text-indent:.2em;margin-bottom:clamp(1rem,3svh,1.8rem)}
+  .roster li{font-size:.66rem;letter-spacing:.18em;text-indent:.18em;padding:clamp(.32rem,1.15svh,.6rem) 0}
+
+  .facts{grid-template-columns:1fr 1fr;gap:clamp(.9rem,2.4svh,1.6rem) 1rem}
+  .fact dd{font-size:1.02rem}
+  .cta{padding:.95em 1.9em;font-size:.62rem;letter-spacing:.2em}
+
+  /* the links wrap out to the screen edges here, so the toggle cannot
+     keep the bottom-left corner */
+  .sound{bottom:auto;top:calc(env(safe-area-inset-top) + .8rem);left:.9rem}
+  .dots{gap:.8rem;right:.55rem}
+  .dots i{width:5px;height:5px}
+  .jump{padding-bottom:clamp(.9rem,2.4svh,1.4rem)}
+  .jump a{padding:.35rem clamp(.5rem,3vw,.9rem);font-size:.58rem;letter-spacing:.16em}
 }
-/* a phone held sideways: very little height, so let the section grow
-   and be scrolled rather than squeezing the photograph to nothing */
-@media (orientation:landscape) and (max-height:520px){
-  :root{--shot:min(78svh,420px)}
-  .panel{grid-template-columns:1fr 1fr;min-height:auto;padding-block:3rem}
+
+/* a phone held sideways has almost no height: let the sections grow and
+   be scrolled rather than squeezing the photographs into nothing */
+@media (orientation:landscape) and (max-height:460px){
+  html{scroll-snap-type:none}
+  .panel{height:auto;min-height:100svh;padding-block:2.5rem}
+  #about{padding-right:46%}
+  #about .verse img{max-height:52svh}
 }
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .js [data-reveal],.js .title .ch{opacity:1!important;transform:none!important;transition:none!important}
-  .cue svg{animation:none}
   *{transition-duration:.01ms!important}
 }
 </style>
@@ -427,13 +426,11 @@ img{display:block;max-width:100%}
 
 <body>
 
-<div class="vignette" aria-hidden="true"></div>
-
 <nav class="dots" aria-label="Sections">
-  <button type="button" data-to="top" aria-label="Opening"><i></i></button>
-  <button type="button" data-to="words" aria-label="An invitation"><i></i></button>
-  <button type="button" data-to="artists" aria-label="The artists"><i></i></button>
-  <button type="button" data-to="details" aria-label="Details and tickets"><i></i></button>
+  <button type="button" data-to="amor" aria-label="Amor fati"><i></i></button>
+  <button type="button" data-to="about" aria-label="About"><i></i></button>
+  <button type="button" data-to="artists" aria-label="Artists"><i></i></button>
+  <button type="button" data-to="attend" aria-label="Attend"><i></i></button>
 </nav>
 
 <button class="sound" id="sound" type="button" aria-pressed="false" aria-label="Play ambient sound" hidden>
@@ -443,130 +440,112 @@ img{display:block;max-width:100%}
 <audio id="ambient" src="audio/ambient.mp3" loop preload="metadata"></audio>
 
 <!-- The one copy of the section links. The script stamps it into every
-     panel, so the four rows are identical by construction. -->
+     section, so the four rows are identical by construction. -->
 <template id="jump-tpl">
   <nav class="jump" aria-label="Sections">
-    <a href="#top">Opening</a>
-    <a href="#words">Invitation</a>
+    <a href="#amor">Amor</a>
+    <a href="#about">About</a>
     <a href="#artists">Artists</a>
-    <a href="#details">Details</a>
+    <a href="#attend">Attend</a>
   </nav>
 </template>
 
 <main>
 
-  <!-- ══════════════════  I. amor fati  ══════════════════ -->
-  <section class="panel" id="top">
-    <div class="said">
-      <h1 class="title" data-split>amor fati</h1>
-
-      <p class="company" data-reveal style="--d:1.15s">Vallerie with Company</p>
-
-      <p class="tagline" data-reveal style="--d:1.35s">
-        Live immersion in sound, movement, and togetherness.
-      </p>
-
-      <div class="stamp" data-reveal style="--d:1.55s">
-        <span>Fri 28 Nov</span><!-- EDIT -->
-        <span class="dot" aria-hidden="true"></span>
-        <span>20:00</span><!-- EDIT -->
-        <span class="dot" aria-hidden="true"></span>
-        <span>Venue Name</span><!-- EDIT -->
-      </div>
-    </div>
-
-    <div class="shot" data-reveal style="--d:.35s">
+  <!-- ══════════════════  I. amor  ══════════════════ -->
+  <section class="panel" id="amor">
+    <div class="shot">
       <img src="images/hero.jpg" width="720" height="1080"
            alt="A dancer arched backwards, arms reaching upward, lit warm against a black room.">
     </div>
+    <div class="veil veil-foot"></div>
 
-    <a class="cue" href="#words" aria-label="To the invitation">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"
-           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M5 9l7 7 7-7"/>
-      </svg>
-    </a>
+    <div class="says">
+      <h1 class="title" data-split>Amor Fati</h1>
+      <p class="subtitle" data-reveal style="--d:.9s">Vallerie live with company</p>
+      <p class="when" data-reveal style="--d:1.1s">September 16–17 &nbsp;·&nbsp; 7–9 pm</p>
+    </div>
   </section>
 
-  <!-- ══════════════════  II. the words  ══════════════════ -->
-  <section class="panel" id="words">
-    <div class="shot shot-text" data-reveal>
+  <!-- ══════════════════  II. about  ══════════════════ -->
+  <!-- The verse in the company's own hand. The words live in the alt
+       text, so screen readers and link previews still get them. -->
+  <section class="panel" id="about">
+    <div class="says verse" data-reveal>
       <img src="images/text.jpg" width="1186" height="1186"
-           alt="each moment of all time gifted us — movement, music, togetherness! — come, bask in this aliveness! — we honour your attention. Vallerie with Company.">
+           alt="Each moment of all time gifted us movement, music, togetherness. Come bask with us in this aliveness! We honour your attention. — Vallerie with Company">
     </div>
-    <div class="shot shot-dancer" data-reveal style="--d:.2s">
+    <div class="beside" data-reveal style="--d:.2s">
       <img src="images/dancer.jpg" width="719" height="1079" alt="">
     </div>
   </section>
 
-  <!-- ══════════════════  III. the artists  ══════════════════ -->
+  <!-- ══════════════════  III. artists  ══════════════════ -->
   <section class="panel" id="artists">
-    <div class="said">
-      <p class="eyebrow" data-reveal>The artists</p>
-      <div class="roster">
-        <!-- EDIT — nine names and what each of them does.
-             Vallerie leads; the other eight fill the grid. -->
-        <ul>
-          <li class="lead" data-reveal style="--d:.1s"><span class="who">Vallerie</span><span>voice</span></li>
-          <li data-reveal style="--d:.20s">Name<span>movement</span></li>
-          <li data-reveal style="--d:.26s">Name<span>movement</span></li>
-          <li data-reveal style="--d:.32s">Name<span>movement</span></li>
-          <li data-reveal style="--d:.38s">Name<span>violin</span></li>
-          <li data-reveal style="--d:.44s">Name<span>cello</span></li>
-          <li data-reveal style="--d:.50s">Name<span>percussion</span></li>
-          <li data-reveal style="--d:.56s">Name<span>light</span></li>
-          <li data-reveal style="--d:.62s">Name<span>sound</span></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="shot" data-reveal style="--d:.15s">
+    <div class="shot">
       <img src="images/artists.jpeg" width="720" height="1080"
            alt="A dancer turning by candlelight, a pale cloth trailing through the air.">
     </div>
+    <div class="veil veil-left"></div>
+
+    <div class="says">
+      <h2 class="section-title" data-reveal>Artists</h2>
+      <ul class="roster">
+        <li data-reveal style="--d:.10s">Vallerie O</li>
+        <li data-reveal style="--d:.16s">Carl Backman</li>
+        <li data-reveal style="--d:.22s">Lova Hellberg</li>
+        <li data-reveal style="--d:.28s">Amina Avdić</li>
+        <li data-reveal style="--d:.34s">Yazz Meavis</li>
+        <li data-reveal style="--d:.40s">Zean Farence Diaz</li>
+        <li data-reveal style="--d:.46s">Eliot Charoff</li>
+        <li data-reveal style="--d:.52s">Joakim Benckert</li>
+        <li data-reveal style="--d:.58s">Kristoffer Benckert</li>
+        <li data-reveal style="--d:.64s">Elias Ljungberg Photography</li>
+      </ul>
+    </div>
   </section>
 
-  <!-- ══════════════════  IV. the evening  ══════════════════ -->
-  <section class="panel" id="details">
-    <div class="said">
-      <p class="eyebrow" data-reveal>amor fati</p>
+  <!-- ══════════════════  IV. attend  ══════════════════ -->
+  <section class="panel" id="attend">
+    <div class="shot">
+      <img src="images/hero.jpg" width="720" height="1080" alt="">
+    </div>
+    <div class="veil veil-left"></div>
 
-      <dl class="grid">
-        <div class="detail" data-reveal style="--d:.1s">
-          <dt>Date</dt>
-          <dd>28 November<small>Friday &middot; 2026</small></dd><!-- EDIT -->
+    <div class="says">
+      <h2 class="section-title" data-reveal>Attend</h2>
+
+      <dl class="facts">
+        <div class="fact" data-reveal style="--d:.1s">
+          <dt>Dates</dt>
+          <dd>September 16–17<small>two evenings</small></dd>
         </div>
-        <div class="detail" data-reveal style="--d:.2s">
+        <div class="fact" data-reveal style="--d:.2s">
           <dt>Time</dt>
-          <dd>20:00<small>doors 19:15</small></dd><!-- EDIT -->
+          <dd>7–9 pm<small>doors 6:30 pm</small></dd><!-- EDIT — doors -->
         </div>
-        <div class="detail" data-reveal style="--d:.3s">
+        <div class="fact" data-reveal style="--d:.3s">
           <dt>Place</dt>
           <dd>Venue Name<small>Street 1, Stockholm</small></dd><!-- EDIT -->
         </div>
-        <div class="detail" data-reveal style="--d:.4s">
+        <div class="fact" data-reveal style="--d:.4s">
           <dt>Tickets</dt>
           <dd>350 kr<small>limited seating</small></dd><!-- EDIT -->
         </div>
       </dl>
 
-      <div class="cta-wrap" data-reveal style="--d:.55s">
+      <div data-reveal style="--d:.5s">
         <!-- EDIT — the Kickstarter URL goes in href -->
         <a class="cta" href="https://www.kickstarter.com/" target="_blank" rel="noopener noreferrer">
-          <span>Come, bask</span>
+          <span>Come bask with us</span>
           <span class="arrow" aria-hidden="true">→</span>
         </a>
-        <p class="cta-note">Tickets through Kickstarter</p>
       </div>
 
-      <p class="reach" data-reveal style="--d:.7s">
+      <p class="reach" data-reveal style="--d:.62s">
         <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a><!-- EDIT -->
         <a href="mailto:hello@example.com">Email</a><!-- EDIT -->
       </p>
-    </div>
-
-    <div class="shot" data-reveal style="--d:.25s">
-      <img src="images/hero.jpg" width="720" height="1080" alt="">
     </div>
   </section>
 
@@ -580,24 +559,20 @@ img{display:block;max-width:100%}
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   /* ── has this visit already seen the opening? ──
-     sessionStorage, so it plays once per visit and again tomorrow.
-     Read before the first paint: if the opening is spent, the page is
-     simply already in place rather than assembling itself again. */
+     sessionStorage, so it plays once a visit and again tomorrow. Read
+     before the first paint: if the opening is spent the page is simply
+     already in place rather than assembling itself a second time. */
   var SEEN = "amorfati.opening";
   var spent = false;
   try { spent = window.sessionStorage.getItem(SEEN) === "1"; } catch (e) {}
   if (spent || reduce.matches) root.classList.add("settled");
-  function markSeen(){
-    try { window.sessionStorage.setItem(SEEN, "1"); } catch (e) {}
-  }
+  function markSeen(){ try { window.sessionStorage.setItem(SEEN, "1"); } catch (e) {} }
 
-  /* ── the same section links in every panel ── */
+  /* ── the same section links in every section ── */
   var tpl = document.getElementById("jump-tpl");
   var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
   if (tpl && "content" in tpl) {
-    panels.forEach(function(panel){
-      panel.appendChild(tpl.content.cloneNode(true));
-    });
+    panels.forEach(function(p){ p.appendChild(tpl.content.cloneNode(true)); });
   }
   var jumps = Array.prototype.slice.call(document.querySelectorAll(".jump"));
 
@@ -618,7 +593,7 @@ img{display:block;max-width:100%}
         var s = document.createElement("span");
         s.className = "ch";
         s.textContent = ch;
-        s.style.setProperty("--d", (0.25 + (n++) * 0.06) + "s");
+        s.style.setProperty("--d", (0.2 + (n++) * 0.055) + "s");
         holder.appendChild(s);
       });
       title.appendChild(holder);
@@ -627,15 +602,17 @@ img{display:block;max-width:100%}
   }
 
   if (title && !spent && !reduce.matches) {
-    /* The letters are lifted over about two seconds, and the stylesheet
-       carrying the serif is deferred so it does not hold up the first
-       paint — so on a cold visit the font can land mid-rise and every
-       glyph changes shape in flight, worst on the f, whose long hook
-       the fallback has nothing like. The rise waits for the serif, but
-       never longer than a beat: if it is not coming, the title arrives
-       in the fallback rather than not at all. */
+    /* The stylesheet carrying the display face is deferred so it does
+       not hold up the first paint — so on a cold visit it can land in
+       the middle of the rise and every glyph changes shape in flight.
+       The rise waits for it, but never longer than a beat: if it is not
+       coming, the title arrives in the fallback rather than not at all.
+       It is a width measurement rather than document.fonts, which stays
+       empty here because Chrome does not expose faces from a
+       cross-origin stylesheet, and fonts.check() answers "can this be
+       rendered" — true from the first frame, since the fallback can. */
     var began = false;
-    function beginTitle(){
+    function begin(){
       if (began) return;
       began = true;
       markSeen();
@@ -643,53 +620,46 @@ img{display:block;max-width:100%}
         requestAnimationFrame(function(){ title.classList.add("in"); });
       });
     }
-    /* Measured, because neither way of asking works here. fonts.check
-       answers "can this be rendered", true from the first frame — the
-       fallback can render it. And document.fonts stays empty however
-       long you wait: Chrome does not put faces from a cross-origin
-       stylesheet in the set, and Google Fonts is cross-origin. So the
-       same words are measured twice, once in the fallback chain and
-       once with the serif in front of it. */
     var probe = document.createElement("span");
-    probe.textContent = title.getAttribute("aria-label") || "amor fati";
+    probe.textContent = title.getAttribute("aria-label") || "Amor Fati";
     probe.setAttribute("aria-hidden", "true");
-    probe.style.cssText = "position:absolute;left:-9999px;top:0;" +
-      "visibility:hidden;white-space:pre;font-size:100px;font-weight:300";
+    probe.style.cssText = "position:absolute;left:-9999px;top:0;visibility:hidden;" +
+      "white-space:pre;font-size:100px;font-weight:500;text-transform:uppercase";
     document.body.appendChild(probe);
-    var fallback = 'Cormorant,Garamond,"Times New Roman",serif';
-    function serifReady(){
+    var fallback = '"Century Gothic",Arial,sans-serif';
+    function ready(){
       probe.style.fontFamily = fallback;
       var without = probe.getBoundingClientRect().width;
-      probe.style.fontFamily = '"Cormorant Garamond",' + fallback;
+      probe.style.fontFamily = '"Jost",' + fallback;
       return Math.abs(probe.getBoundingClientRect().width - without) > 0.5;
     }
-    function startNow(){
+    function go(){
       if (probe.parentNode) probe.parentNode.removeChild(probe);
-      beginTitle();
+      begin();
     }
-    var giveUp = setTimeout(startNow, 1200);
-    (function waitForSerif(){
+    var giveUp = setTimeout(go, 1200);
+    (function wait(){
       if (began) return;
-      if (serifReady()) { clearTimeout(giveUp); startNow(); }
-      else setTimeout(waitForSerif, 50);
+      if (ready()) { clearTimeout(giveUp); go(); }
+      else setTimeout(wait, 50);
     })();
   } else {
     markSeen();
   }
 
-  /* ── blocks rise as they arrive ── */
+  /* ── lines rise as they arrive ── */
   var revealables = document.querySelectorAll("[data-reveal]");
   function rise(el){
     if (reduce.matches || spent) { el.classList.add("in"); return; }
     /* the layer is asked for on one frame and the transition started on
        the next, so the first frame of the rise is already the
-       compositor's; it is handed back once the block has landed */
+       compositor's; it is handed back once the line has landed */
     el.style.willChange = "opacity, transform";
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
         el.classList.add("in");
-        var delay = parseFloat(getComputedStyle(el).transitionDelay) || 0;
-        setTimeout(function(){ el.style.willChange = ""; }, delay * 1000 + 1500);
+        var d = parseFloat(getComputedStyle(el).transitionDelay) || 0;
+        setTimeout(function(){ el.style.willChange = ""; }, d * 1000 + 1500);
       });
     });
   }
@@ -698,7 +668,7 @@ img{display:block;max-width:100%}
       entries.forEach(function(e){
         if (e.isIntersecting) { rise(e.target); io.unobserve(e.target); }
       });
-    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    }, { threshold: 0.1, rootMargin: "0px 0px -5% 0px" });
     Array.prototype.forEach.call(revealables, function(el){ io.observe(el); });
   } else {
     Array.prototype.forEach.call(revealables, function(el){ el.classList.add("in"); });
@@ -711,9 +681,7 @@ img{display:block;max-width:100%}
   function light(i){
     if (i === lit || i < 0) return;
     lit = i;
-    dots.forEach(function(b, d){
-      b.setAttribute("aria-current", d === i ? "true" : "false");
-    });
+    dots.forEach(function(b, d){ b.setAttribute("aria-current", d === i ? "true" : "false"); });
     /* the same state in every copy of the link row */
     jumps.forEach(function(row){
       var links = row.querySelectorAll("a");
@@ -722,33 +690,34 @@ img{display:block;max-width:100%}
       }
     });
   }
-
-  /* Which panel fills the screen is a question of scroll position: the
-     one whose middle is nearest the middle of the viewport. */
+  /* Which section fills the screen is a question of scroll position —
+     the one whose middle is nearest the middle of the viewport — not of
+     intersection, which lights the wrong one mid-transition. */
   var ticking = false;
-  function whichPanel(){
+  function which(){
     ticking = false;
-    var mid = (window.scrollY || window.pageYOffset || 0) + window.innerHeight / 2;
-    var best = 0, bestGap = Infinity;
+    var y = window.scrollY || window.pageYOffset || 0;
+    var mid = y + window.innerHeight / 2;
+    var best = 0, gap = Infinity;
     for (var i = 0; i < panels.length; i++) {
       var box = panels[i].getBoundingClientRect();
-      var centre = box.top + (window.scrollY || window.pageYOffset || 0) + box.height / 2;
-      var gap = Math.abs(centre - mid);
-      if (gap < bestGap) { bestGap = gap; best = i; }
+      var centre = box.top + y + box.height / 2;
+      var d = Math.abs(centre - mid);
+      if (d < gap) { gap = d; best = i; }
     }
     light(best);
   }
   function onScroll(){
     if (ticking) return;
     ticking = true;
-    requestAnimationFrame(whichPanel);
+    requestAnimationFrame(which);
   }
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll, { passive: true });
-  whichPanel();
+  which();
 
   /* ── going to a section ── */
-  var arriveTimer;
+  var arrive;
   function goTo(i){
     var panel = panels[i];
     if (!panel) return;
@@ -758,19 +727,17 @@ img{display:block;max-width:100%}
     } catch (e) {
       window.scrollTo(0, target);          // older browsers take two numbers
     }
-    /* A smooth scroll can be cancelled mid-flight — snapping and touch
-       both do it — and the click then looks like it did nothing. */
-    clearTimeout(arriveTimer);
-    arriveTimer = setTimeout(function(){
+    /* a smooth scroll can be cancelled mid-flight — snapping and touch
+       both do it — and the click then looks like it did nothing */
+    clearTimeout(arrive);
+    arrive = setTimeout(function(){
       var here = window.scrollY || window.pageYOffset || 0;
       if (Math.abs(here - target) > 4) window.scrollTo(0, target);
     }, 900);
   }
   dots.forEach(function(b, i){ b.addEventListener("click", function(){ goTo(i); }); });
-  jumps.concat([document.querySelector(".cue")]).forEach(function(row){
-    if (!row) return;
-    var links = row.tagName === "A" ? [row] : row.querySelectorAll("a");
-    Array.prototype.forEach.call(links, function(a){
+  jumps.forEach(function(row){
+    Array.prototype.forEach.call(row.querySelectorAll("a"), function(a){
       a.addEventListener("click", function(e){
         var i = ids.indexOf((a.getAttribute("href") || "").slice(1));
         if (i < 0) return;

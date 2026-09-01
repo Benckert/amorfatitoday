@@ -3,42 +3,44 @@
 A single self-contained `index.html`. No build step, no dependencies —
 open it in a browser, or drop the folder on any host.
 
-One page, four sections: the opening, the invitation, the artists, the
-evening.
+One page, four sections — **amor**, **about**, **artists**, **attend** —
+each one exactly one screen tall.
 
 ## Editing it
 
 Everything you need to change is marked `<!-- EDIT -->` in `index.html`,
 and there is a checklist at the top of that file. In order:
 
-1. **Opening** — the date/time/venue stamp. The title, the company name
-   and the tagline are already set.
-2. **Artists** — nine names and what each of them does.
-3. **Details** — date, time, doors, place, price, **and the Kickstarter
-   URL** (search for `kickstarter.com` — it's the `href` on the button),
-   then Instagram and email just below it.
+1. **Attend** — the venue and address, the ticket price, the doors time,
+   **and the Kickstarter URL** (search for `kickstarter.com` — it's the
+   `href` on the button), then Instagram and email below it.
+
+The title, the subtitle, the dates, the verse and all ten artists are
+already set.
 
 ## What the design holds to
 
-**The photographs are never cropped.** Each one is shown whole, at its
-own aspect ratio, inside a box it may not exceed — `object-fit` is
-deliberately absent from the stylesheet. On a narrow screen a photograph
-gives up size, never edges. The files in `images/` are the originals,
-untouched and unre-encoded.
+**Every section is exactly one screen, and no photograph is ever
+cropped.** Those two are usually a trade, and the way out is that a 2:3
+photograph in a landscape viewport is limited by *height*: it stands the
+full height of the screen at its own proportions, with the page's black
+either side, and the section is filled without the picture being cut.
+`max-width` and `max-height` together, with `width` and `height` left
+`auto`, do the whole job — `object-fit`, which would crop, appears
+nowhere in this stylesheet. On a phone the screen is narrower than the
+photograph is tall, so the same one rule limits it by width instead and
+it is letterboxed rather than cropped. The files in `images/` are the
+originals, untouched and unre-encoded.
 
 The one edit the design makes to a photograph is mirroring, and it is
 made for the layout rather than to the picture: it turns each figure's
 reach towards the words instead of away from them. Three `--flip` lines
 in the stylesheet do it, and deleting one undoes it.
 
-**One measure.** Every photograph on the page is held to the same
-`--shot` height. That single token is most of what makes four different
-sections read as one site.
-
-**One shape, four times.** A photograph on one side, words on the other,
-the same row of links along the foot. The opening and the closing hold
-the photograph on the same side so the page ends where it began; the
-artists panel turns the other way, which is the only variation.
+**One shape, four times.** A photograph filling the screen, the words
+over the black beside or beneath it, the same row of links along the
+foot. `amor` and `attend` use the same photograph, mirrored, so the page
+ends where it began.
 
 **The navigation is identical everywhere, by construction.** The row of
 section links is written once, as a `<template>`, and stamped into each
@@ -64,13 +66,21 @@ that is the ceiling to stay under.
 
 ### The lettering
 
-"Vallerie with Company" is set in **La Belle Aurore**, the closest match
-on Google Fonts to the hand in the company's own artwork. It is an
-approximation, and it appears one section away from the real lettering
-on their slide — so if you know the actual font, swap the `family=` name
-in the `<link>` tags and the `--script` token. If you'd rather not risk
-the near-miss, setting `--script` to `var(--serif)` drops the script
-entirely.
+Two families, and no more. **Jost** — a geometric, in the Futura line —
+carries the display: set in capitals at 0.22em tracking it is what the
+lettering on the live site reads as. **IBM Plex Mono Light** carries
+every small line: the subtitle, the dates, the artists' names, the
+links. It never appears above 0.9rem, which is the point of it.
+
+The one hand-lettered thing on the page is the verse, and that is the
+company's own artwork rather than a font. An earlier build set "Vallerie
+with Company" in a script face chosen to approximate that hand; it has
+been dropped, because an approximation of the lettering one section away
+from the lettering itself is a near-miss you cannot un-see.
+
+Tracked capitals add their spacing to the right of the last letter too,
+which shifts the line off-centre. Every tracked line here carries a
+`text-indent` equal to its `letter-spacing`, which puts it back.
 
 ## Sound
 
@@ -90,15 +100,23 @@ Any static host works:
 - Fonts come from Google Fonts, loaded without blocking the first paint,
   so the page appears immediately and the serif swaps in a moment later.
   It falls back to system serif/sans gracefully with no connection at all.
-- The title waits for the serif before it rises, capped at 1.2s. It is a
-  width measurement rather than `document.fonts`: `fonts.check()` answers
-  "can this be rendered", true from the first frame, and `document.fonts`
-  stays empty because Chrome does not expose faces from a cross-origin
-  stylesheet. Without the wait, the font lands mid-rise and every glyph
-  changes shape in flight — worst on the f, whose long hook the fallback
-  has nothing like.
-- Scroll snapping is `proximity`, not `mandatory`: a section that
-  outgrows a short screen has to stay reachable.
+- The title waits for the display face before it rises, capped at 1.2s.
+  It is a width measurement rather than `document.fonts`: `fonts.check()`
+  answers "can this be rendered", true from the first frame because the
+  fallback can, and `document.fonts` stays empty because Chrome does not
+  expose faces from a cross-origin stylesheet. Without the wait, the font
+  lands mid-rise and every glyph changes shape in flight.
+- Scroll snapping is `mandatory`, which is honest here because every
+  section really is exactly one screen. The one exception is a phone
+  held sideways, where there is so little height that the sections are
+  allowed to grow and snapping is switched off — squeezing the
+  photographs to fit that would leave nothing to look at.
+- The figure beside the verse is pinned to the panel rather than sized
+  by a grid track. A grid item's height comes from its content, so
+  `max-height:100%` had nothing to resolve against and the photograph
+  was capped on width while its height ran free — 719x1079 rendered
+  575x1079, visibly squashed. Against the panel, which is exactly one
+  screen, both limits resolve.
 - Which section you are in is decided by scroll position — the panel
   whose middle is nearest the middle of the viewport — not by
   intersection, which lights the wrong one during a transition.
