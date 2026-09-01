@@ -182,6 +182,10 @@ img{display:block;max-width:100%}
   height:100svh;
   overflow:hidden;
   scroll-snap-align:start;
+  /* one section per gesture: without this a fling can carry past a
+     snap point and land two sections away, which reads as being
+     thrown rather than as locking */
+  scroll-snap-stop:always;
   display:grid;
 }
 
@@ -695,18 +699,6 @@ img{display:block;max-width:100%}
   .panel{height:auto;min-height:100svh;padding-block:2.5rem}
   .split{padding-right:46%}
   #about .verse img{max-height:52svh}
-}
-
-/* On a touch device the browser's toolbar collapses as you scroll, which
-   changes the viewport height mid-gesture — and under mandatory snapping
-   the page is then forced back onto the nearest snap point instead of
-   holding where the finger left it. Measured at 390x844: growing the
-   viewport by 70px moved the scroll position 140px in one step. That is
-   the jump. Proximity keeps the snap where it helps and lets go when the
-   viewport moves underneath it. Pointer-based, not width-based: a narrow
-   desktop window has no collapsing toolbar and can keep the firm snap. */
-@media (hover:none) and (pointer:coarse){
-  html{scroll-snap-type:y proximity}
 }
 
 @media (prefers-reduced-motion:reduce){

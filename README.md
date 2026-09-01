@@ -228,13 +228,15 @@ presentation.
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
-- **Scroll snapping is `proximity` on touch devices, `mandatory`
-  elsewhere.** Under `mandatory` a phone turns any small scroll into a
-  full-section jump: measured at 390x844, a deliberate 180px scroll was
-  yanked the whole 844px to the next section. Proximity leaves it at
-  180px. The switch is on `(hover:none) and (pointer:coarse)` rather
-  than on width, because a narrow desktop window has no dynamic toolbar
-  and can keep the firmer snap.
+- **Scroll snapping is `mandatory` everywhere, with
+  `scroll-snap-stop:always` on each panel.** That is the scroll-lock
+  this site is built around: a scroll of any size advances exactly one
+  section and lands it square. A short-lived attempt to soften this to
+  `proximity` on touch was a mistake — under proximity a 180px scroll
+  simply stays 180px in, leaving the reader between two sections, which
+  is the opposite of what the layout wants. `scroll-snap-stop` is what
+  keeps a hard fling from carrying past a snap point and landing two
+  sections away.
 - The `goTo()` fallback that corrects a cancelled smooth scroll now
   stands down if the reader starts scrolling themselves. Correcting a
   scroll someone is in the middle of is itself a jump, and a worse one,
