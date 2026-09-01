@@ -250,30 +250,25 @@ presentation.
   itself out at its natural 716x1074. Landscape phones are wide, so
   three columns fit them; everything is simply set smaller. Checked at
   844x390, 932x430 and 780x360.
-- **Panels are `100dvh`, with `100svh` above it as a fallback, and this
-  is what makes snapping work at all.** A snap point is only usable if
-  the page can scroll far enough to reach it. `svh` is the viewport with
-  the browser's UI at its largest, so on a phone whose bar has retracted
-  every panel is *shorter* than the screen, the document is
-  correspondingly short, and the last section's snap point lands beyond
-  the furthest the page can scroll. Measured on a 375x812 screen:
-
-        panel 629 -> max scroll 1075, snap point 1258   unreachable
-        panel 660 -> max scroll 1168, snap point 1320   unreachable
-        panel 812 -> max scroll 1624, snap point 1624   exact
-
-  With an unreachable snap point you can drag the last section into
-  place, but on release snapping falls back to the nearest point it can
-  actually reach — upwards. `dvh` keeps panel and screen equal at every
-  moment, so the document is exactly three screens and every snap point
-  is reachable.
-- Things tried here that did not work, so they are not tried again:
-  `proximity` snapping (removes the scroll lock), `scroll-snap-stop`
-  (no measured effect), an `lvh - svh` spacer (fixes reachability but
-  leaves panels shorter than the screen), and moving the scroll into a
-  nested container (broke the site). `dvh` was also removed once on the
-  suspicion that it caused a jump — it did not; the jump was traced
-  frame by frame to a timer in `goTo()`.
+- **Scroll snapping is off on touch devices, on purpose.** A phone
+  browser changes its own viewport height mid-gesture: the toolbar
+  retracts as you drag, which resizes every full-height panel and moves
+  the snap points with it, so on release the page snaps to where the
+  target is *now* and travels back up under your finger. Sizing panels
+  in `svh` rather than `dvh` does not avoid this, it only changes the
+  failure — panels are then shorter than the screen and the last
+  section's snap point sits past the end of the scroll, measured at
+  375x812 as max scroll 1075 against a snap point at 1258, so release
+  falls back to the previous section. Everything measurable was tried:
+  `proximity`, `scroll-snap-stop`, a toolbar-sized spacer, `svh`,
+  `lvh`, `dvh`, and moving the scroll into a nested container. Each
+  traded one failure for another. Sections are still exactly one screen
+  so the page still reads a section at a time; the browser simply is not
+  steering. Desktop keeps the lock — no moving toolbar there, and it has
+  always worked.
+- Panels are `100dvh` with `100svh` before it as a fallback, so a
+  section matches the screen it is on rather than the screen with the
+  browser's UI at its largest.
 - **There is no "did we arrive?" correction in `goTo()`, and there must
   not be one.** There was: a timer comparing the scroll position to a
   section's `offsetTop` a beat after a click, forcing the page onto it

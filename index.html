@@ -763,6 +763,35 @@ img{display:block;max-width:100%}
   .reach{margin-top:.5rem}
 }
 
+/* NO SNAPPING ON A TOUCH DEVICE — deliberately, after a long run of
+   attempts to make it behave.
+
+   A phone browser changes its own viewport height mid-gesture: the
+   toolbar retracts as you drag, which resizes every full-height panel,
+   moves the document's height and moves the snap points with it. On
+   release the browser snaps to where the target is NOW, not where it
+   was when you let go, and the page travels back up under your finger.
+   Sizing panels in svh instead of dvh does not avoid it, it only
+   changes the failure: the panels are then shorter than the screen, the
+   document is short by that amount per section, and the last section's
+   snap point sits past the end of the scroll — unreachable, so release
+   falls back to the previous one. Measured at 375x812: max scroll 1075
+   against a snap point at 1258.
+
+   Everything measurable was tried: proximity, scroll-snap-stop, a
+   toolbar-sized spacer, svh, lvh, dvh, and moving the scroll into a
+   nested container. Each traded one failure for another. A page that
+   fights the reader is worse than one that simply scrolls, so on touch
+   it simply scrolls. Sections are still exactly one screen, so it still
+   reads a section at a time — the browser just is not steering.
+
+   Pointer-based, not width-based: a narrow desktop window has no
+   moving toolbar and keeps the lock, where it has always worked. */
+@media (hover:none) and (pointer:coarse){
+  html{scroll-snap-type:none}
+  .panel{scroll-snap-align:none}
+}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .js [data-reveal],.js .title .ch{opacity:1!important;transform:none!important;transition:none!important}
