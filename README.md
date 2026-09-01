@@ -239,6 +239,17 @@ presentation.
   so a section covers it exactly and the document is always exactly as
   many screens as there are sections. Do not "fix" this back to `svh`
   for stability; it is what caused the instability.
+- **A phone held sideways gets the three-column artists layout, not the
+  stacked one, and its sections stay one screen like everywhere else.**
+  There used to be an exemption here — `height:auto` with a
+  `min-height`, on the reasoning that a short screen should be allowed
+  to grow rather than squeeze the photographs. That reasoning predated
+  the fixed link rail and the three-column artists section, and by the
+  time both existed it produced 1157px of content on a 390px screen,
+  with the names running underneath the links and the photograph laying
+  itself out at its natural 716x1074. Landscape phones are wide, so
+  three columns fit them; everything is simply set smaller. Checked at
+  844x390, 932x430 and 780x360.
 - **Scroll snapping is `mandatory`, panels are `100svh`, and that is
   deliberately the plainest arrangement that works.** A run of attempts
   to improve it all made things worse and were reverted: `proximity`

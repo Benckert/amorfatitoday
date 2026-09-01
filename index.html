@@ -701,11 +701,53 @@ img{display:block;max-width:100%}
 
 /* a phone held sideways has almost no height: let the sections grow and
    be scrolled rather than squeezing the photographs into nothing */
-@media (orientation:landscape) and (max-height:460px){
-  html{scroll-snap-type:none}
-  .panel{height:auto;min-height:100svh;padding-block:2.5rem}
-  .split{padding-right:46%}
-  #about .verse img{max-height:52svh}
+/* A phone held sideways: very wide, very short. Sections used to be let
+   off the one-screen rule here and allowed to grow to their content —
+   which, once this page had a fixed link rail and a three-column
+   artists section, meant 1157px of content on a 390px screen with the
+   names running underneath the links and the photograph laying itself
+   out at its natural 716x1074. Sections stay one screen here like
+   everywhere else; the shape is wide, so three columns suit it, and
+   everything is simply smaller. */
+@media (orientation:landscape) and (max-height:540px){
+  .panel{height:100svh;padding-block:clamp(.5rem,3svh,1rem)}
+
+  #about{padding-right:44%}
+  #about .verse{justify-content:flex-start}
+  #about .verse img{max-height:74svh}
+
+  #artists{
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr);
+    align-content:center;align-items:center;
+    gap:clamp(.5rem,1.8vw,1.4rem);
+    padding:clamp(.5rem,3svh,1rem) var(--gutter) calc(var(--rail) + .3rem);
+    --reach-align:flex-end;
+  }
+  /* back out of the stacked arrangement the narrow block sets up */
+  #artists .who-lead{display:block;grid-column:1;grid-row:1;text-align:right}
+  #artists .who-company{grid-column:3;grid-row:1}
+  #artists .section-title,#artists .lead-name,
+  #artists .reach,#artists .who-company{max-width:none;padding-inline:0}
+  #artists .beside{
+    position:static;grid-column:2;grid-row:1;
+    align-self:stretch;height:100%;width:auto;min-height:0;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  /* whole, and limited by the height it has — not the narrow block's
+     full-bleed crop, which has no meaning in a middle column */
+  #artists .beside img{
+    width:auto;height:auto;max-width:100%;max-height:100%;
+    object-fit:initial;object-position:initial;
+  }
+  #artists .beside::before{display:none}
+
+  .section-title{font-size:clamp(.95rem,3.4vw,1.5rem);margin-bottom:clamp(.4rem,2svh,.8rem)}
+  .lead-name{font-size:clamp(.68rem,2vw,.9rem);padding-bottom:.45rem}
+  .lead-name::after{right:0;left:auto;width:min(9rem,100%)}
+  .company-label{margin-bottom:.35rem}
+  .roster li{font-size:clamp(.52rem,1.5vw,.66rem);padding:.12rem 0;letter-spacing:.14em;text-indent:.14em}
+  .reach{margin-top:.5rem}
 }
 
 @media (prefers-reduced-motion:reduce){
