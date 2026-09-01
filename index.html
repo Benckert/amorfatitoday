@@ -179,34 +179,30 @@ img{display:block;max-width:100%}
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
   position:relative;
-  /* A section must never be SHORTER than the screen, or the page runs
-     out of scroll before the last one reaches the top and a sliver of
-     the section before it stays showing. Getting that guarantee has
-     been the whole difficulty, because the obvious units do not give
-     it on a phone:
+  /* A section is exactly the height that is visible right now, and that
+     number comes from visualViewport, not from a CSS unit.
 
-       svh  the viewport with the browser's UI at its largest, so it is
-            short by the toolbar the moment that toolbar retracts.
-       dvh  meant to track the live viewport, but WebKit bug 261185 has
-            iOS reporting it EQUAL TO svh when the tab bar is not
-            visible — short by the same amount, which is why swapping
-            svh for dvh changed nothing here.
+     Every unit is wrong in one state or the other on a phone. svh is
+     the viewport with the toolbar out, so it is short once the toolbar
+     retracts. dvh should track the live viewport but WebKit bug 261185
+     has iOS reporting it equal to svh when the tab bar is hidden, so it
+     is short in the same way. lvh is the viewport with the toolbar
+     retracted, so it is right when the bar is collapsed and too tall
+     when it is out. There is no single static value that is correct in
+     both states, because the screen genuinely is two different sizes.
 
-     lvh is the viewport with the dynamic toolbars retracted: the
-     largest the screen can be. It is a static value, so it does not
-     suffer the lag or the equality bug, and being the maximum it is by
-     definition never smaller than what is on screen. --screen is the
-     same guarantee measured at runtime — the larger of innerHeight and
-     visualViewport.height, either of which iOS may under-report alone —
-     and max() takes whichever is bigger.
+     window.innerHeight does not help either: on iOS it reports the
+     LAYOUT viewport, which does not change when the toolbar moves.
+     window.visualViewport.height does change, and is the only number
+     that says what is actually on screen at this moment. So --screen is
+     set from it and re-set whenever it moves, and the sections follow.
 
-     The trade is deliberate: while the toolbar is showing, a section is
-     slightly taller than the visible area, so a little of it sits below
-     the fold. Content is centred, so that reads as framing. A sliver of
-     the wrong section does not. */
+     The units below remain as the pre-JavaScript fallback chain, in
+     rough order of correctness. */
   height:100svh;
   height:100lvh;
-  height:max(100lvh,var(--screen,0px));
+  height:100dvh;
+  height:var(--screen,100dvh);
   overflow:hidden;
   scroll-snap-align:start;
   display:grid;
@@ -727,7 +723,7 @@ img{display:block;max-width:100%}
    everywhere else; the shape is wide, so three columns suit it, and
    everything is simply smaller. */
 @media (orientation:landscape) and (max-height:540px){
-  .panel{height:max(100lvh,var(--screen,0px));padding-block:clamp(.5rem,3svh,1rem)}
+  .panel{height:var(--screen,100dvh);padding-block:clamp(.5rem,3svh,1rem)}
 
   #about{padding-right:44%}
   #about .verse{justify-content:flex-start}
@@ -914,22 +910,31 @@ img{display:block;max-width:100%}
      that much per section, the page runs out of scroll before the last
      section reaches the top, and a strip of the section before it stays
      on screen at the bottom of the page — which is exactly what it did.
-     The measurement takes the larger of window.innerHeight and
-     visualViewport.height, and CSS takes the larger of that and 100lvh,
-     so a panel cannot end up shorter than the screen by any route. */
+     visualViewport.height is the only number that reports what is
+     actually on screen at this moment: innerHeight stays at the layout
+     viewport on iOS, and every CSS unit is a fixed guess at one of the
+     two toolbar states. */
+  var vp = window.visualViewport;
+  var lastScreen = 0;
   function fitScreen(){
-    /* the larger of the two: iOS keeps innerHeight at the layout
-       viewport while visualViewport tracks what is actually shown, and
-       either one alone can be the smaller number depending on whether
-       the toolbar is out */
-    var vv = window.visualViewport ? window.visualViewport.height : 0;
-    root.style.setProperty("--screen", Math.max(window.innerHeight, vv) + "px");
+    /* While the reader is pinch-zoomed the visual viewport is a window
+       onto the page rather than the page's own size, so leave it alone
+       and keep the last honest measurement. */
+    if (vp && vp.scale && Math.abs(vp.scale - 1) > 0.01) return;
+    var h = Math.round(vp ? vp.height : window.innerHeight);
+    if (!h || Math.abs(h - lastScreen) < 2) return;   // ignore sub-pixel noise
+    lastScreen = h;
+    root.style.setProperty("--screen", h + "px");
   }
   fitScreen();
   window.addEventListener("resize", fitScreen, { passive: true });
   window.addEventListener("orientationchange", fitScreen, { passive: true });
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", fitScreen, { passive: true });
+  if (vp) {
+    /* iOS moves its toolbar during a scroll, and reports that as both a
+       resize and a scroll of the visual viewport; listening to only one
+       of them leaves the sections a toolbar's height out of step. */
+    vp.addEventListener("resize", fitScreen, { passive: true });
+    vp.addEventListener("scroll", fitScreen, { passive: true });
   }
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
