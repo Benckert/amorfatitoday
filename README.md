@@ -39,9 +39,10 @@ unre-encoded.
 runs edge to edge, and a 2:3 photograph at the full width of a phone is
 taller than the room left under the verse — so something has to go.
 `object-fit:cover` with `object-position:50% 0%` pins the top of the
-frame, so what goes is the floor and her legs, never her head. Between
-77% and 79% of the photograph survives on a typical phone, 60% on a
-short 360x640 one. This is the only `object-fit` in the stylesheet, it
+frame, so what goes is the floor and her legs, never her head. She runs to the very
+bottom of the screen and under the links, whose backdrop is the foot of
+the photograph rather than flat black. About 87% of the photograph
+survives on a typical phone, 71% on a short 360x640 one. This is the only `object-fit` in the stylesheet, it
 is inside the narrow-screen block, and deleting that one rule returns
 her to being whole with black either side.
 
