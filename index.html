@@ -157,7 +157,7 @@ img{display:block;max-width:100%}
 /* Mirroring is the one edit the layout makes to a photograph, and it is
    made for the words rather than to the picture: it turns each figure's
    reach towards them. Delete a line to undo it. */
-#amor .shot img,#attend .shot img{--flip:scaleX(-1)}
+#amor .shot img{--flip:scaleX(-1)}
 
 /* the dark that buys the words their legibility, without lightening the
    photograph: it is heavy only where text sits and clears quickly */
@@ -268,49 +268,7 @@ img{display:block;max-width:100%}
 }
 
 /* ────────────────────────  IV. attend  (tickets)  ──────────────────── */
-#attend{align-content:center;padding:clamp(2rem,6svh,4rem) var(--inset) calc(var(--rail) + 1rem)}
-.facts{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:clamp(1.1rem,3.2svh,2.2rem) clamp(1.5rem,4vw,3rem);
-  margin:0;max-width:34rem;
-}
-.fact dt{
-  font-family:var(--micro);font-size:.6rem;font-weight:300;
-  letter-spacing:.26em;text-indent:.26em;text-transform:uppercase;color:var(--mist);
-}
-.fact dd{
-  margin:.5rem 0 0;font-family:var(--display);font-weight:300;
-  font-size:clamp(1rem,2.4vw,1.45rem);line-height:1.3;color:var(--cream);
-}
-.fact dd small{
-  display:block;font-family:var(--micro);font-size:.6rem;font-weight:300;
-  letter-spacing:.16em;color:var(--mist);margin-top:.4rem;text-transform:uppercase;
-}
 
-.cta{
-  position:relative;display:inline-flex;align-items:center;gap:.9rem;
-  margin-top:clamp(1.6rem,5svh,3rem);
-  padding:1em 2.3em;
-  border:1px solid rgba(246,227,189,.34);border-radius:999px;
-  font-family:var(--micro);font-weight:300;
-  font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--cream);
-  transform:translate3d(0,0,0);backface-visibility:hidden;
-  transition:border-color .6s var(--ease),transform .6s var(--ease);
-}
-/* the glow is its own layer, so hovering never re-rasterises the pill */
-.cta::before{
-  content:"";position:absolute;z-index:-1;
-  left:-9%;right:-9%;top:-55%;bottom:-75%;
-  background:radial-gradient(closest-side,
-    rgba(217,164,65,.34),rgba(217,164,65,.12) 44%,transparent 76%);
-  opacity:.5;transform:translate3d(0,14%,0) scale(.94);
-  transition:opacity .7s var(--ease),transform .7s var(--ease);
-}
-.cta:hover,.cta:focus-visible{border-color:rgba(246,227,189,.62);transform:translate3d(0,-2px,0)}
-.cta:hover::before,.cta:focus-visible::before{opacity:1;transform:translate3d(0,4%,0) scale(1.06)}
-.cta:hover,.cta:focus-visible,.cta:hover::before,.cta:focus-visible::before{will-change:transform,opacity}
-.cta .arrow{transition:transform .6s var(--ease)}
-.cta:hover .arrow{transform:translate3d(5px,0,0)}
 
 .reach{
   margin:clamp(1.2rem,4svh,2.2rem) 0 0;
@@ -334,18 +292,42 @@ img{display:block;max-width:100%}
   font-size:clamp(.58rem,1.4vw,.68rem);
   letter-spacing:.2em;text-transform:uppercase;
 }
-.jump a{
+.jump a.to{
   position:relative;
   padding:.4rem clamp(.7rem,2vw,1.15rem);
   color:rgba(246,227,189,.72);
   border-bottom:1px solid rgba(246,227,189,.34);
   transition:color .45s var(--ease),border-color .45s var(--ease);
 }
-.jump a + a{border-left:1px solid rgba(246,227,189,.20)}
-.jump a:hover{color:var(--cream);border-bottom-color:var(--cream)}
+.jump a.to + a.to{border-left:1px solid rgba(246,227,189,.20)}
+.jump a.to:hover{color:var(--cream);border-bottom-color:var(--cream)}
 /* the section you are in is named, not hidden — it just stops leading
    anywhere else */
-.jump a[aria-current="true"]{color:var(--gold);border-bottom-color:var(--gold)}
+.jump a.to[aria-current="true"]{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* The one thing on the page that is not navigation: it leaves the site.
+   So it is the one thing shaped like a button rather than a link —
+   enclosed, gold-edged, with the arrow that means "away from here" —
+   and it sits apart from the three section links with real space
+   between, so the rail reads as "here are the parts, and here is how
+   you come". */
+.jump .ticket{
+  display:inline-flex;align-items:center;gap:.5em;
+  margin-left:clamp(.8rem,3vw,2rem);
+  padding:.62em 1.5em;
+  border:1px solid rgba(217,164,65,.55);
+  border-radius:999px;
+  color:var(--gold);
+  letter-spacing:.2em;
+  transition:color .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease);
+}
+.jump .ticket:hover,.jump .ticket:focus-visible{
+  color:#0b0b0d;background:var(--gold);border-color:var(--gold);
+}
+.jump .ticket .out{font-size:.9em;line-height:1}
+/* named for a screen reader, silent for everyone else */
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+    clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 
 /* ────────────────────────  side navigation  ───────────────────────── */
 .dots{
@@ -434,9 +416,6 @@ img{display:block;max-width:100%}
   .section-title{font-size:clamp(1.3rem,7vw,1.9rem);letter-spacing:.14em;text-indent:.14em;margin-bottom:clamp(1rem,3svh,1.8rem)}
   .roster li{font-size:.66rem;letter-spacing:.18em;text-indent:.18em;padding:clamp(.32rem,1.15svh,.6rem) 0}
 
-  .facts{grid-template-columns:1fr 1fr;gap:clamp(.9rem,2.4svh,1.6rem) 1rem}
-  .fact dd{font-size:1.02rem}
-  .cta{padding:.95em 1.9em;font-size:.62rem;letter-spacing:.2em}
 
   /* the links wrap out to the screen edges here, so the toggle cannot
      keep the bottom-left corner */
@@ -470,7 +449,6 @@ img{display:block;max-width:100%}
   <button type="button" data-to="amor" aria-label="Amor fati"><i></i></button>
   <button type="button" data-to="about" aria-label="About"><i></i></button>
   <button type="button" data-to="artists" aria-label="Artists"><i></i></button>
-  <button type="button" data-to="attend" aria-label="Attend"><i></i></button>
 </nav>
 
 <button class="sound" id="sound" type="button" aria-pressed="false" aria-label="Play ambient sound" hidden>
@@ -483,10 +461,14 @@ img{display:block;max-width:100%}
      section, so the four rows are identical by construction. -->
 <template id="jump-tpl">
   <nav class="jump" aria-label="Sections">
-    <a href="#amor">Amor</a>
-    <a href="#about">About</a>
-    <a href="#artists">Artists</a>
-    <a href="#attend">Attend</a>
+    <a class="to" href="#amor">Amor</a>
+    <a class="to" href="#about">About</a>
+    <a class="to" href="#artists">Artists</a>
+    <!-- EDIT — the ticket page's URL goes in href -->
+    <a class="ticket" href="https://www.kickstarter.com/" target="_blank" rel="noopener noreferrer">
+      Tickets<span class="out" aria-hidden="true">↗</span>
+      <span class="sr">(opens in a new tab)</span>
+    </a>
   </nav>
 </template>
 
@@ -542,47 +524,8 @@ img{display:block;max-width:100%}
         <li data-reveal style="--d:.58s">Kristoffer Benckert</li>
         <li data-reveal style="--d:.64s">Elias Ljungberg Photography</li>
       </ul>
-    </div>
-  </section>
 
-  <!-- ══════════════════  IV. attend  ══════════════════ -->
-  <section class="panel" id="attend">
-    <div class="shot">
-      <img src="images/hero.jpg" width="720" height="1080" alt="">
-    </div>
-    <div class="veil veil-left"></div>
-
-    <div class="says">
-      <h2 class="section-title" data-reveal>Attend</h2>
-
-      <dl class="facts">
-        <div class="fact" data-reveal style="--d:.1s">
-          <dt>Dates</dt>
-          <dd>September 16–17<small>two evenings</small></dd>
-        </div>
-        <div class="fact" data-reveal style="--d:.2s">
-          <dt>Time</dt>
-          <dd>7–9 pm<small>doors 6:30 pm</small></dd><!-- EDIT — doors -->
-        </div>
-        <div class="fact" data-reveal style="--d:.3s">
-          <dt>Place</dt>
-          <dd>Venue Name<small>Street 1, Stockholm</small></dd><!-- EDIT -->
-        </div>
-        <div class="fact" data-reveal style="--d:.4s">
-          <dt>Tickets</dt>
-          <dd>350 kr<small>limited seating</small></dd><!-- EDIT -->
-        </div>
-      </dl>
-
-      <div data-reveal style="--d:.5s">
-        <!-- EDIT — the Kickstarter URL goes in href -->
-        <a class="cta" href="https://www.kickstarter.com/" target="_blank" rel="noopener noreferrer">
-          <span>Come bask with us</span>
-          <span class="arrow" aria-hidden="true">→</span>
-        </a>
-      </div>
-
-      <p class="reach" data-reveal style="--d:.62s">
+      <p class="reach" data-reveal style="--d:.72s">
         <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a><!-- EDIT -->
         <a href="mailto:hello@example.com">Email</a><!-- EDIT -->
       </p>
@@ -724,7 +667,7 @@ img{display:block;max-width:100%}
     dots.forEach(function(b, d){ b.setAttribute("aria-current", d === i ? "true" : "false"); });
     /* the same state in every copy of the link row */
     jumps.forEach(function(row){
-      var links = row.querySelectorAll("a");
+      var links = row.querySelectorAll("a.to");
       for (var k = 0; k < links.length; k++) {
         links[k].setAttribute("aria-current", k === i ? "true" : "false");
       }
@@ -777,7 +720,7 @@ img{display:block;max-width:100%}
   }
   dots.forEach(function(b, i){ b.addEventListener("click", function(){ goTo(i); }); });
   jumps.forEach(function(row){
-    Array.prototype.forEach.call(row.querySelectorAll("a"), function(a){
+    Array.prototype.forEach.call(row.querySelectorAll("a.to"), function(a){
       a.addEventListener("click", function(e){
         var i = ids.indexOf((a.getAttribute("href") || "").slice(1));
         if (i < 0) return;

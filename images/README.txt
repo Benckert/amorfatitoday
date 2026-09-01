@@ -1,7 +1,6 @@
 What the page uses, and how:
 
-  hero.jpg      the reaching dancer. Fills the screen on `amor`, and
-                again on `attend`, so the page ends where it began.
+  hero.jpg      the reaching dancer. Fills the screen on `amor`.
                 Mirrored (--flip:scaleX(-1)) so her reach carries
                 towards the words rather than away from them.
 
