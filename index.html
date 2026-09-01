@@ -173,39 +173,20 @@ a{color:inherit;text-decoration:none}
 :focus-visible{outline:1px solid var(--gold);outline-offset:5px;border-radius:2px}
 img{display:block;max-width:100%}
 
-/* The document is exactly as many screens as there are sections, which
-   leaves it with no slack at the end — and on a phone that is a bug.
-   Panels are sized in svh, the SMALL viewport, so they keep their
-   height when the browser's toolbar collapses; but the visual viewport
-   then grows past svh, and the furthest the page can scroll is
-   (document - viewport). With no slack that maximum lands SHORT of the
-   last section's snap point: measured at 390x844 with the toolbar
-   away, the page could reach 1618 while `artists` starts at 1688. It
-   is 70px short of ever aligning, so the foot of `about` stays on
-   screen underneath it and mandatory snapping retries the move it can
-   never complete — which is the jumping.
-
-   The gap is exactly the toolbar: 100lvh (viewport with it gone) minus
-   100svh (viewport with it there). Given back as room after the last
-   section, the maximum scroll reaches the last snap point again. It
-   computes to zero on any screen without a collapsing toolbar, and to
-   nothing at all on a browser that does not know lvh — an invalid
-   calc() drops the declaration and an empty block is 0 tall. It
-   carries no scroll-snap-align, so it is somewhere the page passes
-   through, never somewhere it rests. */
-main::after{
-  content:"";
-  display:block;
-  height:calc(100lvh - 100svh);
-}
-
 /* ─────────────────────────────  sections  ───────────────────────────
    Each one is exactly one screen and never more, so the page is four
    screens and the snap is honest. Anything that would not fit is
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
   position:relative;
-  height:100svh;
+  /* dvh, not svh. svh is the viewport with the browser's UI at its
+     LARGEST — but iOS shrinks its bar to a pill as soon as you scroll,
+     so the screen is then taller than svh and every panel came up
+     short by that difference: a strip of the next section showing
+     under the links, and a strip of the previous one above the
+     heading. dvh is the viewport that is actually on screen, so a
+     section always covers it exactly. */
+  height:100dvh;
   overflow:hidden;
   scroll-snap-align:start;
   /* one section per gesture: without this a fling can carry past a
@@ -603,6 +584,7 @@ main::after{
      screen; an id outranks .split, so it has to be given back here or
      the full-bleed figure comes up short of the right edge */
   #artists{padding-right:0}
+  #about .verse{justify-content:center}
   #about .verse img{max-height:34svh}
   /* align-self, and it is load-bearing: .split centres its items, which
      leaves this box sized by its content rather than by its row. With
