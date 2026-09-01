@@ -179,34 +179,34 @@ img{display:block;max-width:100%}
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
   position:relative;
-  /* The panel must equal the screen it is on, or snapping cannot work.
-     svh is the viewport with the browser's UI at its largest, so on a
-     phone whose bar has retracted every panel is SHORTER than the
-     screen — and then the document is shorter than it needs to be and
-     the last section's snap point sits beyond the furthest the page can
-     scroll. Measured on a 375x812 screen: with 629px panels the page
-     stops at 1075 while `artists` begins at 1258, so it can never
-     align; drag towards it, let go, and snapping falls back to the only
-     point it can reach, which is upwards. That is the "scrolls back up
-     when I release".
+  /* A section must never be SHORTER than the screen, or the page runs
+     out of scroll before the last one reaches the top and a sliver of
+     the section before it stays showing. Getting that guarantee has
+     been the whole difficulty, because the obvious units do not give
+     it on a phone:
 
-           panel 629 -> max scroll 1075, snap point 1258   unreachable
-           panel 660 -> max scroll 1168, snap point 1320   unreachable
-           panel 812 -> max scroll 1624, snap point 1624   exact
+       svh  the viewport with the browser's UI at its largest, so it is
+            short by the toolbar the moment that toolbar retracts.
+       dvh  meant to track the live viewport, but WebKit bug 261185 has
+            iOS reporting it EQUAL TO svh when the tab bar is not
+            visible — short by the same amount, which is why swapping
+            svh for dvh changed nothing here.
 
-     dvh is the viewport actually on screen, so panel and screen agree
-     at every moment, the document is exactly three screens, and every
-     snap point is reachable. It was removed once on the suspicion that
-     it caused a jump; the jump was afterwards traced, frame by frame,
-     to a timer in goTo() that fired 1.00s after every scroll, and that
-     timer is gone. svh stays first as the fallback for anything without
-     dvh. */
-  height:100svh;                          /* anything without dvh */
-  height:100dvh;                          /* modern browsers */
-  /* Whichever is larger: the unit the browser reports, or the height
-     measured from window.innerHeight. A panel is then never shorter
-     than the screen, which is the condition that was failing. */
-  height:max(100dvh,var(--screen,0px));
+     lvh is the viewport with the dynamic toolbars retracted: the
+     largest the screen can be. It is a static value, so it does not
+     suffer the lag or the equality bug, and being the maximum it is by
+     definition never smaller than what is on screen. --screen is the
+     same guarantee measured at runtime — the larger of innerHeight and
+     visualViewport.height, either of which iOS may under-report alone —
+     and max() takes whichever is bigger.
+
+     The trade is deliberate: while the toolbar is showing, a section is
+     slightly taller than the visible area, so a little of it sits below
+     the fold. Content is centred, so that reads as framing. A sliver of
+     the wrong section does not. */
+  height:100svh;
+  height:100lvh;
+  height:max(100lvh,var(--screen,0px));
   overflow:hidden;
   scroll-snap-align:start;
   display:grid;
@@ -727,7 +727,7 @@ img{display:block;max-width:100%}
    everywhere else; the shape is wide, so three columns suit it, and
    everything is simply smaller. */
 @media (orientation:landscape) and (max-height:540px){
-  .panel{height:100svh;padding-block:clamp(.5rem,3svh,1rem)}
+  .panel{height:max(100lvh,var(--screen,0px));padding-block:clamp(.5rem,3svh,1rem)}
 
   #about{padding-right:44%}
   #about .verse{justify-content:flex-start}
@@ -914,11 +914,16 @@ img{display:block;max-width:100%}
      that much per section, the page runs out of scroll before the last
      section reaches the top, and a strip of the section before it stays
      on screen at the bottom of the page — which is exactly what it did.
-     window.innerHeight is the one number that is never smaller than
-     what is on screen, so the panels are set from it and re-set
-     whenever it changes. */
+     The measurement takes the larger of window.innerHeight and
+     visualViewport.height, and CSS takes the larger of that and 100lvh,
+     so a panel cannot end up shorter than the screen by any route. */
   function fitScreen(){
-    root.style.setProperty("--screen", window.innerHeight + "px");
+    /* the larger of the two: iOS keeps innerHeight at the layout
+       viewport while visualViewport tracks what is actually shown, and
+       either one alone can be the smaller number depending on whether
+       the toolbar is out */
+    var vv = window.visualViewport ? window.visualViewport.height : 0;
+    root.style.setProperty("--screen", Math.max(window.innerHeight, vv) + "px");
   }
   fitScreen();
   window.addEventListener("resize", fitScreen, { passive: true });

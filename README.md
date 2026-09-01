@@ -266,21 +266,30 @@ presentation.
   so the page still reads a section at a time; the browser simply is not
   steering. Desktop keeps the lock — no moving toolbar there, and it has
   always worked.
-- **A panel's height is measured, not asked for:
-  `height:max(100dvh, var(--screen,0px))`, where `--screen` is set from
-  `window.innerHeight` and re-set on resize, orientationchange and
-  visualViewport resize.** Every viewport unit lets this page down on a
-  phone. `svh` is the screen with the browser's UI at its largest, so
-  panels come up short the moment the bar retracts; and iOS reports
-  `dvh` lagging its own toolbar, handing back a height smaller than the
-  screen actually is. A short panel means the document is short by that
-  much per section, the page runs out of scroll before the last section
-  reaches the top, and a strip of the section before it stays on screen
-  at the bottom of the page. Simulated with the unit reporting 629px on
-  an 812px screen: without the measured height, a 183px strip; with it,
-  none. The `max()` means whichever number is larger wins, so a panel
-  can never be shorter than the screen.
-- **There is no "did we arrive?" correction in `goTo()`, and there must
+- **A section must never be shorter than the screen**, or the page runs
+  out of scroll before the last one reaches the top and a sliver of the
+  section before it stays showing. The rule is
+  `height:max(100lvh, var(--screen,0px))`, and it is belt and braces on
+  purpose, because both of the obvious answers fail on a phone:
+  - `svh` is the viewport with the browser's UI at its largest, so it is
+    short by the toolbar the moment that toolbar retracts.
+  - `dvh` is meant to track the live viewport, but WebKit bug 261185 has
+    iOS reporting it *equal to `svh`* when the tab bar is not visible —
+    short by the same amount. That is why swapping `svh` for `dvh`
+    changed nothing.
+  - `lvh` is the viewport with the toolbars retracted: the largest the
+    screen can be. Static, so no lag and no equality bug, and being the
+    maximum it is never smaller than what is on screen.
+  - `--screen` is the same guarantee measured at runtime — the larger of
+    `innerHeight` and `visualViewport.height`, since iOS can
+    under-report either alone.
+
+  Verified by failing each source in turn at 375x812: with the CSS unit
+  pinned short the measurement covers it, with the measurement pinned
+  short the unit covers it, and only with both short does the 183px
+  sliver come back. The trade is that while the toolbar is showing a
+  section is slightly taller than the visible area, so a little sits
+  below the fold; content is centred, so that reads as framing.- **There is no "did we arrive?" correction in `goTo()`, and there must
   not be one.** There was: a timer comparing the scroll position to a
   section's `offsetTop` a beat after a click, forcing the page onto it
   if they disagreed. On a phone they always disagree — panels are one
