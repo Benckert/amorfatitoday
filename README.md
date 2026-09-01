@@ -228,6 +228,22 @@ presentation.
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
+- **The document carries `calc(100lvh - 100svh)` of room after the last
+  section**, and it is not decoration. Panels are sized in `svh`, the
+  small viewport, so they keep their height when a phone's toolbar
+  collapses — but the visual viewport then grows past `svh`, and the
+  furthest a page can scroll is (document − viewport). With the
+  document exactly as many screens as there are sections, that maximum
+  lands *short* of the last section's snap point. Measured at 390x844
+  with the toolbar away: the page could reach 1618 while `artists`
+  begins at 1688. Seventy pixels short of ever aligning — so the foot
+  of `about` stayed on screen beneath it, and mandatory snapping kept
+  retrying a move it could never finish. That was the jumping, and both
+  symptoms came from the one cause. The spacer is exactly the toolbar's
+  height, computes to zero without one, and carries no
+  `scroll-snap-align`, so the page passes through it and never rests
+  there. **If you add a section, this stays correct; if you change how
+  panels are sized, re-check it.**
 - **Scroll snapping is `mandatory` everywhere, with
   `scroll-snap-stop:always` on each panel.** That is the scroll-lock
   this site is built around: a scroll of any size advances exactly one
