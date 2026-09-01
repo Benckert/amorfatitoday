@@ -189,7 +189,9 @@ img{display:block;max-width:100%}
 /* Mirroring is the one edit the layout makes to a photograph, and it is
    made for the words rather than to the picture: it turns each figure's
    reach towards them. Delete a line to undo it. */
-#amor .shot img{--flip:scaleX(-1)}
+/* unmirrored: her reach opens to the right, across the frame, which
+   is the composition the live site has */
+#amor .shot img{--flip:none}
 
 /* the dark that buys the words their legibility, without lightening the
    photograph: it is heavy only where text sits and clears quickly */
@@ -203,16 +205,20 @@ img{display:block;max-width:100%}
 .says{position:relative;z-index:2;min-width:0}
 
 /* ────────────────────────  I. amor  (landing)  ─────────────────────── */
+/* The words sit off the foot of the frame rather than on it: the title
+   lands around three-fifths of the way down, which is where the eye
+   goes anyway, and the space beneath it is what makes the photograph
+   feel like a room rather than a backdrop. */
 #amor{align-content:end;justify-items:center;text-align:center;
-      padding:0 var(--inset) calc(var(--rail) + clamp(1rem,4svh,3rem))}
+      padding:0 var(--inset) calc(var(--rail) + clamp(2rem,12svh,9rem))}
 
 .title{
   font-family:var(--display);
   font-weight:300;
   font-size:clamp(2.1rem,8.2vw,5.4rem);
   line-height:1;
-  letter-spacing:.30em;
-  text-indent:.30em;              /* the tracking is added to the right of
+  letter-spacing:.17em;
+  text-indent:.17em;              /* the tracking is added to the right of
                                      the last letter too; this re-centres it */
   text-transform:uppercase;
   color:var(--cream);
@@ -283,7 +289,7 @@ img{display:block;max-width:100%}
 #artists{--focus:50% 38%}   /* the candle and the turning figure, not the ceiling */
 .section-title{
   font-family:var(--display);font-weight:400;
-  font-size:clamp(1.5rem,4.4vw,2.9rem);
+  font-size:clamp(1.6rem,5.2vw,3.4rem);
   letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;
   color:var(--cream);margin:0 0 clamp(1.2rem,3.6svh,2.2rem);
   text-shadow:0 1px 4px rgba(0,0,0,1),0 2px 24px rgba(0,0,0,.9);
@@ -311,11 +317,11 @@ img{display:block;max-width:100%}
 }
 .roster li{
   font-family:var(--micro);font-weight:300;
-  font-size:clamp(.66rem,1.55vw,.88rem);
-  letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;
+  font-size:clamp(.72rem,2.15vw,1.32rem);
+  letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;
   color:var(--cream);
   line-height:1;
-  padding:clamp(.3rem,1.05svh,.52rem) 0;
+  padding:clamp(.34rem,1.35svh,.62rem) 0;
   text-shadow:0 1px 3px rgba(0,0,0,1),0 2px 14px rgba(0,0,0,.95);
 }
 
@@ -445,7 +451,7 @@ img{display:block;max-width:100%}
   /* the landing's words move off the photograph's centre and sit under
      it, over the black, where nothing has to be read through a picture */
   #amor{padding-bottom:calc(var(--rail) + 1rem)}
-  .title{font-size:clamp(1.9rem,10.5vw,3.2rem);letter-spacing:.22em;text-indent:.22em}
+  .title{font-size:clamp(1.9rem,10.5vw,3.2rem);letter-spacing:.13em;text-indent:.13em}
   .subtitle{font-size:.7rem;letter-spacing:.22em;text-indent:.22em}
   .when{font-size:.68rem}
 
