@@ -280,12 +280,17 @@ lightness and fluidity, and that is what separates the two.
   outline still get it, but on screen it was the only thing competing
   with her name. There are no social links on the section either.
 
-- **The horizon under her name starts where the name starts.** On a
-  phone `.lead-name` carries the section's inset as its own padding, so
-  `left:0` on the `::after` put the rule at the edge of the box while
-  the name began 1.4rem further in — a visible 22px overhang to the
-  left of the V. It is `left:var(--inset)` now, and runs out to the
-  right the way the desktop one runs out to the left.
+- **The horizon under her name is drawn on a `<span>`, and that span
+  is the whole fix.** A paragraph fills its column, so a rule anchored
+  to one edge of it with a fixed width lands wherever the column
+  happens to be: measured at 208px under a 143px name on a desktop
+  (64px of it left of the V) and 160px under 91px on a phone (67px
+  past the end). An inline-block is the only box on the page that is
+  exactly as wide as the words in it, so the rule goes on that, with
+  `left:0;right:0` instead of a width. Now measured 0 and 0 at
+  1440x900, 375x704 and 844x390. The overhang that remains is exactly
+  symmetrical: `letter-spacing` adds its .08em after the last letter
+  and `text-indent` puts the same .08em back before the first.
   Two gradients carry it — across, so cream type reads over the left
   and the candle is still a photograph by the middle; down, a little at
   the head and more at the foot where the fixed links are. Neither

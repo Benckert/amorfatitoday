@@ -146,22 +146,6 @@
   src: url(fonts/cormsc-300-latin-ext.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-@font-face {
-  font-family: 'Cormorant SC';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(fonts/cormsc-400-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Cormorant SC';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(fonts/cormsc-400-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
 
 /* ─────────────────────────────  tokens  ───────────────────────────── */
 :root{
@@ -473,18 +457,29 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   letter-spacing:.08em;text-indent:.08em;
   color:var(--gold);
   margin:0;
-  position:relative;
-  padding-bottom:clamp(.7rem,2.2svh,1.1rem);
   text-shadow:0 1px 4px rgba(0,0,0,1),0 2px 18px rgba(0,0,0,.9);
 }
-/* the horizon under her name, anchored to whichever edge her column is
-   set against: the right on a wide screen, the left when it stacks */
-.lead-name::after{
-  content:"";position:absolute;bottom:0;right:0;
-  width:min(13rem,100%);height:1px;
-  background:linear-gradient(to left,
-    rgba(246,227,189,0) 0%,rgba(246,227,189,.30) 24%,
-    rgba(246,227,189,.30) 68%,rgba(246,227,189,0) 100%);
+/* The horizon is drawn on the span, which is shrink-wrapped to the
+   words, so it is the width of her name and centred under it at every
+   size — rather than the width of whatever column the paragraph
+   happens to fill, anchored to one edge of that and hanging off the
+   other. Measured before: a 208px rule under a 143px name on a desktop,
+   64px of it to the left of the V; 160px under 91px on a phone, 67px
+   of it past the end.
+
+   left:0 with right:0 rather than a fixed width, and the overhang that
+   leaves is exactly symmetrical: letter-spacing adds its .08em after
+   the last letter as well, and text-indent puts the same .08em back
+   before the first, so the glyphs sit centred inside the box. */
+.lead-name span{
+  position:relative;display:inline-block;
+  padding-bottom:clamp(.7rem,2.2svh,1.1rem);
+}
+.lead-name span::after{
+  content:"";position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,
+    rgba(246,227,189,0) 0%,rgba(246,227,189,.30) 22%,
+    rgba(246,227,189,.30) 78%,rgba(246,227,189,0) 100%);
 }
 .company-label{
   font-family:var(--micro);font-weight:400;
@@ -854,14 +849,8 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
         rgba(0,0,0,.42) 0%,rgba(0,0,0,.06) 22%,
         rgba(0,0,0,.06) 66%,rgba(0,0,0,.44) 100%);
   }
-  .lead-name{font-size:1.3rem;padding-bottom:.6rem}
-  /* left:var(--inset), not left:0. .lead-name carries the section's
-     inset as its own padding here, so the name begins 1.4rem in while
-     the rule began at the very edge of the box — the horizon started a
-     clear 22px to the left of the V. Both now start on the same line,
-     and it runs out to the right the way the desktop one runs out to
-     the left. */
-  .lead-name::after{right:auto;left:var(--inset);width:min(10rem,100%)}
+  .lead-name{font-size:1.3rem}
+  .lead-name span{padding-bottom:.6rem}
   .company-label{margin-bottom:clamp(.4rem,1.4svh,.8rem)}
 
   /* the links wrap out to the screen edges here, so the toggle cannot
@@ -914,8 +903,8 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   }
   #artists .beside::before{display:none}
 
-  .lead-name{font-size:clamp(.9rem,2.4vw,1.2rem);padding-bottom:.45rem}
-  .lead-name::after{right:0;left:auto;width:min(9rem,100%)}
+  .lead-name{font-size:clamp(.9rem,2.4vw,1.2rem)}
+  .lead-name span{padding-bottom:.45rem}
   .company-label{margin-bottom:.35rem}
   .roster li{font-size:clamp(.58rem,1.3vw,.72rem);padding:.1rem 0;letter-spacing:.12em;text-indent:.12em}
 }
@@ -998,7 +987,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
            label over it, and the label was the only thing on the
            section competing with her name. -->
       <h2 class="sr">Artists</h2>
-      <p class="lead-name" data-reveal style="--d:.12s">Vallerie O</p>
+      <!-- The span is not decoration: the horizon under her name is drawn
+           on it, and an inline-block is the only box on the page that is
+           exactly as wide as the words inside it. On the <p>, which fills
+           its column, the rule came out 208px under a 143px name. -->
+      <p class="lead-name" data-reveal style="--d:.12s"><span>Vallerie O</span></p>
     </div>
 
     <div class="says who-company">
