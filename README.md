@@ -227,21 +227,15 @@ presentation.
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
-- **On a phone both photographs are full-bleed, and that is the second
-  place anything is cropped.** A 2:3 frame shown whole on a screen that
-  narrow leaves a band of black above and below it, and the one above
-  read as the picture starting late. The landing photograph is
-  `object-fit:cover` on portrait and narrow screens, which at that
-  shape takes the crop off the SIDES — her full height is on screen and
-  what goes is a little of the dark room. `object-position` is `72%`,
-  not centred: centred took the fingertips off the right edge, which is
-  where the whole line of the pose is going. Desktop and landscape are
-  unchanged, whole and letterboxed by height, which is the shape the
-  live site has.
-
 - **On a phone the artists photograph is the ground the words are
   written on**, not a panel beneath them: it fills the section and the
-  names sit over it in the left third, which is the dark of the room.
+  names sit over it in the LOWER left, which is the dark of the room —
+  the floor and the shadow under her, where type has the least to
+  compete with, and it leaves the lit half of the frame clear above
+  them. There is no section heading over them: the `<h2>` is still in
+  the markup as `class="sr"`, so a screen reader and the document
+  outline still get it, but on screen it was the only thing competing
+  with her name.
   Two gradients carry it — across, so cream type reads over the left
   and the candle is still a photograph by the middle; down, a little at
   the head and more at the foot where the fixed links are. Neither
@@ -361,6 +355,22 @@ presentation.
   invalid — which silently stripped all the padding off the rail and
   put the ticket button flush against the bottom edge of the screen.
   Nothing errored; the padding simply computed to zero.
+- **The ticket button does not move on hover, and that is a fix rather
+  than a preference.** It used to lift 2px. A transform — even that one
+  — hands the element its own compositor layer, and a promoted layer is
+  rasterised once and then transformed, which on WebKit drops the
+  antialiasing along a `border-radius`: the pill's edge comes back as
+  visible stair-steps. Nothing promotes the pill now; only the glow
+  behind it is composited, and a radial gradient has no edge to go
+  jagged. Worth knowing if it ever returns: the pill's box is
+  fractional in every dimension at every size (91.484 x 31.313 at
+  y 655.797 on a 375x704 screen), because the rail's type is fluid —
+  that is the other candidate, and the answer there would be drawing
+  the ring with `box-shadow` rather than `border`.
+- **Hover lights the button, it does not fill it.** The border goes to
+  full gold, the tint roughly doubles and the glow behind grows by
+  half; the label stays cream. Filled solid, the one warm thing on the
+  page became a slab, which is not what the rest of it is made of.
 - The lock is absolute — a gesture moves exactly one section, never a
   fraction and never two — which is honest here because every section
   really is exactly one screen, on every size checked including a phone
