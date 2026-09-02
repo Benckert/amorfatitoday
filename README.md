@@ -501,26 +501,6 @@ lightness and fluidity, and that is what separates the two.
   one page; two flicks 420ms apart turn two; 3.5s of unbroken
   scrolling turns one.
 
-- **On `about`, the gap that reads as a gap is not the padding.** The
-  figure's box is 42% of the panel and the verse used to stop 2% short
-  of it, so on paper they nearly touched — but the left side of her
-  photograph is dark for a long way before she appears in it. Measured
-  at 1440x900: 142px of black between the last letter and her hair.
-  Two levers move it, and only together: the section's right padding
-  (44% to 38%) opens the room, and the verse's height cap (66svh to
-  70svh) lets the words actually take it, since the cap and not the
-  column was what sized them. Now 55px at 1440x900 and 140px at
-  1920x1080, both about half of what they were. Checked from 1024x768
-  to 2560x1440 for collision: the tightest clearance is 36px, at
-  1024x768.
-
-- **On a phone the artists section reads top and bottom**: her name at
-  the top, the company at the foot, and an empty `minmax(0,1fr)` row
-  between them for the photograph. The cloth and the candle sit in that
-  band and nothing should be written across them; the company stays low
-  because the frame is darkest there, the floor and the shadow under
-  her, so the type has least to compete with.
-
 - **The photographs are all the same size.** All three files are 2:3,
   and on a wide screen each is limited by height — so given the same
   height they render at the same width. The artists section used to pad
