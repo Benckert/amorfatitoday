@@ -14,11 +14,11 @@
   transform, one screen per gesture — see "the deck" in the stylesheet
   for why, and for what happens without script.
 
-  Everything that still needs your words is marked EDIT.
   (An HTML comment ends at the first close marker — never nest one.)
 
-  Still needed:  venue + address · ticket price · the Kickstarter URL
-                 · instagram · email
+  Nothing is left as a placeholder. The ticket link goes to Billetto;
+  venue, address and price live on that page, which is where anyone
+  reading them is going anyway.
 
   Photographs are shown WHOLE — see images/README.txt. A photograph is
   scaled to the full height of the screen at its own aspect ratio, so
@@ -58,6 +58,14 @@
    does, so every letter has a direction and a speed in it. A geometric
    sans is drawn with a compass and stands still. This one moves. The
    italic is used for exactly one thing, her name.
+
+   Cormorant SC comes with it, for the title alone. Like Alegreya Sans
+   SC before it, it is a small-caps FAMILY rather than a font with an
+   smcp feature: its lowercase glyphs ARE the small capitals. So the
+   title is written "Amor Fati" and given NO text-transform —
+   uppercasing it would throw the small caps away and hand back plain
+   capitals, which is what the page had before. It has no italic, which
+   is why her name stays on Cormorant Garamond.
 
    Latin and latin-ext only, and latin-ext is not optional: the Ć in
    Amina Avdić's name is U+0106, which lives only in that subset, and
@@ -122,6 +130,39 @@
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+@font-face {
+  font-family: 'Cormorant SC';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(fonts/cormsc-300-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Cormorant SC';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(fonts/cormsc-300-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cormorant SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/cormsc-400-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Cormorant SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/cormsc-400-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 /* ─────────────────────────────  tokens  ───────────────────────────── */
 :root{
   --ink:#000;
@@ -138,7 +179,7 @@
      Cormorant's x-height is small for its em, which is most of where
      its air comes from — and it means every size below is set larger
      than the sans it replaced. Do not "restore" those numbers. */
-  --display:"Cormorant Garamond",Cormorant,Garamond,Georgia,"Times New Roman",serif;
+  --display:"Cormorant SC","Cormorant Garamond",Cormorant,Georgia,"Times New Roman",serif;
   --micro:"Cormorant Garamond",Cormorant,Garamond,Georgia,"Times New Roman",serif;
 
   --gutter:clamp(1.25rem,5vw,5rem);
@@ -153,6 +194,13 @@
      the inset; above it the frame does, and every section's first
      letter lands on the same vertical line however wide the screen. */
   --measure:1120px;
+  /* The width a photograph actually renders at. All three are 2:3, and
+     on a wide screen they are limited by height — so that width is two
+     thirds of the screen's height. On a narrow screen they are limited
+     by width instead, and the first term wins. The link rail is set to
+     this, so its ends line up with the edges of the picture behind it
+     rather than floating somewhere inside them. */
+  --shot:min(calc(100% - var(--inset) * 2),calc(var(--screen,100svh) * 2 / 3));
   --ease:cubic-bezier(.22,.61,.36,1);
   /* the room the section links keep at the foot of every screen */
   --rail:clamp(3.2rem,7svh,4.6rem);
@@ -215,7 +263,10 @@ html.js .deck{
   touch-action:pinch-zoom;
   will-change:transform;
 }
-html.js .deck.glide{transition:transform .62s var(--ease)}
+/* .38s, not .62s. A section change is a cut with a bit of travel in
+   it, not a journey — and at .62s a second gesture had to wait out the
+   first, which is most of what read as lag. */
+html.js .deck.glide{transition:transform .38s var(--ease)}
 html.js.zoomed .deck{touch-action:auto}
 
 ::selection{background:rgba(217,164,65,.35);color:var(--cream)}
@@ -296,12 +347,17 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .title{
   font-family:var(--display);
   font-weight:300;
-  font-size:clamp(2.3rem,9vw,6rem);
+  /* Larger than the all-caps setting it replaces, and it has to be:
+     small capitals stand about three quarters the height of the full
+     ones, so matched by nominal size the mark reads much smaller. */
+  font-size:clamp(2.7rem,11.5vw,8rem);
   line-height:1;
-  letter-spacing:.20em;
-  text-indent:.20em;              /* the tracking is added to the right of
+  letter-spacing:.11em;
+  text-indent:.11em;              /* the tracking is added to the right of
                                      the last letter too; this re-centres it */
-  text-transform:uppercase;
+  /* NO text-transform. Cormorant SC's lowercase glyphs are the small
+     capitals; uppercasing "Amor Fati" would discard them and give back
+     the plain capitals this is moving away from. */
   color:var(--cream);
   margin:0;
   text-shadow:0 2px 30px rgba(0,0,0,.85);
@@ -376,11 +432,18 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    columns take the gutter rather than the 1120px measure, because at
    the measure there is not enough width left beside a 600px figure to
    set a name in. */
+/* No block padding, and that is what makes this photograph the same
+   size as the one on the landing. Both files are 720x1080; both are
+   limited by height; so given the same height — the whole screen —
+   they render at the same width. Padded top and bottom, this one was
+   792px tall against the hero's 900 and came out 528 wide against 600,
+   which read as two different pictures. The words are centred in the
+   row, so losing the padding costs them nothing. */
 #artists{
   grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
   align-items:center;
   gap:clamp(1rem,2.6vw,2.6rem);
-  padding:clamp(2rem,5svh,4rem) var(--gutter) var(--rail);
+  padding:0 var(--gutter);
 }
 #artists .who-lead{grid-column:1;grid-row:1;text-align:right}
 #artists .beside{
@@ -403,7 +466,9 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* The one italic on the page, and the only place the type leans.
      Mixed case rather than tracked-out capitals: a name, written,
      not a label. */
-  font-family:var(--display);font-weight:300;font-style:italic;
+  /* --micro, not --display: the display face is the small-caps cut and
+     has no italic, and a synthesised oblique is not the same letter. */
+  font-family:var(--micro);font-weight:300;font-style:italic;
   font-size:clamp(1.3rem,3vw,2.05rem);
   letter-spacing:.08em;text-indent:.08em;
   color:var(--gold);
@@ -431,10 +496,17 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .roster{list-style:none;margin:0;padding:0}
 .roster li{
   font-family:var(--micro);font-weight:400;
-  font-size:clamp(.76rem,1.5vw,1.04rem);
-  letter-spacing:.18em;text-indent:.18em;text-transform:uppercase;
+  /* Smaller and tighter than the rest of the page's tracking, because
+     the photograph in the middle column grew to the full height of the
+     screen and the side columns lost the width to it. Balanced rather
+     than merely allowed to wrap: on a squarer screen the longest
+     credit still needs two lines, and two even ones read as intended
+     where a long line and a stub does not. */
+  font-size:clamp(.72rem,1.05vw,.92rem);
+  letter-spacing:.14em;text-indent:.14em;text-transform:uppercase;
+  text-wrap:balance;
   color:var(--cream);
-  line-height:1;
+  line-height:1.15;
   padding:clamp(.34rem,1.35svh,.62rem) 0;
   text-shadow:0 1px 3px rgba(0,0,0,1),0 2px 14px rgba(0,0,0,.95);
 }
@@ -454,14 +526,19 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      links stay put while the page scrolls rather than riding up and
      down with whatever section is passing. */
   position:fixed;left:0;right:0;bottom:0;z-index:8;
-  display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
-  padding:0 var(--inset) clamp(1.1rem,3svh,1.8rem);
+  /* left:0 and right:0 with a width and auto side margins centres the
+     rail; the width is the photograph's, so "Amor" begins on the
+     picture's left edge and the ticket button ends on its right. */
+  width:var(--shot);margin-inline:auto;
+  display:flex;justify-content:flex-start;align-items:center;flex-wrap:wrap;
+  padding:0 0 clamp(1.1rem,3svh,1.8rem);
   font-family:var(--micro);font-weight:400;
   font-size:clamp(.66rem,1.5vw,.78rem);
   letter-spacing:.2em;text-transform:uppercase;
 }
 .jump::before{
-  content:"";position:absolute;left:0;right:0;bottom:0;top:-70%;z-index:-1;
+  /* the feather stays full-bleed even though the rail no longer is */
+  content:"";position:absolute;left:-50vw;right:-50vw;bottom:0;top:-70%;z-index:-1;
   pointer-events:none;
   background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%);
 }
@@ -486,7 +563,9 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .jump .ticket{
   position:relative;isolation:isolate;
   display:inline-flex;align-items:center;gap:.55em;
-  margin-left:clamp(.8rem,3vw,2rem);
+  /* auto, so it sits on the picture's right edge with the links on its
+     left, and the row spans the photograph exactly */
+  margin-left:auto;
   padding:.72em 1.85em;
   border:2px solid rgba(217,164,65,.62);
   border-radius:999px;
@@ -612,7 +691,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      and broke onto two lines. At 9.4vw with .14em of tracking it needs
      ~301px there, and still fits at 320px wide, which is the narrowest
      screen this is checked against. */
-  .title{font-size:clamp(1.85rem,9.4vw,3.2rem);letter-spacing:.14em;text-indent:.14em}
+  .title{font-size:clamp(2.5rem,12.6vw,4.2rem);letter-spacing:.09em;text-indent:.09em}
   .subtitle{font-size:.8rem;letter-spacing:.22em;text-indent:.22em}
   .when{font-size:.78rem}
 
@@ -816,7 +895,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     grid-template-rows:minmax(0,1fr);
     align-content:center;align-items:center;
     gap:clamp(.5rem,1.8vw,1.4rem);
-    padding:clamp(.5rem,3svh,1rem) var(--gutter) calc(var(--rail) + .3rem);
+    padding:0 var(--gutter);
   }
   /* back out of the stacked arrangement the narrow block sets up */
   #artists .who-lead{display:block;grid-column:1;grid-row:1;text-align:right}
@@ -838,7 +917,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   .lead-name{font-size:clamp(.9rem,2.4vw,1.2rem);padding-bottom:.45rem}
   .lead-name::after{right:0;left:auto;width:min(9rem,100%)}
   .company-label{margin-bottom:.35rem}
-  .roster li{font-size:clamp(.62rem,1.7vw,.78rem);padding:.1rem 0;letter-spacing:.14em;text-indent:.14em}
+  .roster li{font-size:clamp(.58rem,1.3vw,.72rem);padding:.1rem 0;letter-spacing:.12em;text-indent:.12em}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -868,8 +947,9 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   <a class="to" href="#amor">Amor</a>
   <a class="to" href="#about">About</a>
   <a class="to" href="#artists">Artists</a>
-  <!-- EDIT — the ticket page's URL goes in href -->
-  <a class="ticket" href="https://www.kickstarter.com/" target="_blank" rel="noopener noreferrer">
+  <!-- Billetto. The bref query parameter is their own referral tag and
+       is part of the link as supplied; it is not tracking added here. -->
+  <a class="ticket" href="https://billetto.se/e/amor-fati-biljetter-1988017?bref=eyJzIjoiYmlsbGV0dG8iLCJtIjoiYmlsbGV0dG8iLCJjIjoiZmluZCIsImNvIjoiM1NFIiwidCI6MTc4ODM3MTM5Mn0%3D" target="_blank" rel="noopener noreferrer">
     Tickets<svg class="out" viewBox="0 0 12 12" aria-hidden="true" fill="none"
       stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"
     ><path d="M3.6 8.4 8.4 3.6"/><path d="M4.7 3.6h3.7v3.7"/></svg>
@@ -1051,7 +1131,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     function ready(){
       probe.style.fontFamily = fallback;
       var without = probe.getBoundingClientRect().width;
-      probe.style.fontFamily = '"Cormorant Garamond",' + fallback;
+      probe.style.fontFamily = '"Cormorant SC",' + fallback;
       return Math.abs(probe.getBoundingClientRect().width - without) > 0.5;
     }
     function go(){
@@ -1134,7 +1214,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     if (still) { gliding = false; return; }
     gliding = true;
     clearTimeout(settle);
-    settle = setTimeout(function(){ gliding = false; }, 700);
+    settle = setTimeout(function(){ gliding = false; }, 460);
   }
   deck.addEventListener("transitionend", function(e){
     if (e.propertyName === "transform" && e.target === deck) {
@@ -1142,6 +1222,20 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
       clearTimeout(settle);
     }
   });
+  /* Finish whatever is in flight, this frame. Dropping the transition
+     puts the deck on --at immediately, so a new gesture starts from a
+     section rather than from halfway between two — and, more to the
+     point, does not have to wait for the old one. Inputs used to be
+     thrown away while a glide ran, which meant two quick swipes moved
+     one section and the second only registered once everything had
+     come to rest. That is the stagger. */
+  function land(){
+    if (!gliding) return;
+    deck.classList.remove("glide");
+    deck.style.transform = "";
+    clearTimeout(settle);
+    gliding = false;
+  }
   function step(dir){
     var next = at + dir;
     if (next < 0 || next >= panels.length) return false;
@@ -1179,10 +1273,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     else if (!armed && since() > 700 && abs >= 24) rearm();
     lastAbs = abs;
 
-    if (!armed || gliding) return;
+    if (!armed) return;
     spin += dy;
     if (Math.abs(spin) < 24) return;
     armed = false;
+    land();
     lastStep = Date.now();
     var dir = spin > 0 ? 1 : -1;
     spin = 0;
@@ -1206,9 +1301,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   var drag = 0, from = 0, began = 0, held = false;
   function screen(){ return lastScreen || window.innerHeight; }
   window.addEventListener("touchstart", function(e){
-    if (e.touches.length !== 1 || gliding || root.classList.contains("zoomed")) {
+    if (e.touches.length !== 1 || root.classList.contains("zoomed")) {
       held = false; return;
     }
+    land();                       /* a finger outranks a glide in flight */
     held = true; drag = 0; from = e.touches[0].clientY; began = Date.now();
     deck.classList.remove("glide");
   }, { passive: true });
@@ -1251,7 +1347,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     else if (k === "End") { e.preventDefault(); show(panels.length - 1); return; }
     if (!dir) return;
     e.preventDefault();
-    if (!gliding) step(dir);
+    /* Held arrow keys repeat several times a second; a short cooldown
+       keeps that from flying through the page, without making a
+       deliberate second press wait out the first glide. */
+    if (!gliding || since() > 180) { land(); step(dir); }
   });
 
   /* ── the links, the dots, and the address bar ── */
