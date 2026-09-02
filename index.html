@@ -153,7 +153,12 @@ html,body{margin:0;padding:0}
 
 html{
   background:var(--ink);
-  scroll-behavior:smooth;
+  /* Deliberately NOT scroll-behavior:smooth. That property animates
+     every scroll adjustment the browser makes, its own snap corrections
+     included — so a snap arrives as a second, separate movement after
+     the finger has left, which is the two-stage settle that reads as
+     jumpiness. Clicking a link is still smooth: goTo() passes
+     behavior:"smooth" to scrollTo, which does not depend on this. */
   scroll-snap-type:y mandatory;   /* every section is exactly one screen,
                                      so nothing can be snapped past */
   /* No rubber-band at the ends. Pulling past the top and letting go was
@@ -1148,7 +1153,7 @@ img{display:block;max-width:100%}
 <script>
 (function(){
   if (!/[?&]debug/.test(location.search)) return;
-  var BUILD = "2026-09-01-j";        // bump when publishing, to prove what is live
+  var BUILD = "2026-09-01-k";        // bump when publishing, to prove what is live
 
   var box = document.createElement("pre");
   box.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;margin:0;padding:6px 8px;" +
@@ -1180,7 +1185,11 @@ img{display:block;max-width:100%}
       "   scale " + (vp && vp.scale ? vp.scale.toFixed(2) : "-") + "\n" +
       "svh " + unit("svh") + "   lvh " + unit("lvh") + "   dvh " + unit("dvh") +
       "   --screen " + screenVar + "\n" +
-      "panel " + ph + "   doc " + doc + "   maxScroll " + maxS +
+      "panels " + [].map.call(document.querySelectorAll(".panel"), function(p){
+          return p.offsetHeight; }).join("/") +
+      "   tops " + [].map.call(document.querySelectorAll(".panel"), function(p){
+          return p.offsetTop; }).join("/") + "\n" +
+      "doc " + doc + "   maxScroll " + maxS +
       "   artistsTop " + (art ? art.offsetTop : "-") + "\n" +
       "scrollY " + Math.round(window.scrollY) +
       "   SHORT BY " + (ph - window.innerHeight) +
