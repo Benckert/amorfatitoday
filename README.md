@@ -227,6 +227,17 @@ presentation.
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
+- **The landing photograph sits against the TOP edge on a phone, and
+  nothing is cropped to put it there.** A 2:3 frame on a screen that
+  narrow is limited by width, so it is shorter than the screen and the
+  difference has to go somewhere; centred (`align-items:center`, the
+  default for `.shot`) it was split in two and the half above her read
+  as the picture starting late. `align-items:flex-start` drops all of
+  it at the foot instead, under the words, where the frame had already
+  gone to black — so the join is invisible and the picture starts at
+  the top of the screen. An earlier pass solved this by cropping
+  (`object-fit:cover`); this is the version that keeps her whole.
+
 - **On a phone the artists photograph is the ground the words are
   written on**, not a panel beneath them: it fills the section and the
   names sit over it in the LOWER left, which is the dark of the room —
@@ -235,7 +246,14 @@ presentation.
   them. There is no section heading over them: the `<h2>` is still in
   the markup as `class="sr"`, so a screen reader and the document
   outline still get it, but on screen it was the only thing competing
-  with her name.
+  with her name. There are no social links on the section either.
+
+- **The horizon under her name starts where the name starts.** On a
+  phone `.lead-name` carries the section's inset as its own padding, so
+  `left:0` on the `::after` put the rule at the edge of the box while
+  the name began 1.4rem further in — a visible 22px overhang to the
+  left of the V. It is `left:var(--inset)` now, and runs out to the
+  right the way the desktop one runs out to the left.
   Two gradients carry it — across, so cream type reads over the left
   and the candle is still a photograph by the middle; down, a little at
   the head and more at the foot where the fixed links are. Neither
@@ -355,22 +373,40 @@ presentation.
   invalid — which silently stripped all the padding off the rail and
   put the ticket button flush against the bottom edge of the screen.
   Nothing errored; the padding simply computed to zero.
-- **The ticket button does not move on hover, and that is a fix rather
-  than a preference.** It used to lift 2px. A transform — even that one
-  — hands the element its own compositor layer, and a promoted layer is
-  rasterised once and then transformed, which on WebKit drops the
-  antialiasing along a `border-radius`: the pill's edge comes back as
-  visible stair-steps. Nothing promotes the pill now; only the glow
-  behind it is composited, and a radial gradient has no edge to go
-  jagged. Worth knowing if it ever returns: the pill's box is
-  fractional in every dimension at every size (91.484 x 31.313 at
-  y 655.797 on a 375x704 screen), because the rail's type is fluid —
-  that is the other candidate, and the answer there would be drawing
-  the ring with `box-shadow` rather than `border`.
+- **The ticket button's lift is `translateY`, never `translate3d`, and
+  it carries no `will-change`.** This is the jagged border. A 3d
+  transform, or a declared `will-change`, promotes the element to its
+  own compositor layer for good — and a promoted layer is rasterised
+  once and then transformed, which on WebKit drops the antialiasing
+  along a `border-radius`, so the edge comes back as stair-steps. A
+  plain 2d translate is composited only while it animates. At a 2px
+  lift and a 2px border there is nothing here that needs its own layer.
+  If the edge ever looks jagged again, the lift is the first thing to
+  take out — the glow alone carried the hover perfectly well. The other
+  candidate, if it survives that: the pill's box is fractional in every
+  dimension at every size (92.547 x 32.188 at y 654.922 on a 375x704
+  screen) because the rail's type is fluid, and the answer there is
+  drawing the ring with `box-shadow` rather than `border`.
 - **Hover lights the button, it does not fill it.** The border goes to
   full gold, the tint roughly doubles and the glow behind grows by
   half; the label stays cream. Filled solid, the one warm thing on the
   page became a slab, which is not what the rest of it is made of.
+- **The wheel can be re-armed four ways, and three of them are there
+  because the fourth is not enough.** A step disarms the wheel so that
+  one trackpad flick is one section rather than a walk through the page
+  — a flick keeps sending deltas for the better part of a second after
+  the fingers have lifted. Re-arming used to depend only on the stream
+  going quiet for 160ms, which left the page stuck on one section for
+  anyone who scrolls without ever pausing: the stream never went quiet,
+  so nothing ever cleared the latch, and the workaround people found
+  was to move the mouse. The other three: the stream speeding up again
+  (a momentum tail only decays, so a rise is a second push), a delta
+  still 24 or larger more than 700ms after the step (that is a hand,
+  not a coast), and any pointer movement 380ms after the step — the
+  workaround, honoured. Synthesized wheel events do not reproduce the
+  original lock, so this was reasoned from the handler rather than
+  measured.
+
 - The lock is absolute — a gesture moves exactly one section, never a
   fraction and never two — which is honest here because every section
   really is exactly one screen, on every size checked including a phone
