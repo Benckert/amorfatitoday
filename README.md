@@ -280,17 +280,6 @@ lightness and fluidity, and that is what separates the two.
   outline still get it, but on screen it was the only thing competing
   with her name. There are no social links on the section either.
 
-- **Her name and the company label share a first baseline** on a wide
-  screen: `align-self:baseline` on both text columns, with the padding
-  that positions the pair vertically on the COLUMNS rather than on the
-  section — the section has none, and that is what lets the photograph
-  between them stand the full height of the screen. Centring cannot do
-  this: it aligns boxes, and a two-line name and a ten-line roster are
-  nothing like the same height. The narrow block backs the whole
-  arrangement out (`align-self:auto`, no padding), because there are no
-  two columns to align there and the wide layout's padding put 147px of
-  nothing between the two lines on a phone.
-
 - **The horizon under her name is drawn on a `<span>`, and that span
   is the whole fix.** A paragraph fills its column, so a rule anchored
   to one edge of it with a fixed width lands wherever the column
@@ -441,22 +430,44 @@ lightness and fluidity, and that is what separates the two.
   full gold, the tint roughly doubles and the glow behind grows by
   half; the label stays cream. Filled solid, the one warm thing on the
   page became a slab, which is not what the rest of it is made of.
-- **One section per gesture, however hard or long the gesture is.**
-  A step disarms the wheel; it arms again when the stream has been
-  quiet for 220ms — when the flick, and the momentum behind it, are
-  actually over. Nothing else counts as a new intention, because
-  nothing else reliably is one. Two rules that tried were both wrong
-  in the same direction: reading a rise in the deltas as a second push
-  (a momentum tail decays on average but not monotonically, so a hard
-  throw produced rises all the way down) and reading a large delta long
-  after the step (a long throw is still one throw). Each turned a
-  single hard flick into two page turns.
+- **One section per gesture, however hard or long — and never stuck.**
+  These two pull against each other, and getting one has repeatedly
+  cost the other. A flick keeps sending deltas for a second or more
+  after the fingers have lifted, and the page has to tell that tail
+  apart from a hand still working.
 
-  Scrolling on without pausing therefore turns one page and waits,
-  which is the asked-for behaviour rather than a lock. The one safety
-  valve is a pointer move 500ms after a step: it ends whatever gesture
-  was in flight, and a two-finger scroll does not move the cursor, so
-  it cannot fire mid-flick.
+  Silence alone cannot: a second flick arrives before the first tail
+  has died, so the stream never goes quiet and the page locks until the
+  pointer happens to move. Delta size alone cannot either: a tail
+  decays on average but not monotonically, so both "it got bigger" and
+  "it is still big" fire partway down a hard throw and turn one flick
+  into two. Resetting when the animation ends — the obvious model —
+  is worse than either: **measured at 2, 3, 4 and 5 turns for a single
+  flick** (`scratchpad/proposal.js`), because a 620ms animation ends
+  while a 2000ms tail is still delivering 30-100 per event and it
+  re-crosses the threshold immediately.
+
+  What a tail cannot do is either of these, and they are what the
+  handler tests:
+  1. **Dip and rise again.** Momentum only slows. Once the stream has
+     fallen to a fifth of the gesture's peak, anything back above a
+     third of it came from a finger. A new peak resets its own trough,
+     so the ramp *up* at the start of a throw cannot read as a recovery.
+  2. **Travel further than it has left in it.** A decaying tail's
+     remaining distance is bounded by its peak — about 22x it at the
+     rate a trackpad decays, 40x at the slowest rate worth allowing
+     for. Past 55x, whatever is still arriving is being pushed.
+
+  (2) is what answers a steady scroll that never varies and never
+  stops: it keeps turning, about twice a second, instead of waiting for
+  a silence that is not coming. Plus the two cheap ones — 220ms of
+  quiet, and a pointer move 500ms after a step, which cannot fire
+  mid-flick because a two-finger scroll does not move the cursor.
+
+  Verified in `scratchpad/trackpad.js` across twelve flick shapes
+  (peaks 40 to 700, decay rates giving tails from 1.5s to 5.7s): one
+  turn each. Two flicks 400ms apart: two turns. Steady, slow and
+  varying continuous scrolls for 3.5s: they keep turning.
 
   **Test it with a modelled momentum tail, not with `mouse.wheel`.**
   CDP round trips leave 100ms-plus gaps between synthesized events,
@@ -469,20 +480,19 @@ lightness and fluidity, and that is what separates the two.
   one page; two flicks 420ms apart turn two; 3.5s of unbroken
   scrolling turns one.
 
-- **The photographs are all the same size, and the rail is that size
-  too.** All three files are 2:3, and on a wide screen each is limited
-  by height — so given the same height they render at the same width.
-  The artists section used to pad its middle column top and bottom,
-  which made that photograph 792px tall against the hero's 900 and 528
-  wide against 600; it read as two different pictures. Its block
-  padding is gone (the words are centred in the row, so they lose
-  nothing), and `--shot` states the shared width as
-  `min(100% - 2 x inset, screen x 2/3)` — the first term wins on a
-  phone, where the pictures are limited by width instead. The link rail
-  is set to `--shot` with auto side margins and the ticket button takes
-  `margin-left:auto`, so "Amor" begins on the picture's left edge and
-  the button ends on its right. Measured equal at 1280x800, 1440x900,
-  1920x1080, 844x390 and 375x704.
+- **The photographs are all the same size.** All three files are 2:3,
+  and on a wide screen each is limited by height — so given the same
+  height they render at the same width. The artists section used to pad
+  its middle column top and bottom, which made that photograph 792px
+  tall against the hero's 900 and 528 wide against 600; it read as two
+  different pictures. Its block padding is gone, and the words are
+  centred in the row, so they lose nothing by it. Measured equal at
+  1280x800, 1440x900, 1920x1080, 844x390 and 375x704.
+- **The link rail is one centred group, narrower than the picture.**
+  It was stretched to the photograph's width for a while, with the
+  ticket button pushed out to the right edge: the ends lined up and it
+  left a lake of black through the middle of the row. Held together and
+  centred reads better than aligned and pulled apart.
 - **The roster is smaller and tighter than the rest of the page**
   (`clamp(.72rem,1.05vw,.92rem)`, .14em) because that wider middle
   column took the width out of the side ones. Measured across seven
