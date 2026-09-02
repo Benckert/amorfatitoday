@@ -1252,16 +1252,39 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
      What a tail cannot do is either of these:
 
-       1. DIP AND RISE AGAIN. Momentum only slows. Once the stream has
-          fallen to a fifth of the gesture's peak, anything back above
-          a third of it came from a finger. (The peak resets its own
-          trough, so the ramp UP at the start of a throw cannot look
-          like a rise after a dip.)
+       1. TURN BACK UPWARD. Momentum only slows, so a stream that
+          stops falling and then climbs to well over twice its own low
+          has a finger behind it. Measured against the run's OWN low
+          rather than a fraction of the peak, which is what lets it see
+          a second flick thrown while the first is still loud — there
+          is no dip below any fixed fraction there, only a turn.
+
+          2.2x is a tuned number and the tuning is a straight
+          trade-off, measured both ways. Below 2.0 a half-strength
+          nudge on a decaying tail turns the page, which is the page
+          feeling trigger-happy. Above 2.2 a deliberate second flick
+          has to be further behind the first before it counts. It sits
+          at 2.2: a second flick registers from about 500ms after the
+          first, and nothing smaller than a real throw registers at
+          all.
+
+          Read off RAW DELTAS this is hopeless, and measurably so: real
+          trackpad deltas jitter, so any sample can be a low and the
+          next can be 75% above it, and a single flick turned two pages
+          every time at +/-50% jitter. It is read off a smoothed
+          envelope instead — an exponential average about four events
+          wide — which cannot turn upward on noise. The peak comes from
+          the same average, so one spike cannot inflate it, and a new
+          peak restarts the descent, so the climb at the START of a
+          throw is not a recovery from anything.
        2. TRAVEL FURTHER THAN IT HAS LEFT IN IT. A decaying tail's
-          total remaining distance is bounded by its peak — about 22x
-          it at the rate a trackpad decays, 40x at the slowest rate
-          worth allowing for. Past 55x the peak, whatever is still
-          arriving is being pushed.
+          remaining distance is bounded: peak / (1 - decay). That is
+          22x the peak at the rate a trackpad usually decays and 50x at
+          the slowest rate worth allowing for, and the envelope above
+          reads a few per cent under the true peak, so the budget is
+          90x with a floor under it. Past that, whatever is still
+          arriving is being pushed. The floor is what stops a very
+          small gesture from having a very small budget.
 
      (2) is what answers a steady scroll that never varies and never
      stops: it keeps turning, about twice a second, instead of waiting
@@ -1270,10 +1293,12 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      gesture and cannot fire mid-flick because a two-finger scroll does
      not move the cursor. */
   var armed = true, spin = 0, quiet;
-  var peak = 0, trough = Infinity, travel = 0;
+  var peak = 0, avg = 0, low = Infinity, travel = 0;
   /* declared here, assigned in show(): every input's cooldown reads it */
   var lastStep = 0;
-  function rearm(){ armed = true; spin = 0; peak = 0; trough = Infinity; travel = 0; }
+  function rearm(){
+    armed = true; spin = 0; peak = 0; avg = 0; low = Infinity; travel = 0;
+  }
   function since(){ return Date.now() - lastStep; }
 
   window.addEventListener("wheel", function(e){
@@ -1286,21 +1311,28 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     clearTimeout(quiet);
     quiet = setTimeout(rearm, 220);        /* the gesture simply stopped */
 
+    avg = avg ? avg * 0.72 + abs * 0.28 : abs;
+
     if (!armed) {
       travel += abs;
-      if ((trough < peak * 0.2 && abs > peak * 0.35 && abs > 25) ||
-          travel > peak * 55) rearm();
+      if (avg < low) low = avg;
+      /* 300ms of grace after a turn: nothing a reader does inside that
+         is a second intention. The floor under the rise keeps the very
+         end of a tail, where the envelope is tiny and proportionally
+         noisiest, from counting. */
+      if (since() > 300 &&
+          ((avg > low * 2.2 && avg > peak * 0.15) ||
+           travel > Math.max(peak * 90, 2600))) rearm();
     }
-    /* after the test, never before it: a new high resets the trough, so
-       the climb at the start of a throw cannot read as a recovery */
-    if (abs > peak) { peak = abs; trough = Infinity; }
-    else if (abs < trough) trough = abs;
+    /* after the test, never before it: a new high restarts the descent,
+       so the climb at the start of a throw is not a recovery */
+    if (avg > peak) { peak = avg; low = Infinity; }
 
     if (!armed) return;
     spin += dy;
     if (Math.abs(spin) < 24) return;
     armed = false;
-    peak = abs; trough = Infinity; travel = 0;
+    peak = avg; low = Infinity; travel = 0;
     land();
     var dir = spin > 0 ? 1 : -1;
     spin = 0;

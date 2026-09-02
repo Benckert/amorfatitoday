@@ -449,25 +449,46 @@ lightness and fluidity, and that is what separates the two.
 
   What a tail cannot do is either of these, and they are what the
   handler tests:
-  1. **Dip and rise again.** Momentum only slows. Once the stream has
-     fallen to a fifth of the gesture's peak, anything back above a
-     third of it came from a finger. A new peak resets its own trough,
-     so the ramp *up* at the start of a throw cannot read as a recovery.
+  1. **Turn back upward.** Momentum only slows, so a stream that stops
+     falling and climbs to over twice its own low has a finger behind
+     it. Measured against the run's own low rather than a fraction of
+     the peak — that is what lets it see a second flick thrown while
+     the first is still loud, where there is no dip below any fixed
+     fraction, only a turn.
   2. **Travel further than it has left in it.** A decaying tail's
-     remaining distance is bounded by its peak — about 22x it at the
-     rate a trackpad decays, 40x at the slowest rate worth allowing
-     for. Past 55x, whatever is still arriving is being pushed.
+     remaining distance is bounded: peak / (1 - decay). That is 22x the
+     peak at the rate a trackpad usually decays and 50x at the slowest
+     worth allowing for, and the envelope reads a few per cent under
+     the true peak, so the budget is 90x with a floor under it.
 
   (2) is what answers a steady scroll that never varies and never
-  stops: it keeps turning, about twice a second, instead of waiting for
-  a silence that is not coming. Plus the two cheap ones — 220ms of
-  quiet, and a pointer move 500ms after a step, which cannot fire
-  mid-flick because a two-finger scroll does not move the cursor.
+  stops: it keeps turning instead of waiting for a silence that is not
+  coming. Plus the two cheap ones — 220ms of quiet, and a pointer move
+  500ms after a step, which cannot fire mid-flick because a two-finger
+  scroll does not move the cursor.
 
-  Verified in `scratchpad/trackpad.js` across twelve flick shapes
-  (peaks 40 to 700, decay rates giving tails from 1.5s to 5.7s): one
-  turn each. Two flicks 400ms apart: two turns. Steady, slow and
-  varying continuous scrolls for 3.5s: they keep turning.
+  **Read the envelope, never the raw deltas.** Real trackpad deltas
+  jitter, so on raw samples any value is a low and the next can be
+  twice it: measured, a single flick turned two pages *every time* at
+  +/-50% jitter (`scratchpad/noisy.js`). Both rules read an exponential
+  average about four events wide, which cannot turn upward on noise,
+  and the peak comes from the same average so one spike cannot inflate
+  it. Clean at +/-65% jitter now.
+
+  **2.2x is tuned, and the tuning is a straight trade-off** measured
+  both ways in `scratchpad/sens.js`. Below 2.0, a half-strength nudge
+  on a decaying tail turns the page — the page feeling trigger-happy.
+  Above 2.2, a deliberate second flick has to be further behind the
+  first to count. At 2.2 a second flick registers from about 500ms
+  after the first, and nothing smaller than a real throw registers at
+  all. Two flicks closer than that overlap too heavily for the envelope
+  to have turned, and count as one gesture: that is the intended
+  answer, not a gap in the detector.
+
+  Verified across twelve flick shapes (peaks 40 to 700, tails from 1.5s
+  to 5.7s): one turn each. Nudges at a fifth, a third and half strength
+  on a live tail: no turn. Steady, slow and varying continuous scrolls:
+  they keep turning.
 
   **Test it with a modelled momentum tail, not with `mouse.wheel`.**
   CDP round trips leave 100ms-plus gaps between synthesized events,
