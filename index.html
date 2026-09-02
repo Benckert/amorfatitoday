@@ -8,7 +8,11 @@
   ═══════════════════════════════════════════════════════════════════
   amor fati — Vallerie with Company
 
-  One page, four sections, each exactly one screen tall.
+  One page, three sections, each exactly one screen tall.
+
+  The page does not scroll. Sections live in a deck that is moved by
+  transform, one screen per gesture — see "the deck" in the stylesheet
+  for why, and for what happens without script.
 
   Everything that still needs your words is marked EDIT.
   (An HTML comment ends at the first close marker — never nest one.)
@@ -32,6 +36,13 @@
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23d9a441' stroke-width='1'/%3E%3Ccircle cx='16' cy='16' r='1.6' fill='%23f6e3bd'/%3E%3C/svg%3E">
 
+
+<!-- Set before the stylesheet, not at the end of the body: the whole
+     deck layout below is written twice — once as an ordinary scrolling
+     document for a reader without script, once as the fixed deck — and
+     the class is what chooses. Chosen after the first paint it would
+     choose twice, and the reader would see the change. -->
+<script>document.documentElement.className+=" js";</script>
 
 <style>
 /* ───────────────────────────  the faces  ────────────────────────────
@@ -153,19 +164,6 @@ html,body{margin:0;padding:0}
 
 html{
   background:var(--ink);
-  /* Deliberately NOT scroll-behavior:smooth. That property animates
-     every scroll adjustment the browser makes, its own snap corrections
-     included — so a snap arrives as a second, separate movement after
-     the finger has left, which is the two-stage settle that reads as
-     jumpiness. Clicking a link is still smooth: goTo() passes
-     behavior:"smooth" to scrollTo, which does not depend on this. */
-  scroll-snap-type:y mandatory;   /* every section is exactly one screen,
-                                     so nothing can be snapped past */
-  /* No rubber-band at the ends. Pulling past the top and letting go was
-     handing the browser a scroll position outside the page, and it
-     re-snapped from there to the SECOND section rather than back to the
-     first. With the bounce gone there is no outside to release from. */
-  overscroll-behavior-y:none;
   -webkit-text-size-adjust:100%;
 }
 body{
@@ -176,8 +174,50 @@ body{
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
-  overscroll-behavior-y:none;
 }
+
+/* ══════════════════════════  the deck  ══════════════════════════════
+   THE PAGE DOES NOT SCROLL. That is the whole design, and it is what
+   every earlier attempt was fighting.
+
+   A phone's browser retracts its toolbar WHILE the document scrolls,
+   so a scrolling page's viewport changes height mid-gesture: sections
+   sized to it resize under the reader, every snap point below moves,
+   and letting go lands on a target that is no longer where it was.
+   That is not a bug in this stylesheet to be tuned out — it is what a
+   scrolling document on a phone does, and no combination of svh, lvh,
+   dvh or measured pixels can hold still against it. It is also why the
+   libraries built for exactly this arrangement (fullPage.js among
+   them) still carry the same bug open.
+
+   So the document is nailed down: body is fixed at the four edges and
+   clips, and there is no scrollable overflow anywhere on the page. The
+   toolbar has no scroll to react to, so it stays out, and the viewport
+   is one number for the whole visit. The sections live in a column
+   that is moved by transform — one screen per step, on the compositor,
+   never touching layout. Nothing can drift, because nothing measures
+   anything after the first frame.
+
+   Without script this all collapses to an ordinary long page that
+   scrolls normally: the rules below are gated on html.js. */
+html.js,html.js body{height:100%;overflow:hidden;overscroll-behavior:none}
+html.js body{position:fixed;top:0;left:0;right:0;bottom:0}
+
+.deck{position:relative}
+html.js .deck{
+  position:absolute;top:0;left:0;right:0;
+  /* the measured screen, with the fixed body's own height as the
+     fallback; they agree, and the measurement is the belt */
+  height:var(--screen,100%);
+  display:flex;flex-direction:column;
+  transform:translate3d(0,calc(var(--at,0) * -100%),0);
+  /* pinch-zoom stays; one-finger panning is ours to interpret. When
+     the reader IS zoomed, script hands panning back (html.zoomed). */
+  touch-action:pinch-zoom;
+  will-change:transform;
+}
+html.js .deck.glide{transition:transform .62s var(--ease)}
+html.js.zoomed .deck{touch-action:auto}
 
 ::selection{background:rgba(217,164,65,.35);color:var(--cream)}
 a{color:inherit;text-decoration:none}
@@ -190,33 +230,18 @@ img{display:block;max-width:100%}
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
   position:relative;
-  /* One height, for the whole visit: the LARGE viewport, which is the
-     screen with the browser's retractable toolbar out of the way.
-
-     This is the point of the whole arrangement. A section sized to the
-     live viewport has to change whenever the toolbar moves, and it
-     moves mid-gesture — so the document changes height under the
-     reader, every snap point below shifts, and releasing a drag lands
-     on a target that has moved. Sized to lvh nothing ever changes: the
-     document is exactly three screens and stays that way, and the snap
-     points are fixed for the life of the page.
-
-     The trade, chosen deliberately: while the toolbar is out, the
-     bottom of a section rests behind it. Content is centred, so what
-     that costs is a few pixels of margin, and never the layout. The
-     link rail is the exception — it is fixed to the bottom of the
-     VISIBLE area, so it rides above the toolbar rather than behind it.
-
-     --screen (measured from visualViewport) stays as a floor. It cannot
-     exceed lvh, so it changes nothing in normal use; it is there in
-     case a browser under-reports the unit. */
-  height:100svh;
-  height:100lvh;
-  height:max(100lvh,var(--screen,0px));
+  /* No script: an ordinary section, at least one screen tall, and the
+     page scrolls past it the way any page does. */
+  min-height:100svh;
   overflow:hidden;
-  scroll-snap-align:start;
   display:grid;
 }
+/* With script every section is a fixed step of the deck: exactly the
+   deck's height, which is exactly the screen, and it cannot shrink.
+   flex-basis:100% resolves against the deck rather than against a
+   viewport unit, so there is no unit here to be wrong about the
+   toolbar — the section is the screen by construction. */
+html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
 /* ─── the photograph, whole and full-screen ───
    max-height and max-width together, with width and height left auto:
@@ -733,7 +758,7 @@ img{display:block;max-width:100%}
    everywhere else; the shape is wide, so three columns suit it, and
    everything is simply smaller. */
 @media (orientation:landscape) and (max-height:540px){
-  .panel{height:max(100lvh,var(--screen,0px));padding-block:clamp(.5rem,3svh,1rem)}
+  .panel{padding-block:clamp(.5rem,3svh,1rem)}
 
   #about{padding-right:44%}
   #about .verse{justify-content:flex-start}
@@ -774,7 +799,7 @@ img{display:block;max-width:100%}
 }
 
 @media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
+  html.js .deck.glide{transition:none}
   .js [data-reveal],.js .title .ch{opacity:1!important;transform:none!important;transition:none!important}
   *{transition-duration:.01ms!important}
 }
@@ -809,7 +834,7 @@ img{display:block;max-width:100%}
   </a>
 </nav>
 
-<main>
+<main class="deck" id="deck">
 
   <!-- ══════════════════  I. amor  ══════════════════ -->
   <section class="panel" id="amor">
@@ -882,26 +907,24 @@ img{display:block;max-width:100%}
   var root = document.documentElement;
   root.classList.add("js");
 
-  /* The panel height is measured rather than asked for. Every viewport
-     unit lets us down on a phone: svh is the screen with the browser's
-     UI at its largest, so panels come up short as soon as the bar
-     retracts; and iOS reports dvh lagging behind its own toolbar, so it
-     too can hand back a height smaller than the screen actually is.
-     When a panel is shorter than the screen the document is short by
-     that much per section, the page runs out of scroll before the last
-     section reaches the top, and a strip of the section before it stays
-     on screen at the bottom of the page — which is exactly what it did.
-     visualViewport.height is the only number that reports what is
-     actually on screen at this moment: innerHeight stays at the layout
-     viewport on iOS, and every CSS unit is a fixed guess at one of the
-     two toolbar states. */
+  /* The screen is measured once and then simply stops changing,
+     because nothing on this page scrolls for a toolbar to react to.
+     visualViewport.height is the number that says what is actually on
+     screen right now — innerHeight reports the layout viewport on iOS,
+     and every CSS viewport unit is a fixed guess at one of the two
+     toolbar states rather than a reading of the current one. The
+     listeners below are for rotation and for a desktop window being
+     dragged; on a phone, in normal use, this fires once. */
   var vp = window.visualViewport;
   var lastScreen = 0;
   function fitScreen(){
-    /* While the reader is pinch-zoomed the visual viewport is a window
-       onto the page rather than the page's own size, so leave it alone
-       and keep the last honest measurement. */
-    if (vp && vp.scale && Math.abs(vp.scale - 1) > 0.01) return;
+    var zoomed = !!(vp && vp.scale && Math.abs(vp.scale - 1) > 0.01);
+    /* Pinch-zoomed, the visual viewport is a window onto the page
+       rather than the page's size, so it is not a screen measurement —
+       keep the last honest one, and hand one-finger panning back to
+       the browser so the reader can move around what they zoomed in on. */
+    root.classList.toggle("zoomed", zoomed);
+    if (zoomed) return;
     var h = Math.round(vp ? vp.height : window.innerHeight);
     if (!h || Math.abs(h - lastScreen) < 2) return;   // ignore sub-pixel noise
     lastScreen = h;
@@ -911,9 +934,6 @@ img{display:block;max-width:100%}
   window.addEventListener("resize", fitScreen, { passive: true });
   window.addEventListener("orientationchange", fitScreen, { passive: true });
   if (vp) {
-    /* iOS moves its toolbar during a scroll, and reports that as both a
-       resize and a scroll of the visual viewport; listening to only one
-       of them leaves the sections a toolbar's height out of step. */
     vp.addEventListener("resize", fitScreen, { passive: true });
     vp.addEventListener("scroll", fitScreen, { passive: true });
   }
@@ -1030,71 +1050,143 @@ img{display:block;max-width:100%}
     Array.prototype.forEach.call(revealables, function(el){ el.classList.add("in"); });
   }
 
-  /* ── which section are we in ── */
+  /* ════════════════  moving between sections  ════════════════
+     One gesture, one section — the scroll lock, done by hand because
+     the browser's own version of it (scroll-snap) needs a scrolling
+     document, and a scrolling document is the thing that cannot be
+     made to hold still on a phone.
+
+     Nothing here reads a scroll position, because there is no scroll
+     position: the current section IS the state. `at` is the index, the
+     deck is at -at screens, and the two cannot disagree. */
+  var deck = document.getElementById("deck");
   var dots = Array.prototype.slice.call(document.querySelectorAll(".dots button"));
-  var ids = dots.map(function(b){ return b.dataset.to; });
+  var ids = panels.map(function(p){ return p.id; });
   var lit = -1;
   function light(i){
-    if (i === lit || i < 0) return;
+    if (i === lit) return;
     lit = i;
     dots.forEach(function(b, d){ b.setAttribute("aria-current", d === i ? "true" : "false"); });
-    jumpLinks.forEach(function(a, k){
-      a.setAttribute("aria-current", k === i ? "true" : "false");
-    });
+    jumpLinks.forEach(function(a, k){ a.setAttribute("aria-current", k === i ? "true" : "false"); });
   }
-  /* Which section fills the screen is a question of scroll position —
-     the one whose middle is nearest the middle of the viewport — not of
-     intersection, which lights the wrong one mid-transition. */
-  var ticking = false;
-  function which(){
-    ticking = false;
-    var y = window.scrollY || window.pageYOffset || 0;
-    var mid = y + window.innerHeight / 2;
-    var best = 0, gap = Infinity;
-    for (var i = 0; i < panels.length; i++) {
-      var box = panels[i].getBoundingClientRect();
-      var centre = box.top + y + box.height / 2;
-      var d = Math.abs(centre - mid);
-      if (d < gap) { gap = d; best = i; }
-    }
-    light(best);
-  }
-  function onScroll(){
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(which);
-  }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
-  which();
 
-  /* ── going to a section ── */
-  function goTo(i){
-    var panel = panels[i];
-    if (!panel) return;
-    var target = panel.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0);
-    try {
-      window.scrollTo({ top: target, behavior: reduce.matches ? "auto" : "smooth" });
-    } catch (e) {
-      window.scrollTo(0, target);          // older browsers take two numbers
+  var at = 0;
+  var gliding = false;
+  var settle;
+  function show(i, quick){
+    i = Math.max(0, Math.min(panels.length - 1, i));
+    var still = quick || reduce.matches;
+    deck.classList.toggle("glide", !still);
+    deck.style.transform = "";          /* let the class rule take it back */
+    deck.style.setProperty("--at", i);
+    if (i !== at) {
+      at = i;
+      /* replace rather than push: the section links are navigation
+         within one screen, not a stack of pages to back out of */
+      try { history.replaceState(null, "", "#" + ids[i]); } catch (e) {}
     }
-    /* There is deliberately no "did we arrive?" correction here.
-       There was one: a timer that, a beat after the click, compared the
-       scroll position against this target and forced the page onto it
-       if they disagreed. On a phone they always disagree. The panels
-       are one height and the screen is another, because the browser's
-       bar takes the difference — so a section's position in the layout
-       can sit past the furthest the page can scroll, the browser stops
-       short of it, and the timer then hauls the page the rest of the
-       way. Whether it can depends on whether the bar has since
-       collapsed, which is why it fires as a single lurch a second after
-       everything came to rest rather than as part of the scroll.
-       Measured from the reported device: 58px, in one frame, with the
-       fixed links and the browser's own chrome staying put.
-       Mandatory snapping already guarantees the page lands on a
-       section, so nothing was being fixed and something was being
-       broken. */
+    light(i);
+    if (still) { gliding = false; return; }
+    gliding = true;
+    clearTimeout(settle);
+    settle = setTimeout(function(){ gliding = false; }, 700);
   }
+  deck.addEventListener("transitionend", function(e){
+    if (e.propertyName === "transform" && e.target === deck) {
+      gliding = false;
+      clearTimeout(settle);
+    }
+  });
+  function step(dir){
+    var next = at + dir;
+    if (next < 0 || next >= panels.length) return false;
+    show(next);
+    return true;
+  }
+
+  /* ── the wheel, and the long tail a trackpad leaves behind it ──
+     A trackpad flick keeps sending deltas for the better part of a
+     second after the fingers have lifted. Counting those as new
+     intentions walks the reader through the whole page from one
+     gesture, so a step disarms the wheel until the deltas have been
+     quiet for a moment — the burst is one movement, however long it
+     rumbles on. */
+  var armed = true, spin = 0, quiet;
+  window.addEventListener("wheel", function(e){
+    if (e.ctrlKey) return;                 /* that is a zoom, not a scroll */
+    if (e.cancelable) e.preventDefault();
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    clearTimeout(quiet);
+    quiet = setTimeout(function(){ armed = true; spin = 0; }, 160);
+    if (!armed || gliding) return;
+    spin += e.deltaY;
+    if (Math.abs(spin) < 24) return;
+    armed = false;
+    var dir = spin > 0 ? 1 : -1;
+    spin = 0;
+    step(dir);
+  }, { passive: false });
+
+  /* ── the finger ──
+     The deck follows it, one to one, and the release decides. Following
+     is not decoration: a page that only jumps on release gives the
+     reader nothing to read the gesture by, and a drag that goes
+     nowhere until it is over is exactly what "jumpy" describes. Past
+     the first and last section the pull is damped to a fifth rather
+     than stopped, so the end of the page announces itself. */
+  var drag = 0, from = 0, began = 0, held = false;
+  function screen(){ return lastScreen || window.innerHeight; }
+  window.addEventListener("touchstart", function(e){
+    if (e.touches.length !== 1 || gliding || root.classList.contains("zoomed")) {
+      held = false; return;
+    }
+    held = true; drag = 0; from = e.touches[0].clientY; began = Date.now();
+    deck.classList.remove("glide");
+  }, { passive: true });
+  window.addEventListener("touchmove", function(e){
+    if (!held) return;
+    if (root.classList.contains("zoomed")) { held = false; return; }
+    if (e.cancelable) e.preventDefault();
+    drag = e.touches[0].clientY - from;
+    var edge = (at === 0 && drag > 0) || (at === panels.length - 1 && drag < 0);
+    var by = edge ? drag * 0.2 : drag;
+    deck.style.transform = "translate3d(0," + (-at * screen() + by) + "px,0)";
+  }, { passive: false });
+  function release(){
+    if (!held) return;
+    held = false;
+    /* Either a long enough pull, or a short decisive one. The velocity
+       floor sits well clear of a drift — an idle 30px over most of a
+       second is 0.04 px/ms — and well under a real flick, which runs
+       past 1. */
+    var far = Math.abs(drag) > screen() * 0.12;
+    var fast = Math.abs(drag) / Math.max(Date.now() - began, 1) > 0.25 && Math.abs(drag) > 24;
+    if ((far || fast) && step(drag < 0 ? 1 : -1)) return;
+    show(at);                              /* nowhere to go: settle back */
+  }
+  window.addEventListener("touchend", release, { passive: true });
+  window.addEventListener("touchcancel", release, { passive: true });
+
+  /* ── the keyboard, which is the only way through without a pointer ── */
+  window.addEventListener("keydown", function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target;
+    var typing = t && (t.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT|BUTTON|A)$/.test(t.tagName || ""));
+    var k = e.key;
+    var dir = 0;
+    if (k === "ArrowDown" || k === "PageDown") dir = 1;
+    else if (k === "ArrowUp" || k === "PageUp") dir = -1;
+    else if (k === " " && !typing) dir = e.shiftKey ? -1 : 1;
+    else if (k === "Home") { e.preventDefault(); show(0); return; }
+    else if (k === "End") { e.preventDefault(); show(panels.length - 1); return; }
+    if (!dir) return;
+    e.preventDefault();
+    if (!gliding) step(dir);
+  });
+
+  /* ── the links, the dots, and the address bar ── */
+  function goTo(i){ if (i > -1) show(i); }
   dots.forEach(function(b, i){ b.addEventListener("click", function(){ goTo(i); }); });
   jumpLinks.forEach(function(a){
     a.addEventListener("click", function(e){
@@ -1104,6 +1196,27 @@ img{display:block;max-width:100%}
       goTo(i);
     });
   });
+  window.addEventListener("hashchange", function(){
+    var i = ids.indexOf(location.hash.slice(1));
+    if (i > -1 && i !== at) show(i);
+  });
+
+  /* Tabbing reaches the links in sections that are off screen, and off
+     screen here means clipped rather than below the fold — there is no
+     scroll for the browser to bring them into view with, so focus would
+     land somewhere invisible. Following the focus is the whole fix. */
+  document.addEventListener("focusin", function(e){
+    var el = e.target;
+    while (el && el !== document.body) {
+      var i = panels.indexOf(el);
+      if (i > -1) { if (i !== at) show(i, true); return; }
+      el = el.parentNode;
+    }
+  });
+
+  /* where the visit starts: a named section if the link asked for one */
+  var opening = ids.indexOf(location.hash.slice(1));
+  show(opening > -1 ? opening : 0, true);
 
   /* ── ambient sound: off until asked, hidden if the file isn't there ── */
   var audio = document.getElementById("ambient");
@@ -1153,7 +1266,7 @@ img{display:block;max-width:100%}
 <script>
 (function(){
   if (!/[?&]debug/.test(location.search)) return;
-  var BUILD = "2026-09-01-k";        // bump when publishing, to prove what is live
+  var BUILD = "2026-09-02-deck";        // bump when publishing, to prove what is live
 
   var box = document.createElement("pre");
   box.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;margin:0;padding:6px 8px;" +
@@ -1172,28 +1285,34 @@ img{display:block;max-width:100%}
 
   function draw(){
     var vp = window.visualViewport;
-    var panel = document.querySelector(".panel");
-    var art = document.getElementById("artists");
-    var ph = panel ? Math.round(panel.getBoundingClientRect().height) : 0;
-    var doc = document.documentElement.scrollHeight;
-    var maxS = doc - window.innerHeight;
-    var screenVar = getComputedStyle(document.documentElement).getPropertyValue("--screen").trim() || "(unset)";
+    var deck = document.getElementById("deck");
+    var ps = [].slice.call(document.querySelectorAll(".panel"));
+    var css = getComputedStyle(document.documentElement);
+    var screenVar = css.getPropertyValue("--screen").trim() || "(unset)";
+    var h = window.innerHeight;
+    var short = ps.map(function(p){ return Math.round(p.getBoundingClientRect().height) - h; });
+    var here = -1;
+    ps.forEach(function(p, i){
+      var t = p.getBoundingClientRect().top;
+      if (Math.abs(t) < 2) here = i;
+    });
     box.textContent =
-      "build " + BUILD + "   js OK\n" +
-      "innerHeight " + window.innerHeight +
+      "build " + BUILD + "   js OK   doc scroll " + document.documentElement.scrollHeight +
+        "/" + h + "\n" +
+      "innerHeight " + h +
       "   visualVP " + (vp ? Math.round(vp.height) : "n/a") +
       "   scale " + (vp && vp.scale ? vp.scale.toFixed(2) : "-") + "\n" +
       "svh " + unit("svh") + "   lvh " + unit("lvh") + "   dvh " + unit("dvh") +
       "   --screen " + screenVar + "\n" +
-      "panels " + [].map.call(document.querySelectorAll(".panel"), function(p){
-          return p.offsetHeight; }).join("/") +
-      "   tops " + [].map.call(document.querySelectorAll(".panel"), function(p){
-          return p.offsetTop; }).join("/") + "\n" +
-      "doc " + doc + "   maxScroll " + maxS +
-      "   artistsTop " + (art ? art.offsetTop : "-") + "\n" +
-      "scrollY " + Math.round(window.scrollY) +
-      "   SHORT BY " + (ph - window.innerHeight) +
-      "   reachable " + (art ? (maxS >= art.offsetTop) : "-");
+      "deck " + Math.round(deck.getBoundingClientRect().height) +
+      "   --at " + (getComputedStyle(deck).getPropertyValue("--at").trim() || "0") +
+      "   at panel " + here + "\n" +
+      "panels " + ps.map(function(p){
+          return Math.round(p.getBoundingClientRect().height); }).join("/") +
+      "   tops " + ps.map(function(p){
+          return Math.round(p.getBoundingClientRect().top); }).join("/") + "\n" +
+      "SHORT BY " + short.join("/") +
+      "   covers " + short.every(function(d){ return d >= 0; });
   }
   draw();
   addEventListener("scroll", draw, { passive:true });
