@@ -8,17 +8,15 @@ exactly one screen tall, plus a **Tickets** button that leaves the site.
 
 ## Editing it
 
-Everything you need to change is marked `<!-- EDIT -->` in `index.html`,
-and there is a checklist at the top of that file. In order:
+Nothing in the page is a placeholder any more. The ticket button in
+`<nav class="jump">` points at the Billetto listing (the `bref` query
+parameter is Billetto's own referral tag, supplied with the link — it
+is not tracking added here). The title, the subtitle, the dates, the
+verse and all ten artists are set.
 
-1. **The ticket URL** — search for `kickstarter.com`. It is the `href`
-   on the Tickets button, in the `<nav class="jump">` near the top of
-   the body. There is one of it, for the whole page.
-2. **Instagram and email** — at the foot of the artists section.
-
-The title, the subtitle, the dates, the verse and all ten artists are
-already set. There is no venue/price section: those details live on the
-ticket page, which is where anyone reading them is going anyway.
+There is no venue/price section, and no social links: those details
+live on the ticket page, which is where anyone reading them is going
+anyway.
 
 ## What the design holds to
 
@@ -282,12 +280,17 @@ lightness and fluidity, and that is what separates the two.
   outline still get it, but on screen it was the only thing competing
   with her name. There are no social links on the section either.
 
-- **The horizon under her name starts where the name starts.** On a
-  phone `.lead-name` carries the section's inset as its own padding, so
-  `left:0` on the `::after` put the rule at the edge of the box while
-  the name began 1.4rem further in — a visible 22px overhang to the
-  left of the V. It is `left:var(--inset)` now, and runs out to the
-  right the way the desktop one runs out to the left.
+- **The horizon under her name is drawn on a `<span>`, and that span
+  is the whole fix.** A paragraph fills its column, so a rule anchored
+  to one edge of it with a fixed width lands wherever the column
+  happens to be: measured at 208px under a 143px name on a desktop
+  (64px of it left of the V) and 160px under 91px on a phone (67px
+  past the end). An inline-block is the only box on the page that is
+  exactly as wide as the words in it, so the rule goes on that, with
+  `left:0;right:0` instead of a width. Now measured 0 and 0 at
+  1440x900, 375x704 and 844x390. The overhang that remains is exactly
+  symmetrical: `letter-spacing` adds its .08em after the last letter
+  and `text-indent` puts the same .08em back before the first.
   Two gradients carry it — across, so cream type reads over the left
   and the candle is still a photograph by the middle; down, a little at
   the head and more at the foot where the fixed links are. Neither
@@ -441,6 +444,36 @@ lightness and fluidity, and that is what separates the two.
   original lock, so this was reasoned from the handler rather than
   measured.
 
+- **The photographs are all the same size, and the rail is that size
+  too.** All three files are 2:3, and on a wide screen each is limited
+  by height — so given the same height they render at the same width.
+  The artists section used to pad its middle column top and bottom,
+  which made that photograph 792px tall against the hero's 900 and 528
+  wide against 600; it read as two different pictures. Its block
+  padding is gone (the words are centred in the row, so they lose
+  nothing), and `--shot` states the shared width as
+  `min(100% - 2 x inset, screen x 2/3)` — the first term wins on a
+  phone, where the pictures are limited by width instead. The link rail
+  is set to `--shot` with auto side margins and the ticket button takes
+  `margin-left:auto`, so "Amor" begins on the picture's left edge and
+  the button ends on its right. Measured equal at 1280x800, 1440x900,
+  1920x1080, 844x390 and 375x704.
+- **The roster is smaller and tighter than the rest of the page**
+  (`clamp(.72rem,1.05vw,.92rem)`, .14em) because that wider middle
+  column took the width out of the side ones. Measured across seven
+  screen sizes: the longest credit sits on one line everywhere from
+  1280 up. At 1024x768 the column is 178px and it needs two lines,
+  which no readable size avoids — `text-wrap:balance` makes those two
+  lines even rather than a long one and a stub.
+- **A gesture interrupts a glide instead of queueing behind it.**
+  `land()` drops the transition so the deck is on `--at` that frame,
+  and the new gesture starts from a section rather than from halfway
+  between two. Before this, input during a glide was thrown away: two
+  quick swipes moved one section, and the second only registered once
+  everything had come to rest. The glide itself is .38s, down from
+  .62s. Held arrow keys get a 180ms cooldown so auto-repeat does not
+  fly through the page; nothing else needs one, since one gesture is
+  one section by construction.
 - The lock is absolute — a gesture moves exactly one section, never a
   fraction and never two — which is honest here because every section
   really is exactly one screen, on every size checked including a phone
