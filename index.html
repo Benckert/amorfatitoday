@@ -434,13 +434,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   color:var(--mist);
   margin:0 0 clamp(.7rem,2.2svh,1.2rem);
 }
-.section-title{
-  font-family:var(--display);font-weight:500;
-  font-size:clamp(1.6rem,5.2vw,3.4rem);
-  letter-spacing:.24em;text-indent:.24em;
-  color:var(--cream);margin:0 0 clamp(1.2rem,3.6svh,2.2rem);
-  text-shadow:0 1px 4px rgba(0,0,0,1),0 2px 24px rgba(0,0,0,.9);
-}
 .roster{list-style:none;margin:0;padding:0}
 .roster li{
   font-family:var(--micro);font-weight:300;
@@ -510,35 +503,46 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   display:inline-flex;align-items:center;gap:.55em;
   margin-left:clamp(.8rem,3vw,2rem);
   padding:.78em 1.9em;
-  border:1px solid rgba(217,164,65,.72);
+  border:1px solid rgba(217,164,65,.62);
   border-radius:999px;
-  background:rgba(217,164,65,.10);
+  background:rgba(217,164,65,.08);
   color:var(--cream);
   letter-spacing:.2em;
+  /* transform is deliberately NOT in this list, and the button
+     deliberately does not move on hover. A transform — even a 2px lift —
+     hands the element its own compositor layer, and a promoted layer is
+     rasterised once and then transformed, which on WebKit drops the
+     antialiasing along a border-radius: the pill's edge comes back as
+     visible stair-steps. Nothing here promotes the pill any more; only
+     the glow behind it is composited, and a radial gradient has no edge
+     to go jagged. */
   transition:color .45s var(--ease),border-color .45s var(--ease),
-             background-color .45s var(--ease),transform .45s var(--ease);
+             background-color .45s var(--ease);
 }
+/* The glow is the whole hover. It sits behind the pill on its own
+   layer, so growing it costs one composited frame and never repaints
+   the button — and the button stays a lit outline rather than becoming
+   a solid slab, which is what the rest of the page is made of. */
 .jump .ticket::before{
   content:"";position:absolute;z-index:-1;
-  left:-12%;right:-12%;top:-70%;bottom:-90%;
+  left:-16%;right:-16%;top:-90%;bottom:-110%;
   background:radial-gradient(closest-side,
-    rgba(217,164,65,.42),rgba(217,164,65,.14) 46%,transparent 76%);
-  opacity:.6;transform:translate3d(0,10%,0) scale(.94);
+    rgba(217,164,65,.36),rgba(217,164,65,.13) 46%,transparent 76%);
+  opacity:.5;transform:scale(.88);
   transition:opacity .6s var(--ease),transform .6s var(--ease);
 }
 .jump .ticket:hover,.jump .ticket:focus-visible{
-  color:#0b0b0d;background:var(--gold);border-color:var(--gold);
-  transform:translate3d(0,-2px,0);
+  color:var(--cream);
+  border-color:var(--gold);
+  background:rgba(217,164,65,.17);
 }
 .jump .ticket:hover::before,.jump .ticket:focus-visible::before{
-  opacity:1;transform:translate3d(0,2%,0) scale(1.08);
+  opacity:1;transform:scale(1.34);
+  will-change:opacity,transform;
 }
-.jump .ticket:hover,.jump .ticket:focus-visible,
-.jump .ticket:hover::before,.jump .ticket:focus-visible::before{will-change:transform,opacity}
 /* An SVG, not the character U+2197: iOS and Android render that arrow
    from a colour emoji font, which put a blue emoji in the middle of
-   this button. Drawn here it inherits currentColor and turns dark with
-   the label on hover. */
+   this button. Drawn here it inherits currentColor. */
 .jump .ticket .out{width:.74em;height:.74em;flex:none;overflow:visible}
 /* named for a screen reader, silent for everyone else */
 .sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
@@ -608,22 +612,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* the landing's words move off the photograph's centre and sit under
      it, over the black, where nothing has to be read through a picture */
   #amor{padding-bottom:calc(var(--rail) + 1rem)}
-  /* The landing photograph reaches all four edges here rather than
-     being letterboxed. A phone is much narrower than a 2:3 frame is
-     tall, so shown whole it left a band of black above her and another
-     below — and the one above read as the picture starting late. At
-     this shape the crop is taken off the SIDES, not the top: 720x1080
-     into 375x704 scales by height, so her full height is on screen and
-     what goes is a little of the dark room either side of her. */
-  #amor .shot img{
-    width:100%;height:100%;
-    max-width:none;max-height:none;
-    object-fit:cover;
-    /* Off centre, and towards her hands: the crop is taken from the
-       sides, and centred it took the fingertips off the right edge —
-       which is where the whole line of the pose is going. */
-    object-position:72% 30%;
-  }
   .title{font-size:clamp(1.9rem,10.5vw,3.2rem);letter-spacing:.13em;text-indent:.13em}
   .subtitle{font-size:.7rem;letter-spacing:.22em;text-indent:.22em}
   .when{font-size:.68rem}
@@ -703,7 +691,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      taken off the bottom: the top of the frame is pinned */
   .split .beside{align-items:flex-start}
 
-  .section-title{font-size:clamp(1.3rem,7vw,1.9rem);letter-spacing:.18em;text-indent:.18em;margin-bottom:clamp(1rem,3svh,1.8rem)}
   .roster li{font-size:.68rem;letter-spacing:.16em;text-indent:.16em;padding:clamp(.26rem,.95svh,.48rem) 0}
 
   /* one column: her name, then the company, then the room — the two
@@ -715,10 +702,18 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      this shape moves her clear of them. */
   #artists{
     grid-template-columns:1fr;
-    grid-template-rows:auto auto auto auto;
-    align-content:start;
+    grid-template-rows:auto auto auto;
+    /* The names sit on the LOWER part of the photograph, not the upper.
+       That is where the frame is darkest — the floor and the shadow
+       under her — so the type has the least to compete with, and it
+       leaves the lit half of the picture, the cloth and the candle,
+       clear above them. */
+    align-content:end;
     gap:clamp(.4rem,1.4svh,1rem);
-    padding:clamp(1.6rem,4.5svh,2.4rem) 0 calc(var(--rail) + .4rem);
+    /* Room under the socials for the link rail AND its feather, now
+       that the names are pushed down onto it rather than ending well
+       above it. */
+    padding:clamp(1.6rem,4.5svh,2.4rem) 0 calc(var(--rail) + 1.4rem);
     --focus:32% 34%;
   }
   /* display:contents dissolves the left column into the grid, so its
@@ -732,15 +727,14 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      their own place in the stack, or the photograph behind them (which
      is now a real, positioned layer rather than a grid cell) covers
      them. .who-company is a .says and already has it. */
-  #artists .section-title,#artists .lead-name,
+  #artists .lead-name,
   #artists .reach,#artists .who-company{
     grid-column:1;text-align:left;position:relative;z-index:2;
   }
-  #artists .section-title,#artists .lead-name,#artists .reach{padding-inline:var(--inset)}
-  #artists .section-title{grid-row:1}
-  #artists .lead-name{grid-row:2}
-  #artists .who-company{grid-row:3}
-  #artists .reach{grid-row:4}
+  #artists .lead-name,#artists .reach{padding-inline:var(--inset)}
+  #artists .lead-name{grid-row:1}
+  #artists .who-company{grid-row:2}
+  #artists .reach{grid-row:3}
   /* one property, no specificity contest */
   #artists{--reach-align:flex-start}
   /* grid-column too, not just the row: left at the desktop value it
@@ -834,7 +828,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* back out of the stacked arrangement the narrow block sets up */
   #artists .who-lead{display:block;grid-column:1;grid-row:1;text-align:right}
   #artists .who-company{grid-column:3;grid-row:1}
-  #artists .section-title,#artists .lead-name,
+  #artists .lead-name,
   #artists .reach,#artists .who-company{max-width:none;padding-inline:0}
   #artists .beside{
     position:static;grid-column:2;grid-row:1;
@@ -849,7 +843,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   }
   #artists .beside::before{display:none}
 
-  .section-title{font-size:clamp(.95rem,3.4vw,1.5rem);margin-bottom:clamp(.4rem,2svh,.8rem)}
   .lead-name{font-size:clamp(.68rem,2vw,.9rem);padding-bottom:.45rem}
   .lead-name::after{right:0;left:auto;width:min(9rem,100%)}
   .company-label{margin-bottom:.35rem}
@@ -929,7 +922,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
          order, gets the words before the photograph. On a wide screen
          grid-column puts the figure between them. -->
     <div class="says who-lead">
-      <h2 class="section-title" data-reveal>Artists</h2>
+      <!-- Named for a screen reader and for the document outline, and
+           shown to nobody: the roster reads as what it is without a
+           label over it, and the label was the only thing on the
+           section competing with her name. -->
+      <h2 class="sr">Artists</h2>
       <p class="lead-name" data-reveal style="--d:.12s">Vallerie O</p>
       <p class="reach" data-reveal style="--d:.7s">
         <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a><!-- EDIT -->
