@@ -219,6 +219,40 @@ of the button. Any glyph in U+2190–21FF, U+2600–27BF or U+2B00–2BFF is
 liable to the same thing. Draw it, or pick a character with no emoji
 presentation.
 
+## The type
+
+**Cormorant Garamond, one family, three cuts** — roman 300 for the
+mark, roman 400 for every line of text, italic 300 for exactly one
+thing: her name. Self-hosted in `fonts/`, latin and latin-ext.
+
+The choice is about the work rather than about taste. Cormorant is a
+high-contrast old-style face: the strokes swell and thin the way a pen
+does, so every letter has a direction and a speed in it. A geometric
+sans is drawn with a compass and stands still. The brief was movement,
+lightness and fluidity, and that is what separates the two.
+
+- **Every size is larger than the sans it replaced, by 10-15%.**
+  Cormorant's x-height is small for its em — which is where its air
+  comes from — so matched by nominal size it reads a good deal smaller.
+  Do not "restore" those numbers to the old ones.
+- **The narrow title is 9.4vw, and that number is measured.** At the
+  sans's old 10.5vw, "AMOR FATI" in Cormorant needed 376px of the 330px
+  a 375px screen leaves inside the inset, and broke onto two lines.
+  Checked from 320px up: one line at every width, with 25px to spare at
+  the narrowest.
+- **`latin-ext` is not optional.** The Ć in Amina Avdić's name is
+  U+0106 and lives only in that subset; each file was checked for it
+  with fontTools before being committed.
+- **The italic is rationed.** It is on `.lead-name` and nowhere else,
+  so the lean reads as a person rather than as a style.
+- **REVERTING.** The previous pairing was Alegreya Sans SC 500 for
+  `--display` and Alegreya Sans 300 for `--micro`, self-hosted the same
+  way. Alegreya Sans SC is a small-caps *family* rather than a font
+  with an `smcp` feature — its lowercase glyphs *are* the small
+  capitals — so the title was written "Amor Fati" and given no
+  `text-transform`. `git log --oneline -- fonts/` finds the commit that
+  carried those files.
+
 ## Notes
 
 - The title waits for the display face before it rises, capped at 1.2s.
