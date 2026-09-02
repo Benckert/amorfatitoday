@@ -1162,5 +1162,64 @@ img{display:block;max-width:100%}
 })();
 </script>
 
+<!-- ─────────────────────────────────────────────────────────────────
+     TEMPORARY. Add ?debug to the URL and this prints, on the device
+     itself, every number this page depends on. It is the only way to
+     see what a phone is actually doing: a desktop browser has no
+     dynamic toolbar and cannot reproduce any of it. Delete this block
+     once the layout is settled.
+     ───────────────────────────────────────────────────────────────── -->
+<script>
+(function(){
+  if (!/[?&]debug/.test(location.search)) return;
+  var BUILD = "2026-09-01-h";        // bump when publishing, to prove what is live
+
+  var box = document.createElement("pre");
+  box.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;margin:0;padding:6px 8px;" +
+    "background:rgba(0,0,0,.86);color:#7CFC9A;font:11px/1.35 ui-monospace,Menlo,monospace;" +
+    "white-space:pre;pointer-events:none;border-bottom:1px solid #2a2a2a";
+  document.body.appendChild(box);
+
+  function unit(u){                   // what does the browser say this unit is?
+    var d = document.createElement("div");
+    d.style.cssText = "position:absolute;left:-9999px;top:0;height:100" + u + ";width:1px";
+    document.body.appendChild(d);
+    var h = d.getBoundingClientRect().height;
+    d.parentNode.removeChild(d);
+    return Math.round(h);
+  }
+
+  function draw(){
+    var vp = window.visualViewport;
+    var panel = document.querySelector(".panel");
+    var art = document.getElementById("artists");
+    var ph = panel ? Math.round(panel.getBoundingClientRect().height) : 0;
+    var doc = document.documentElement.scrollHeight;
+    var maxS = doc - window.innerHeight;
+    var screenVar = getComputedStyle(document.documentElement).getPropertyValue("--screen").trim() || "(unset)";
+    box.textContent =
+      "build " + BUILD + "   js OK\n" +
+      "innerHeight " + window.innerHeight +
+      "   visualVP " + (vp ? Math.round(vp.height) : "n/a") +
+      "   scale " + (vp && vp.scale ? vp.scale.toFixed(2) : "-") + "\n" +
+      "svh " + unit("svh") + "   lvh " + unit("lvh") + "   dvh " + unit("dvh") +
+      "   --screen " + screenVar + "\n" +
+      "panel " + ph + "   doc " + doc + "   maxScroll " + maxS +
+      "   artistsTop " + (art ? art.offsetTop : "-") + "\n" +
+      "scrollY " + Math.round(window.scrollY) +
+      "   SHORT BY " + (ph - window.innerHeight) +
+      "   reachable " + (art ? (maxS >= art.offsetTop) : "-");
+  }
+  draw();
+  addEventListener("scroll", draw, { passive:true });
+  addEventListener("resize", draw, { passive:true });
+  if (window.visualViewport) {
+    visualViewport.addEventListener("resize", draw, { passive:true });
+    visualViewport.addEventListener("scroll", draw, { passive:true });
+  }
+  setInterval(draw, 400);
+})();
+</script>
+
 </body>
 </html>
