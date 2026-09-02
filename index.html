@@ -247,10 +247,7 @@ html.js .deck{
   touch-action:pinch-zoom;
   will-change:transform;
 }
-/* .38s, not .62s. A section change is a cut with a bit of travel in
-   it, not a journey — and at .62s a second gesture had to wait out the
-   first, which is most of what read as lag. */
-html.js .deck.glide{transition:transform .38s var(--ease)}
+html.js .deck.glide{transition:transform .62s var(--ease)}
 html.js.zoomed .deck{touch-action:auto}
 
 ::selection{background:rgba(217,164,65,.35);color:var(--cream)}
@@ -429,7 +426,22 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   gap:clamp(1rem,2.6vw,2.6rem);
   padding:0 var(--gutter);
 }
+/* Baseline alignment, not centring, and padding on the COLUMNS rather
+   than on the section. Her name and the company label are the first
+   line of each side, and align-self:baseline puts those two first
+   baselines on one line however different their sizes are — which
+   centring cannot do, since it works on boxes and these two boxes are
+   nothing like the same height. The padding is on the columns because
+   the section has none: that is what lets the photograph between them
+   stand the full height of the screen, and so come out the same size
+   as the one on the landing. Equal padding on both moves the pair down
+   together without disturbing the alignment. */
 #artists .who-lead{grid-column:1;grid-row:1;text-align:right}
+#artists .who-lead,#artists .who-company{
+  align-self:baseline;
+  padding-top:clamp(2rem,21svh,13rem);
+  padding-bottom:var(--rail);
+}
 #artists .beside{
   grid-column:2;grid-row:1;
   position:static;width:auto;
@@ -805,7 +817,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     grid-column:1;text-align:left;position:relative;z-index:2;
   }
   #artists .lead-name{padding-inline:var(--inset);grid-row:1}
-  #artists .who-company{grid-row:2}
+  /* Back out of the desktop's baseline pairing. There are no two
+     columns to align here — the name sits directly above the company —
+     and the padding that moves that pair down the screen on a wide
+     layout put 147px of nothing between the two lines on a phone. */
+  #artists .who-company{grid-row:2;align-self:auto;padding-top:0;padding-bottom:0}
   /* grid-column too, not just the row: left at the desktop value it
      lands in an implicit second column sized to its own content, which
      is how a full-bleed figure came out 146px wide */
@@ -850,7 +866,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
         rgba(0,0,0,.06) 66%,rgba(0,0,0,.44) 100%);
   }
   .lead-name{font-size:1.3rem}
+  /* The rule goes here, the room it took does not: the padding stays
+     on the span, so the gap between her name and the company is the
+     one the horizon used to sit in. */
   .lead-name span{padding-bottom:.6rem}
+  .lead-name span::after{display:none}
   .company-label{margin-bottom:clamp(.4rem,1.4svh,.8rem)}
 
   /* the links wrap out to the screen edges here, so the toggle cannot
@@ -995,7 +1015,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     </div>
 
     <div class="says who-company">
-      <p class="company-label" data-reveal style="--d:.16s">and company</p>
+      <p class="company-label" data-reveal style="--d:.16s">with company</p>
       <ul class="roster">
         <li data-reveal style="--d:.22s">Yazz Meavis</li>
         <li data-reveal style="--d:.27s">Amina Avdić</li>
@@ -1204,10 +1224,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
       try { history.replaceState(null, "", "#" + ids[i]); } catch (e) {}
     }
     light(i);
+    lastStep = Date.now();     /* every input's cooldown reads this one */
     if (still) { gliding = false; return; }
     gliding = true;
     clearTimeout(settle);
-    settle = setTimeout(function(){ gliding = false; }, 460);
+    settle = setTimeout(function(){ gliding = false; }, 700);
   }
   deck.addEventListener("transitionend", function(e){
     if (e.propertyName === "transform" && e.target === deck) {
@@ -1237,14 +1258,31 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   }
 
   /* ── the wheel, and the long tail a trackpad leaves behind it ──
-     A trackpad flick keeps sending deltas for the better part of a
-     second after the fingers have lifted, so a step disarms the wheel
-     and something has to arm it again. There are four ways, and there
-     used to be only the first — which left the page stuck on one
-     section for anyone who scrolls without ever pausing, since the
-     stream never went quiet and nothing else could clear the latch. */
-  var armed = true, spin = 0, quiet, lastAbs = 0, lastStep = 0;
-  function rearm(){ armed = true; spin = 0; lastAbs = 0; }
+     A step disarms the wheel, so one flick is one section however hard
+     it is thrown. Something then has to arm it again, and getting that
+     wrong goes wrong in both directions: too strict and the page locks
+     for anyone who scrolls without pausing, too loose and one big flick
+     counts as two.
+
+     There is exactly one way back, and that is the point: ONE SECTION
+     PER GESTURE, however hard or long the gesture is. The wheel arms
+     again when the stream has been quiet for 220ms — when the flick,
+     and the momentum behind it, are actually over. Nothing else counts
+     as a new intention, because nothing else reliably is one: a
+     momentum tail decays on average but not monotonically, so reading
+     a rise in the deltas as a second push made every hard throw into
+     two turns, and reading a large delta long after the step made
+     every long one into two.
+
+     Scrolling on without ever pausing therefore turns one page and
+     waits, which is the behaviour asked for rather than a lock. The
+     one safety valve is a pointer move: it ends whatever gesture was
+     in flight, and a two-finger scroll does not move the cursor, so it
+     cannot fire mid-flick. */
+  var armed = true, spin = 0, quiet;
+  /* declared here, assigned in show(): every input's cooldown reads it */
+  var lastStep = 0;
+  function rearm(){ armed = true; spin = 0; }
   function since(){ return Date.now() - lastStep; }
 
   window.addEventListener("wheel", function(e){
@@ -1252,36 +1290,22 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     if (e.cancelable) e.preventDefault();
     var dy = e.deltaY;
     if (Math.abs(e.deltaX) > Math.abs(dy)) return;
-    var abs = Math.abs(dy);
 
-    /* (1) the burst ended: nothing for a moment */
     clearTimeout(quiet);
-    quiet = setTimeout(rearm, 160);
-
-    /* (2) the stream is speeding up again. A momentum tail only ever
-       decays, so a rise is the reader pushing a second time. */
-    if (!armed && abs > lastAbs + 2 && since() > 380) rearm();
-    /* (3) still pushing hard well after the step. A tail this far out
-       is small; a delta this big is a hand, not a coast. */
-    else if (!armed && since() > 700 && abs >= 24) rearm();
-    lastAbs = abs;
+    quiet = setTimeout(rearm, 220);          /* the gesture is over */
 
     if (!armed) return;
     spin += dy;
     if (Math.abs(spin) < 24) return;
     armed = false;
     land();
-    lastStep = Date.now();
     var dir = spin > 0 ? 1 : -1;
     spin = 0;
     step(dir);
   }, { passive: false });
 
-  /* (4) the pointer moved, so whatever gesture was in flight is over.
-     This is also the workaround people find on their own when a wheel
-     latch sticks — worth honouring rather than leaving them to it. */
   window.addEventListener("pointermove", function(){
-    if (!armed && since() > 380) rearm();
+    if (!armed && since() > 500) rearm();
   }, { passive: true });
 
   /* ── the finger ──

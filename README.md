@@ -280,6 +280,17 @@ lightness and fluidity, and that is what separates the two.
   outline still get it, but on screen it was the only thing competing
   with her name. There are no social links on the section either.
 
+- **Her name and the company label share a first baseline** on a wide
+  screen: `align-self:baseline` on both text columns, with the padding
+  that positions the pair vertically on the COLUMNS rather than on the
+  section — the section has none, and that is what lets the photograph
+  between them stand the full height of the screen. Centring cannot do
+  this: it aligns boxes, and a two-line name and a ten-line roster are
+  nothing like the same height. The narrow block backs the whole
+  arrangement out (`align-self:auto`, no padding), because there are no
+  two columns to align there and the wide layout's padding put 147px of
+  nothing between the two lines on a phone.
+
 - **The horizon under her name is drawn on a `<span>`, and that span
   is the whole fix.** A paragraph fills its column, so a rule anchored
   to one edge of it with a fixed width lands wherever the column
@@ -290,7 +301,9 @@ lightness and fluidity, and that is what separates the two.
   `left:0;right:0` instead of a width. Now measured 0 and 0 at
   1440x900, 375x704 and 844x390. The overhang that remains is exactly
   symmetrical: `letter-spacing` adds its .08em after the last letter
-  and `text-indent` puts the same .08em back before the first.
+  and `text-indent` puts the same .08em back before the first. On a
+  phone the rule itself is `display:none` but the span keeps its
+  padding, so the gap it used to sit in stays.
   Two gradients carry it — across, so cream type reads over the left
   and the candle is still a photograph by the middle; down, a little at
   the head and more at the foot where the fixed links are. Neither
@@ -428,21 +441,33 @@ lightness and fluidity, and that is what separates the two.
   full gold, the tint roughly doubles and the glow behind grows by
   half; the label stays cream. Filled solid, the one warm thing on the
   page became a slab, which is not what the rest of it is made of.
-- **The wheel can be re-armed four ways, and three of them are there
-  because the fourth is not enough.** A step disarms the wheel so that
-  one trackpad flick is one section rather than a walk through the page
-  — a flick keeps sending deltas for the better part of a second after
-  the fingers have lifted. Re-arming used to depend only on the stream
-  going quiet for 160ms, which left the page stuck on one section for
-  anyone who scrolls without ever pausing: the stream never went quiet,
-  so nothing ever cleared the latch, and the workaround people found
-  was to move the mouse. The other three: the stream speeding up again
-  (a momentum tail only decays, so a rise is a second push), a delta
-  still 24 or larger more than 700ms after the step (that is a hand,
-  not a coast), and any pointer movement 380ms after the step — the
-  workaround, honoured. Synthesized wheel events do not reproduce the
-  original lock, so this was reasoned from the handler rather than
-  measured.
+- **One section per gesture, however hard or long the gesture is.**
+  A step disarms the wheel; it arms again when the stream has been
+  quiet for 220ms — when the flick, and the momentum behind it, are
+  actually over. Nothing else counts as a new intention, because
+  nothing else reliably is one. Two rules that tried were both wrong
+  in the same direction: reading a rise in the deltas as a second push
+  (a momentum tail decays on average but not monotonically, so a hard
+  throw produced rises all the way down) and reading a large delta long
+  after the step (a long throw is still one throw). Each turned a
+  single hard flick into two page turns.
+
+  Scrolling on without pausing therefore turns one page and waits,
+  which is the asked-for behaviour rather than a lock. The one safety
+  valve is a pointer move 500ms after a step: it ends whatever gesture
+  was in flight, and a two-finger scroll does not move the cursor, so
+  it cannot fire mid-flick.
+
+  **Test it with a modelled momentum tail, not with `mouse.wheel`.**
+  CDP round trips leave 100ms-plus gaps between synthesized events,
+  which a trackpad never has — a gap past the quiet window re-arms
+  mid-gesture and the test double-steps for reasons the browser never
+  would. `scratchpad/trackpad.js` dispatches WheelEvents on the page's
+  own clock: a six-event push then a 0.955-per-16ms decay, which is
+  close enough to macOS to reproduce the real double-step and to prove
+  it gone. Cases: one flick at peak 40, 140 and 400 all turn exactly
+  one page; two flicks 420ms apart turn two; 3.5s of unbroken
+  scrolling turns one.
 
 - **The photographs are all the same size, and the rail is that size
   too.** All three files are 2:3, and on a wide screen each is limited
@@ -470,10 +495,10 @@ lightness and fluidity, and that is what separates the two.
   and the new gesture starts from a section rather than from halfway
   between two. Before this, input during a glide was thrown away: two
   quick swipes moved one section, and the second only registered once
-  everything had come to rest. The glide itself is .38s, down from
-  .62s. Held arrow keys get a 180ms cooldown so auto-repeat does not
-  fly through the page; nothing else needs one, since one gesture is
-  one section by construction.
+  everything had come to rest. The glide stays at .62s — the interrupt
+  is what fixed the lag, not a shorter animation. Held arrow keys get a
+  180ms cooldown so auto-repeat does not fly through the page; nothing
+  else needs one, since one gesture is one section by construction.
 - The lock is absolute — a gesture moves exactly one section, never a
   fraction and never two — which is honest here because every section
   really is exactly one screen, on every size checked including a phone
