@@ -131,6 +131,12 @@
   --display:"Alegreya Sans SC","Optima","Gill Sans",Helvetica,Arial,sans-serif;
   --micro:"Alegreya Sans","Optima","Helvetica Neue",Arial,sans-serif;
 
+  /* Exactly the height of the browser's retractable toolbar: the large
+     viewport minus the small one. 40px on an iPhone 13 mini, 0 wherever
+     there is no such toolbar. Invalid on a browser without the units,
+     in which case var() falls back to 0px. */
+  --toolbar:calc(100lvh - 100svh);
+
   --gutter:clamp(1.25rem,5vw,5rem);
   /* On :root, not on .panel: the link rail is fixed to the viewport and
      lives outside every panel, and a var() that resolves to nothing
@@ -172,6 +178,31 @@ body{
 a{color:inherit;text-decoration:none}
 :focus-visible{outline:1px solid var(--gold);outline-offset:5px;border-radius:2px}
 img{display:block;max-width:100%}
+
+/* The last section carries the toolbar's height as extra slack, and it
+   is what lets snapping work on a phone.
+
+   A snap point is only usable if the page can scroll far enough to
+   reach it, and the furthest any page can scroll is (document -
+   viewport). At rest that works out exactly: the sections track the
+   screen, so the document is three screens and the last snap point sits
+   precisely at the end of the scroll. But a toolbar retracts DURING a
+   gesture — for a moment the sections are still the old height while
+   the screen is already the new one, the document is short by the
+   toolbar, and the last snap point is out of reach. Release in that
+   window and snapping falls back to the previous section, which is the
+   page travelling back up under your finger.
+
+   One toolbar's height of slack on the last section covers exactly that
+   window. Measured on the reported device: screen 704 with sections
+   momentarily at 664 gives a document of 1992 and a furthest scroll of
+   1288, against a snap point at 1328 — 40px out of reach. With the
+   slack the document is 2032 and the furthest scroll is 1328, which is
+   the snap point. It costs nothing anywhere without a retractable
+   toolbar, where it computes to zero. */
+main > .panel:last-of-type{
+  height:calc(var(--screen,100dvh) + var(--toolbar,0px));
+}
 
 /* ─────────────────────────────  sections  ───────────────────────────
    Each one is exactly one screen and never more, so the page is four
@@ -763,35 +794,6 @@ img{display:block;max-width:100%}
   .reach{margin-top:.5rem}
 }
 
-/* NO SNAPPING ON A TOUCH DEVICE — deliberately, after a long run of
-   attempts to make it behave.
-
-   A phone browser changes its own viewport height mid-gesture: the
-   toolbar retracts as you drag, which resizes every full-height panel,
-   moves the document's height and moves the snap points with it. On
-   release the browser snaps to where the target is NOW, not where it
-   was when you let go, and the page travels back up under your finger.
-   Sizing panels in svh instead of dvh does not avoid it, it only
-   changes the failure: the panels are then shorter than the screen, the
-   document is short by that amount per section, and the last section's
-   snap point sits past the end of the scroll — unreachable, so release
-   falls back to the previous one. Measured at 375x812: max scroll 1075
-   against a snap point at 1258.
-
-   Everything measurable was tried: proximity, scroll-snap-stop, a
-   toolbar-sized spacer, svh, lvh, dvh, and moving the scroll into a
-   nested container. Each traded one failure for another. A page that
-   fights the reader is worse than one that simply scrolls, so on touch
-   it simply scrolls. Sections are still exactly one screen, so it still
-   reads a section at a time — the browser just is not steering.
-
-   Pointer-based, not width-based: a narrow desktop window has no
-   moving toolbar and keeps the lock, where it has always worked. */
-@media (hover:none) and (pointer:coarse){
-  html{scroll-snap-type:none}
-  .panel{scroll-snap-align:none}
-}
-
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .js [data-reveal],.js .title .ch{opacity:1!important;transform:none!important;transition:none!important}
@@ -1172,7 +1174,7 @@ img{display:block;max-width:100%}
 <script>
 (function(){
   if (!/[?&]debug/.test(location.search)) return;
-  var BUILD = "2026-09-01-h";        // bump when publishing, to prove what is live
+  var BUILD = "2026-09-01-i";        // bump when publishing, to prove what is live
 
   var box = document.createElement("pre");
   box.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;margin:0;padding:6px 8px;" +

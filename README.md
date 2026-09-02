@@ -250,23 +250,23 @@ presentation.
   itself out at its natural 716x1074. Landscape phones are wide, so
   three columns fit them; everything is simply set smaller. Checked at
   844x390, 932x430 and 780x360.
-- **Scroll snapping is off on touch devices, on purpose.** A phone
-  browser changes its own viewport height mid-gesture: the toolbar
-  retracts as you drag, which resizes every full-height panel and moves
-  the snap points with it, so on release the page snaps to where the
-  target is *now* and travels back up under your finger. Sizing panels
-  in `svh` rather than `dvh` does not avoid this, it only changes the
-  failure — panels are then shorter than the screen and the last
-  section's snap point sits past the end of the scroll, measured at
-  375x812 as max scroll 1075 against a snap point at 1258, so release
-  falls back to the previous section. Everything measurable was tried:
-  `proximity`, `scroll-snap-stop`, a toolbar-sized spacer, `svh`,
-  `lvh`, `dvh`, and moving the scroll into a nested container. Each
-  traded one failure for another. Sections are still exactly one screen
-  so the page still reads a section at a time; the browser simply is not
-  steering. Desktop keeps the lock — no moving toolbar there, and it has
-  always worked.
-- **A section must never be shorter than the screen**, or the page runs
+- **The last section carries one toolbar's height of extra slack, and
+  it is what lets snapping work on a phone.** A snap point is only
+  usable if the page can scroll far enough to reach it, and the furthest
+  any page can scroll is (document - viewport). At rest that is exact:
+  the sections track the screen, so the document is three screens and
+  the last snap point sits precisely at the end of the scroll. But a
+  toolbar retracts *during* a gesture — for a moment the sections are
+  still the old height while the screen is already the new one, the
+  document is short by the toolbar, and the last snap point is out of
+  reach. Release in that window and snapping falls back to the previous
+  section: the page travelling back up under your finger, which is what
+  this bug always was. `--toolbar` is `calc(100lvh - 100svh)`, exactly
+  that height — 40px on an iPhone 13 mini, 0 where there is no
+  retractable toolbar — and the last section is that much taller.
+  Measured: screen 704 with sections momentarily at 664 gives a furthest
+  scroll of 1288 against a snap point at 1328, 40px out of reach; with
+  the slack it is 1328 against 1328.- **A section must never be shorter than the screen**, or the page runs
   out of scroll before the last one reaches the top and a sliver of the
   section before it stays showing. The rule is
   `height:max(100lvh, var(--screen,0px))`, and it is belt and braces on
