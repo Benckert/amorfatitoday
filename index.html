@@ -384,14 +384,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   padding:clamp(2rem,5svh,4rem) var(--gutter) var(--rail);
 }
 #artists .who-lead{grid-column:1;grid-row:1;text-align:right}
-/* .reach is a flexbox, so text-align does not reach it — and this is
-   driven by a custom property rather than by a second, more specific
-   selector further down. Overriding an id-plus-two-class rule from the
-   narrow-screen block needs a selector at least as specific, which is
-   an arms race that has already been lost four times in this file. A
-   property is set once and read once. */
-#artists{--reach-align:flex-end}
-#artists .who-lead .reach{justify-content:var(--reach-align)}
 #artists .beside{
   grid-column:2;grid-row:1;
   position:static;width:auto;
@@ -448,15 +440,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 /* ────────────────────────  IV. attend  (tickets)  ──────────────────── */
 
 
-.reach{
-  margin:clamp(1.2rem,4svh,2.2rem) 0 0;
-  display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;
-  font-family:var(--micro);font-size:.6rem;font-weight:300;
-  letter-spacing:.22em;text-transform:uppercase;color:var(--mist);
-}
-.reach a{border-bottom:1px solid rgba(246,227,189,.22);padding-bottom:.15rem;transition:color .45s var(--ease),border-color .45s var(--ease)}
-.reach a:hover{color:var(--cream);border-bottom-color:rgba(246,227,189,.6)}
-
 /* ────────────────  the section links, on every screen  ───────────────
    The same row, in the same place, in all four sections — centred at
    the foot, underlined, divided by a rule, exactly as on the live
@@ -502,27 +485,19 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   position:relative;isolation:isolate;
   display:inline-flex;align-items:center;gap:.55em;
   margin-left:clamp(.8rem,3vw,2rem);
-  padding:.78em 1.9em;
-  border:1px solid rgba(217,164,65,.62);
+  padding:.72em 1.85em;
+  border:2px solid rgba(217,164,65,.62);
   border-radius:999px;
   background:rgba(217,164,65,.08);
   color:var(--cream);
   letter-spacing:.2em;
-  /* transform is deliberately NOT in this list, and the button
-     deliberately does not move on hover. A transform — even a 2px lift —
-     hands the element its own compositor layer, and a promoted layer is
-     rasterised once and then transformed, which on WebKit drops the
-     antialiasing along a border-radius: the pill's edge comes back as
-     visible stair-steps. Nothing here promotes the pill any more; only
-     the glow behind it is composited, and a radial gradient has no edge
-     to go jagged. */
   transition:color .45s var(--ease),border-color .45s var(--ease),
-             background-color .45s var(--ease);
+             background-color .45s var(--ease),transform .45s var(--ease);
 }
-/* The glow is the whole hover. It sits behind the pill on its own
+/* The glow is most of the hover. It sits behind the pill on its own
    layer, so growing it costs one composited frame and never repaints
-   the button — and the button stays a lit outline rather than becoming
-   a solid slab, which is what the rest of the page is made of. */
+   the button — and the button lights rather than filling in, so the
+   one warm thing on the page stays an outline instead of a slab. */
 .jump .ticket::before{
   content:"";position:absolute;z-index:-1;
   left:-16%;right:-16%;top:-90%;bottom:-110%;
@@ -531,14 +506,23 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   opacity:.5;transform:scale(.88);
   transition:opacity .6s var(--ease),transform .6s var(--ease);
 }
+/* translateY, NOT translate3d, and no will-change on the pill — and
+   the difference is the jagged border. A 3d transform (or a declared
+   will-change) promotes the element to its own compositor layer for
+   good, and a promoted layer is rasterised once and then transformed,
+   which on WebKit drops the antialiasing along a border-radius: the
+   edge comes back as stair-steps. A plain 2d translate is composited
+   only while it animates, and at 2px there is nothing here that needs
+   its own layer. If the edge ever looks jagged again this lift is the
+   first thing to take out — the glow alone carried the hover before. */
 .jump .ticket:hover,.jump .ticket:focus-visible{
   color:var(--cream);
   border-color:var(--gold);
   background:rgba(217,164,65,.17);
+  transform:translateY(-2px);
 }
 .jump .ticket:hover::before,.jump .ticket:focus-visible::before{
   opacity:1;transform:scale(1.34);
-  will-change:opacity,transform;
 }
 /* An SVG, not the character U+2197: iOS and Android render that arrow
    from a colour emoji font, which put a blue emoji in the middle of
@@ -612,6 +596,14 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* the landing's words move off the photograph's centre and sit under
      it, over the black, where nothing has to be read through a picture */
   #amor{padding-bottom:calc(var(--rail) + 1rem)}
+  /* The photograph goes to the TOP edge rather than being centred, and
+     nothing is cropped to get it there. A 2:3 frame on a screen this
+     narrow is limited by width, so it is shorter than the screen and
+     the difference has to sit somewhere; centred, it was split in two
+     and the half above her read as the picture starting late. Pushed
+     up, all of it falls at the foot, under the words, where the frame
+     had already gone to black. */
+  #amor .shot{align-items:flex-start}
   .title{font-size:clamp(1.9rem,10.5vw,3.2rem);letter-spacing:.13em;text-indent:.13em}
   .subtitle{font-size:.7rem;letter-spacing:.22em;text-indent:.22em}
   .when{font-size:.68rem}
@@ -702,7 +694,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      this shape moves her clear of them. */
   #artists{
     grid-template-columns:1fr;
-    grid-template-rows:auto auto auto;
+    grid-template-rows:auto auto;
     /* The names sit on the LOWER part of the photograph, not the upper.
        That is where the frame is darkest — the floor and the shadow
        under her — so the type has the least to compete with, and it
@@ -727,16 +719,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      their own place in the stack, or the photograph behind them (which
      is now a real, positioned layer rather than a grid cell) covers
      them. .who-company is a .says and already has it. */
-  #artists .lead-name,
-  #artists .reach,#artists .who-company{
+  #artists .lead-name,#artists .who-company{
     grid-column:1;text-align:left;position:relative;z-index:2;
   }
-  #artists .lead-name,#artists .reach{padding-inline:var(--inset)}
-  #artists .lead-name{grid-row:1}
+  #artists .lead-name{padding-inline:var(--inset);grid-row:1}
   #artists .who-company{grid-row:2}
-  #artists .reach{grid-row:3}
-  /* one property, no specificity contest */
-  #artists{--reach-align:flex-start}
   /* grid-column too, not just the row: left at the desktop value it
      lands in an implicit second column sized to its own content, which
      is how a full-bleed figure came out 146px wide */
@@ -781,15 +768,14 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
         rgba(0,0,0,.06) 66%,rgba(0,0,0,.44) 100%);
   }
   .lead-name{font-size:.92rem;padding-bottom:.6rem}
-  .lead-name::after{right:auto;left:0;width:min(11rem,100%)}
+  /* left:var(--inset), not left:0. .lead-name carries the section's
+     inset as its own padding here, so the name begins 1.4rem in while
+     the rule began at the very edge of the box — the horizon started a
+     clear 22px to the left of the V. Both now start on the same line,
+     and it runs out to the right the way the desktop one runs out to
+     the left. */
+  .lead-name::after{right:auto;left:var(--inset);width:min(10rem,100%)}
   .company-label{margin-bottom:clamp(.4rem,1.4svh,.8rem)}
-  .who-lead .reach{
-    margin-top:clamp(.5rem,1.7svh,1rem);
-    gap:1.4rem;
-  }
-  /* a real target to hit with a thumb, without the text growing */
-  .reach a{padding:.55rem 0;border-bottom-width:1px}
-
 
   /* the links wrap out to the screen edges here, so the toggle cannot
      keep the bottom-left corner */
@@ -823,13 +809,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     align-content:center;align-items:center;
     gap:clamp(.5rem,1.8vw,1.4rem);
     padding:clamp(.5rem,3svh,1rem) var(--gutter) calc(var(--rail) + .3rem);
-    --reach-align:flex-end;
   }
   /* back out of the stacked arrangement the narrow block sets up */
   #artists .who-lead{display:block;grid-column:1;grid-row:1;text-align:right}
   #artists .who-company{grid-column:3;grid-row:1}
-  #artists .lead-name,
-  #artists .reach,#artists .who-company{max-width:none;padding-inline:0}
+  #artists .lead-name,#artists .who-company{max-width:none;padding-inline:0}
   #artists .beside{
     position:static;grid-column:2;grid-row:1;
     align-self:stretch;height:100%;width:auto;min-height:0;
@@ -847,7 +831,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   .lead-name::after{right:0;left:auto;width:min(9rem,100%)}
   .company-label{margin-bottom:.35rem}
   .roster li{font-size:clamp(.52rem,1.5vw,.66rem);padding:.12rem 0;letter-spacing:.14em;text-indent:.14em}
-  .reach{margin-top:.5rem}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -928,10 +911,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
            section competing with her name. -->
       <h2 class="sr">Artists</h2>
       <p class="lead-name" data-reveal style="--d:.12s">Vallerie O</p>
-      <p class="reach" data-reveal style="--d:.7s">
-        <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a><!-- EDIT -->
-        <a href="mailto:hello@example.com">Email</a><!-- EDIT -->
-      </p>
     </div>
 
     <div class="says who-company">
@@ -1162,26 +1141,50 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
   /* ── the wheel, and the long tail a trackpad leaves behind it ──
      A trackpad flick keeps sending deltas for the better part of a
-     second after the fingers have lifted. Counting those as new
-     intentions walks the reader through the whole page from one
-     gesture, so a step disarms the wheel until the deltas have been
-     quiet for a moment — the burst is one movement, however long it
-     rumbles on. */
-  var armed = true, spin = 0, quiet;
+     second after the fingers have lifted, so a step disarms the wheel
+     and something has to arm it again. There are four ways, and there
+     used to be only the first — which left the page stuck on one
+     section for anyone who scrolls without ever pausing, since the
+     stream never went quiet and nothing else could clear the latch. */
+  var armed = true, spin = 0, quiet, lastAbs = 0, lastStep = 0;
+  function rearm(){ armed = true; spin = 0; lastAbs = 0; }
+  function since(){ return Date.now() - lastStep; }
+
   window.addEventListener("wheel", function(e){
     if (e.ctrlKey) return;                 /* that is a zoom, not a scroll */
     if (e.cancelable) e.preventDefault();
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    var dy = e.deltaY;
+    if (Math.abs(e.deltaX) > Math.abs(dy)) return;
+    var abs = Math.abs(dy);
+
+    /* (1) the burst ended: nothing for a moment */
     clearTimeout(quiet);
-    quiet = setTimeout(function(){ armed = true; spin = 0; }, 160);
+    quiet = setTimeout(rearm, 160);
+
+    /* (2) the stream is speeding up again. A momentum tail only ever
+       decays, so a rise is the reader pushing a second time. */
+    if (!armed && abs > lastAbs + 2 && since() > 380) rearm();
+    /* (3) still pushing hard well after the step. A tail this far out
+       is small; a delta this big is a hand, not a coast. */
+    else if (!armed && since() > 700 && abs >= 24) rearm();
+    lastAbs = abs;
+
     if (!armed || gliding) return;
-    spin += e.deltaY;
+    spin += dy;
     if (Math.abs(spin) < 24) return;
     armed = false;
+    lastStep = Date.now();
     var dir = spin > 0 ? 1 : -1;
     spin = 0;
     step(dir);
   }, { passive: false });
+
+  /* (4) the pointer moved, so whatever gesture was in flight is over.
+     This is also the workaround people find on their own when a wheel
+     latch sticks — worth honouring rather than leaving them to it. */
+  window.addEventListener("pointermove", function(){
+    if (!armed && since() > 380) rearm();
+  }, { passive: true });
 
   /* ── the finger ──
      The deck follows it, one to one, and the release decides. Following
