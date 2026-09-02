@@ -131,12 +131,6 @@
   --display:"Alegreya Sans SC","Optima","Gill Sans",Helvetica,Arial,sans-serif;
   --micro:"Alegreya Sans","Optima","Helvetica Neue",Arial,sans-serif;
 
-  /* Exactly the height of the browser's retractable toolbar: the large
-     viewport minus the small one. 40px on an iPhone 13 mini, 0 wherever
-     there is no such toolbar. Invalid on a browser without the units,
-     in which case var() falls back to 0px. */
-  --toolbar:calc(100lvh - 100svh);
-
   --gutter:clamp(1.25rem,5vw,5rem);
   /* On :root, not on .panel: the link rail is fixed to the viewport and
      lives outside every panel, and a var() that resolves to nothing
@@ -162,6 +156,11 @@ html{
   scroll-behavior:smooth;
   scroll-snap-type:y mandatory;   /* every section is exactly one screen,
                                      so nothing can be snapped past */
+  /* No rubber-band at the ends. Pulling past the top and letting go was
+     handing the browser a scroll position outside the page, and it
+     re-snapped from there to the SECOND section rather than back to the
+     first. With the bounce gone there is no outside to release from. */
+  overscroll-behavior-y:none;
   -webkit-text-size-adjust:100%;
 }
 body{
@@ -172,6 +171,7 @@ body{
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
+  overscroll-behavior-y:none;
 }
 
 ::selection{background:rgba(217,164,65,.35);color:var(--cream)}
@@ -179,61 +179,35 @@ a{color:inherit;text-decoration:none}
 :focus-visible{outline:1px solid var(--gold);outline-offset:5px;border-radius:2px}
 img{display:block;max-width:100%}
 
-/* The last section carries the toolbar's height as extra slack, and it
-   is what lets snapping work on a phone.
-
-   A snap point is only usable if the page can scroll far enough to
-   reach it, and the furthest any page can scroll is (document -
-   viewport). At rest that works out exactly: the sections track the
-   screen, so the document is three screens and the last snap point sits
-   precisely at the end of the scroll. But a toolbar retracts DURING a
-   gesture — for a moment the sections are still the old height while
-   the screen is already the new one, the document is short by the
-   toolbar, and the last snap point is out of reach. Release in that
-   window and snapping falls back to the previous section, which is the
-   page travelling back up under your finger.
-
-   One toolbar's height of slack on the last section covers exactly that
-   window. Measured on the reported device: screen 704 with sections
-   momentarily at 664 gives a document of 1992 and a furthest scroll of
-   1288, against a snap point at 1328 — 40px out of reach. With the
-   slack the document is 2032 and the furthest scroll is 1328, which is
-   the snap point. It costs nothing anywhere without a retractable
-   toolbar, where it computes to zero. */
-main > .panel:last-of-type{
-  height:calc(var(--screen,100dvh) + var(--toolbar,0px));
-}
-
 /* ─────────────────────────────  sections  ───────────────────────────
    Each one is exactly one screen and never more, so the page is four
    screens and the snap is honest. Anything that would not fit is
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
   position:relative;
-  /* A section is exactly the height that is visible right now, and that
-     number comes from visualViewport, not from a CSS unit.
+  /* One height, for the whole visit: the LARGE viewport, which is the
+     screen with the browser's retractable toolbar out of the way.
 
-     Every unit is wrong in one state or the other on a phone. svh is
-     the viewport with the toolbar out, so it is short once the toolbar
-     retracts. dvh should track the live viewport but WebKit bug 261185
-     has iOS reporting it equal to svh when the tab bar is hidden, so it
-     is short in the same way. lvh is the viewport with the toolbar
-     retracted, so it is right when the bar is collapsed and too tall
-     when it is out. There is no single static value that is correct in
-     both states, because the screen genuinely is two different sizes.
+     This is the point of the whole arrangement. A section sized to the
+     live viewport has to change whenever the toolbar moves, and it
+     moves mid-gesture — so the document changes height under the
+     reader, every snap point below shifts, and releasing a drag lands
+     on a target that has moved. Sized to lvh nothing ever changes: the
+     document is exactly three screens and stays that way, and the snap
+     points are fixed for the life of the page.
 
-     window.innerHeight does not help either: on iOS it reports the
-     LAYOUT viewport, which does not change when the toolbar moves.
-     window.visualViewport.height does change, and is the only number
-     that says what is actually on screen at this moment. So --screen is
-     set from it and re-set whenever it moves, and the sections follow.
+     The trade, chosen deliberately: while the toolbar is out, the
+     bottom of a section rests behind it. Content is centred, so what
+     that costs is a few pixels of margin, and never the layout. The
+     link rail is the exception — it is fixed to the bottom of the
+     VISIBLE area, so it rides above the toolbar rather than behind it.
 
-     The units below remain as the pre-JavaScript fallback chain, in
-     rough order of correctness. */
+     --screen (measured from visualViewport) stays as a floor. It cannot
+     exceed lvh, so it changes nothing in normal use; it is there in
+     case a browser under-reports the unit. */
   height:100svh;
   height:100lvh;
-  height:100dvh;
-  height:var(--screen,100dvh);
+  height:max(100lvh,var(--screen,0px));
   overflow:hidden;
   scroll-snap-align:start;
   display:grid;
@@ -754,7 +728,7 @@ main > .panel:last-of-type{
    everywhere else; the shape is wide, so three columns suit it, and
    everything is simply smaller. */
 @media (orientation:landscape) and (max-height:540px){
-  .panel{height:var(--screen,100dvh);padding-block:clamp(.5rem,3svh,1rem)}
+  .panel{height:max(100lvh,var(--screen,0px));padding-block:clamp(.5rem,3svh,1rem)}
 
   #about{padding-right:44%}
   #about .verse{justify-content:flex-start}
@@ -1174,7 +1148,7 @@ main > .panel:last-of-type{
 <script>
 (function(){
   if (!/[?&]debug/.test(location.search)) return;
-  var BUILD = "2026-09-01-i";        // bump when publishing, to prove what is live
+  var BUILD = "2026-09-01-j";        // bump when publishing, to prove what is live
 
   var box = document.createElement("pre");
   box.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;margin:0;padding:6px 8px;" +
