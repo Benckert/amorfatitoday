@@ -178,13 +178,6 @@
      the inset; above it the frame does, and every section's first
      letter lands on the same vertical line however wide the screen. */
   --measure:1120px;
-  /* The width a photograph actually renders at. All three are 2:3, and
-     on a wide screen they are limited by height — so that width is two
-     thirds of the screen's height. On a narrow screen they are limited
-     by width instead, and the first term wins. The link rail is set to
-     this, so its ends line up with the edges of the picture behind it
-     rather than floating somewhere inside them. */
-  --shot:min(calc(100% - var(--inset) * 2),calc(var(--screen,100svh) * 2 / 3));
   --ease:cubic-bezier(.22,.61,.36,1);
   /* the room the section links keep at the foot of every screen */
   --rail:clamp(3.2rem,7svh,4.6rem);
@@ -426,22 +419,12 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   gap:clamp(1rem,2.6vw,2.6rem);
   padding:0 var(--gutter);
 }
-/* Baseline alignment, not centring, and padding on the COLUMNS rather
-   than on the section. Her name and the company label are the first
-   line of each side, and align-self:baseline puts those two first
-   baselines on one line however different their sizes are — which
-   centring cannot do, since it works on boxes and these two boxes are
-   nothing like the same height. The padding is on the columns because
-   the section has none: that is what lets the photograph between them
-   stand the full height of the screen, and so come out the same size
-   as the one on the landing. Equal padding on both moves the pair down
-   together without disturbing the alignment. */
+/* Both columns are centred in the row, which is the whole screen — so
+   her name sits at the middle of the photograph and the roster is
+   centred beside it. Aligning her name's baseline to the company label
+   instead was tried: it put the two on one line but pushed her up into
+   the top third and left the section bottom-heavy. */
 #artists .who-lead{grid-column:1;grid-row:1;text-align:right}
-#artists .who-lead,#artists .who-company{
-  align-self:baseline;
-  padding-top:clamp(2rem,21svh,13rem);
-  padding-bottom:var(--rail);
-}
 #artists .beside{
   grid-column:2;grid-row:1;
   position:static;width:auto;
@@ -533,19 +516,19 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      links stay put while the page scrolls rather than riding up and
      down with whatever section is passing. */
   position:fixed;left:0;right:0;bottom:0;z-index:8;
-  /* left:0 and right:0 with a width and auto side margins centres the
-     rail; the width is the photograph's, so "Amor" begins on the
-     picture's left edge and the ticket button ends on its right. */
-  width:var(--shot);margin-inline:auto;
-  display:flex;justify-content:flex-start;align-items:center;flex-wrap:wrap;
-  padding:0 0 clamp(1.1rem,3svh,1.8rem);
+  /* One group, centred on the page. The rail was stretched to the width
+     of the photograph for a while, with the button pushed out to its
+     right edge; the ends lined up but it left a lake of black in the
+     middle of the row. Narrower than the picture and held together
+     reads better than aligned and pulled apart. */
+  display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
+  padding:0 var(--inset) clamp(1.1rem,3svh,1.8rem);
   font-family:var(--micro);font-weight:400;
   font-size:clamp(.66rem,1.5vw,.78rem);
   letter-spacing:.2em;text-transform:uppercase;
 }
 .jump::before{
-  /* the feather stays full-bleed even though the rail no longer is */
-  content:"";position:absolute;left:-50vw;right:-50vw;bottom:0;top:-70%;z-index:-1;
+  content:"";position:absolute;left:0;right:0;bottom:0;top:-70%;z-index:-1;
   pointer-events:none;
   background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%);
 }
@@ -570,9 +553,9 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .jump .ticket{
   position:relative;isolation:isolate;
   display:inline-flex;align-items:center;gap:.55em;
-  /* auto, so it sits on the picture's right edge with the links on its
-     left, and the row spans the photograph exactly */
-  margin-left:auto;
+  /* enough to read as a different kind of thing from the three links,
+     and no more: it belongs to the same row */
+  margin-left:clamp(.7rem,2.2vw,1.4rem);
   padding:.72em 1.85em;
   border:2px solid rgba(217,164,65,.62);
   border-radius:999px;
@@ -817,11 +800,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     grid-column:1;text-align:left;position:relative;z-index:2;
   }
   #artists .lead-name{padding-inline:var(--inset);grid-row:1}
-  /* Back out of the desktop's baseline pairing. There are no two
-     columns to align here — the name sits directly above the company —
-     and the padding that moves that pair down the screen on a wide
-     layout put 147px of nothing between the two lines on a phone. */
-  #artists .who-company{grid-row:2;align-self:auto;padding-top:0;padding-bottom:0}
+  #artists .who-company{grid-row:2}
   /* grid-column too, not just the row: left at the desktop value it
      lands in an implicit second column sized to its own content, which
      is how a full-bleed figure came out 146px wide */
@@ -1258,31 +1237,43 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   }
 
   /* ── the wheel, and the long tail a trackpad leaves behind it ──
-     A step disarms the wheel, so one flick is one section however hard
-     it is thrown. Something then has to arm it again, and getting that
-     wrong goes wrong in both directions: too strict and the page locks
-     for anyone who scrolls without pausing, too loose and one big flick
-     counts as two.
+     One section per gesture, however hard or long — and never stuck.
+     Those two have pulled against each other through several attempts,
+     because a flick keeps sending deltas for a second or more after
+     the fingers have lifted and the page has to tell that tail apart
+     from a hand that is still working.
 
-     There is exactly one way back, and that is the point: ONE SECTION
-     PER GESTURE, however hard or long the gesture is. The wheel arms
-     again when the stream has been quiet for 220ms — when the flick,
-     and the momentum behind it, are actually over. Nothing else counts
-     as a new intention, because nothing else reliably is one: a
-     momentum tail decays on average but not monotonically, so reading
-     a rise in the deltas as a second push made every hard throw into
-     two turns, and reading a large delta long after the step made
-     every long one into two.
+     Silence alone cannot do it: a second flick arrives before the
+     first tail has died, so the stream never goes quiet and the page
+     locks until the pointer happens to move. Delta size alone cannot
+     either: a tail decays on average but not monotonically, so "it got
+     bigger" and "it is still big" both fire partway down a hard throw
+     and turn one flick into two.
 
-     Scrolling on without ever pausing therefore turns one page and
-     waits, which is the behaviour asked for rather than a lock. The
-     one safety valve is a pointer move: it ends whatever gesture was
-     in flight, and a two-finger scroll does not move the cursor, so it
-     cannot fire mid-flick. */
+     What a tail cannot do is either of these:
+
+       1. DIP AND RISE AGAIN. Momentum only slows. Once the stream has
+          fallen to a fifth of the gesture's peak, anything back above
+          a third of it came from a finger. (The peak resets its own
+          trough, so the ramp UP at the start of a throw cannot look
+          like a rise after a dip.)
+       2. TRAVEL FURTHER THAN IT HAS LEFT IN IT. A decaying tail's
+          total remaining distance is bounded by its peak — about 22x
+          it at the rate a trackpad decays, 40x at the slowest rate
+          worth allowing for. Past 55x the peak, whatever is still
+          arriving is being pushed.
+
+     (2) is what answers a steady scroll that never varies and never
+     stops: it keeps turning, about twice a second, instead of waiting
+     for a silence that is not coming. Plus the two cheap ones: the
+     stream going quiet for 220ms, and a pointer move, which ends any
+     gesture and cannot fire mid-flick because a two-finger scroll does
+     not move the cursor. */
   var armed = true, spin = 0, quiet;
+  var peak = 0, trough = Infinity, travel = 0;
   /* declared here, assigned in show(): every input's cooldown reads it */
   var lastStep = 0;
-  function rearm(){ armed = true; spin = 0; }
+  function rearm(){ armed = true; spin = 0; peak = 0; trough = Infinity; travel = 0; }
   function since(){ return Date.now() - lastStep; }
 
   window.addEventListener("wheel", function(e){
@@ -1290,14 +1281,26 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     if (e.cancelable) e.preventDefault();
     var dy = e.deltaY;
     if (Math.abs(e.deltaX) > Math.abs(dy)) return;
+    var abs = Math.abs(dy);
 
     clearTimeout(quiet);
-    quiet = setTimeout(rearm, 220);          /* the gesture is over */
+    quiet = setTimeout(rearm, 220);        /* the gesture simply stopped */
+
+    if (!armed) {
+      travel += abs;
+      if ((trough < peak * 0.2 && abs > peak * 0.35 && abs > 25) ||
+          travel > peak * 55) rearm();
+    }
+    /* after the test, never before it: a new high resets the trough, so
+       the climb at the start of a throw cannot read as a recovery */
+    if (abs > peak) { peak = abs; trough = Infinity; }
+    else if (abs < trough) trough = abs;
 
     if (!armed) return;
     spin += dy;
     if (Math.abs(spin) < 24) return;
     armed = false;
+    peak = abs; trough = Infinity; travel = 0;
     land();
     var dir = spin > 0 ? 1 : -1;
     spin = 0;
