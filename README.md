@@ -227,6 +227,38 @@ presentation.
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
+- **On a phone both photographs are full-bleed, and that is the second
+  place anything is cropped.** A 2:3 frame shown whole on a screen that
+  narrow leaves a band of black above and below it, and the one above
+  read as the picture starting late. The landing photograph is
+  `object-fit:cover` on portrait and narrow screens, which at that
+  shape takes the crop off the SIDES — her full height is on screen and
+  what goes is a little of the dark room. `object-position` is `72%`,
+  not centred: centred took the fingertips off the right edge, which is
+  where the whole line of the pose is going. Desktop and landscape are
+  unchanged, whole and letterboxed by height, which is the shape the
+  live site has.
+
+- **On a phone the artists photograph is the ground the words are
+  written on**, not a panel beneath them: it fills the section and the
+  names sit over it in the left third, which is the dark of the room.
+  Two gradients carry it — across, so cream type reads over the left
+  and the candle is still a photograph by the middle; down, a little at
+  the head and more at the foot where the fixed links are. Neither
+  reaches full black.
+
+  **`grid-column` and `grid-row` are reset to `auto` on that layer, and
+  it is load-bearing.** An absolutely positioned grid child with a
+  *definite* grid position is laid out against its grid area rather
+  than against the panel — so with the desktop rule's
+  `grid-column:2;grid-row:1` still in force, `inset:0` resolved to the
+  first row and the photograph began below the section's top padding:
+  a 32px band of black at the top, the same defect the full-bleed hero
+  was fixing. Placed automatically the containing block is the grid
+  container's padding box, which is the whole panel. Measured: the
+  layer is `t0 b0 l0 r0` against its section at 375x704 and 768x1024,
+  and untouched at 1440x900 and 844x390.
+
 - **A phone held sideways gets the three-column artists layout, not the
   stacked one, and its sections stay one screen like everywhere else.**
   There used to be an exemption here — `height:auto` with a
