@@ -12,9 +12,8 @@ Everything you need to change is marked `<!-- EDIT -->` in `index.html`,
 and there is a checklist at the top of that file. In order:
 
 1. **The ticket URL** — search for `kickstarter.com`. It is the `href`
-   on the Tickets button, which lives in the `<template id="jump-tpl">`
-   near the top of the body, so changing it once changes it in all
-   three copies.
+   on the Tickets button, in the `<nav class="jump">` near the top of
+   the body. There is one of it, for the whole page.
 2. **Instagram and email** — at the foot of the artists section.
 
 The title, the subtitle, the dates, the verse and all ten artists are
@@ -126,8 +125,8 @@ screen, which is exactly what happened before they were reordered.
 **The link rail is fixed to the viewport**, not stamped into each
 section. It used to be one `<template>` cloned into all three panels so
 the copies could not drift apart; one element that never moves cannot
-drift either, and the links now stay put while the page scrolls instead
-of riding up and down with whatever section is passing. A gradient
+drift either, and the links stay put while the deck moves behind them
+instead of riding up and down with whatever section is passing. A gradient
 under it keeps it off the photographs.
 
 **One thing in that rail is not navigation, and it is shaped
@@ -135,14 +134,14 @@ differently.** The ticket button leaves the site, so it is the only
 enclosed, warm, gold-edged thing there, set apart from the three
 section links with real space and carrying the arrow that means "away
 from here". It is never marked as the
-current section, and the script that tracks scrolling only ever touches
+current section: the script that marks where you are only ever touches
 `a.to`.
 
-**The navigation is identical everywhere, by construction.** The row of
-section links is written once, as a `<template>`, and stamped into each
-panel by script — so the four copies cannot drift apart. The section
-you are in is named in gold rather than hidden. The dots on the right
-are the same four places, and both are driven from the same state.
+**The navigation is identical everywhere, by construction.** There is
+one row of section links, fixed to the foot of the viewport, so there
+are no copies to drift apart. The section you are in is named in gold
+rather than hidden. The dots on the right are the same three places,
+and both are driven from the deck's index.
 
 **The opening plays once a visit.** The title arrives letter by letter
 and the blocks under it rise, and that is remembered in `sessionStorage`.
@@ -228,17 +227,6 @@ presentation.
   fallback can, and `document.fonts` stays empty because Chrome does not
   expose faces from a cross-origin stylesheet. Without the wait, the font
   lands mid-rise and every glyph changes shape in flight.
-- **Panels are `100dvh`, and that unit is the whole answer to a class
-  of mobile bug.** `svh` is the viewport with the browser's UI at its
-  *largest*; iOS shrinks its bar to a pill the moment you scroll, so
-  the screen is then taller than `svh` and every panel came up short by
-  that difference — a strip of the next section under the links, a
-  strip of the previous one above the heading, and, because the
-  document was then shorter than the last snap point needed, a jump
-  that never settled. `dvh` is the viewport that is actually on screen,
-  so a section covers it exactly and the document is always exactly as
-  many screens as there are sections. Do not "fix" this back to `svh`
-  for stability; it is what caused the instability.
 - **A phone held sideways gets the three-column artists layout, not the
   stacked one, and its sections stay one screen like everywhere else.**
   There used to be an exemption here — `height:auto` with a
@@ -250,61 +238,67 @@ presentation.
   itself out at its natural 716x1074. Landscape phones are wide, so
   three columns fit them; everything is simply set smaller. Checked at
   844x390, 932x430 and 780x360.
-- **The last section carries one toolbar's height of extra slack, and
-  it is what lets snapping work on a phone.** A snap point is only
-  usable if the page can scroll far enough to reach it, and the furthest
-  any page can scroll is (document - viewport). At rest that is exact:
-  the sections track the screen, so the document is three screens and
-  the last snap point sits precisely at the end of the scroll. But a
-  toolbar retracts *during* a gesture — for a moment the sections are
-  still the old height while the screen is already the new one, the
-  document is short by the toolbar, and the last snap point is out of
-  reach. Release in that window and snapping falls back to the previous
-  section: the page travelling back up under your finger, which is what
-  this bug always was. `--toolbar` is `calc(100lvh - 100svh)`, exactly
-  that height — 40px on an iPhone 13 mini, 0 where there is no
-  retractable toolbar — and the last section is that much taller.
-  Measured: screen 704 with sections momentarily at 664 gives a furthest
-  scroll of 1288 against a snap point at 1328, 40px out of reach; with
-  the slack it is 1328 against 1328.- **A section must never be shorter than the screen**, or the page runs
-  out of scroll before the last one reaches the top and a sliver of the
-  section before it stays showing. The rule is
-  `height:max(100lvh, var(--screen,0px))`, and it is belt and braces on
-  purpose, because both of the obvious answers fail on a phone:
-  - `svh` is the viewport with the browser's UI at its largest, so it is
-    short by the toolbar the moment that toolbar retracts.
-  - `dvh` is meant to track the live viewport, but WebKit bug 261185 has
-    iOS reporting it *equal to `svh`* when the tab bar is not visible —
-    short by the same amount. That is why swapping `svh` for `dvh`
-    changed nothing.
-  - `lvh` is the viewport with the toolbars retracted: the largest the
-    screen can be. Static, so no lag and no equality bug, and being the
-    maximum it is never smaller than what is on screen.
-  - `--screen` is the same guarantee measured at runtime — the larger of
-    `innerHeight` and `visualViewport.height`, since iOS can
-    under-report either alone.
+- **The page does not scroll, and that is the fix.** Sections live in
+  a deck — a flex column inside a `position:fixed` body that clips —
+  and a gesture moves the deck by `transform:translate3d`, one screen
+  per step. Nothing measures anything after the first frame, so nothing
+  can drift.
 
-  Verified by failing each source in turn at 375x812: with the CSS unit
-  pinned short the measurement covers it, with the measurement pinned
-  short the unit covers it, and only with both short does the 183px
-  sliver come back. The trade is that while the toolbar is showing a
-  section is slightly taller than the visible area, so a little sits
-  below the fold; content is centred, so that reads as framing.- **There is no "did we arrive?" correction in `goTo()`, and there must
-  not be one.** There was: a timer comparing the scroll position to a
-  section's `offsetTop` a beat after a click, forcing the page onto it
-  if they disagreed. On a phone they always disagree — panels are one
-  height and the screen another — so the last section's `offsetTop` can
-  sit past the furthest the page can scroll. Measured at 390x902 with
-  844px panels: `offsetTop` 1688, furthest reachable 1630. The browser
-  stopped at 1630, the timer hauled the page to 1688, and it landed as
-  a single 58px lurch a second after everything came to rest. Chrome
-  clamps the same call and shows nothing, so it passes every headless
-  test; it was only ever visible on the device. Mandatory snapping
-  already guarantees landing on a section.
-- The `goTo()` fallback that corrects a cancelled smooth scroll now
-  stands down if the reader starts scrolling themselves. Correcting a
-  scroll someone is in the middle of is itself a jump, and a worse one,
-  because they caused it and it fought them.
+  Everything before this fought the same thing and lost. A phone's
+  browser retracts its toolbar *while the document scrolls*, so a
+  scrolling page's viewport changes height mid-gesture: sections sized
+  to it resize under the reader, every snap point below them moves, and
+  releasing a drag lands on a target that is no longer where it was.
+  That is not a bug in this stylesheet to be tuned out. It is what a
+  scrolling document on a phone does, and `svh`, `lvh`, `dvh`, measured
+  pixels, extra slack on the last section and a smaller snap threshold
+  were each tried and each failed, because each of them was an attempt
+  to hold a moving thing still rather than to stop it moving.
+
+  The libraries built for exactly this arrangement do not do better:
+  fullPage.js, the canonical one, carries open, unresolved reports of
+  the same iOS height bug ([#4733][fp1], [#2414][fp2]) and is GPLv3 or
+  paid. The ones that *are* immune — Swiper among them — are immune
+  because they do not scroll the document either; they move slides by
+  transform. That technique is 120 lines, so it is written here rather
+  than added as a dependency, and this file stays the whole site.
+
+  What it buys: the toolbar has no scroll to react to, so it stays out
+  and the viewport is one number for the whole visit. A section is
+  `flex:0 0 100%` of the deck, so it is the screen by construction —
+  there is no viewport unit left to be wrong about anything. Verified
+  at 17 sizes from 320x568 to 1920x1080: deck, all three sections and
+  the screen are the same number, the document's scroll height never
+  exceeds one screen, and every section arrives at exactly `top:0`.
+
+  What it costs: the address bar never retracts, so a phone gives up
+  the ~40px it would have reclaimed. That is the trade, taken
+  deliberately — those 40px were the whole source of the instability.
+
+[fp1]: https://github.com/alvarotrigo/fullPage.js/issues/4733
+[fp2]: https://github.com/alvarotrigo/fullPage.js/issues/2414
+
+- **Without script it is an ordinary long page.** Every deck rule is
+  gated on `html.js`, and the class is set in a one-line script in the
+  `<head>` rather than at the end of the body, so the deck layout is
+  the first one painted rather than the second. With script off,
+  sections are `min-height:100svh` in normal flow and the page scrolls
+  the way any page does.
+
+- **Gestures are interpreted, not delegated.** A wheel burst is
+  disarmed until its deltas have been quiet for 160ms, so one trackpad
+  flick is one section rather than a walk through the whole page. A
+  finger drags the deck one to one and the release decides: past 12% of
+  the screen, or faster than 0.25px/ms having moved at least 24px. At
+  the first and last section the pull is damped to a fifth rather than
+  stopped, so the end of the page announces itself. Keyboard: arrows,
+  page keys, space, Home and End.
+
+- **Focus follows into clipped sections.** Off-screen here means
+  clipped, not below the fold, so there is no scroll for the browser to
+  bring a tabbed-to link into view with. A `focusin` listener moves the
+  deck to whichever section took focus.
+
 - **Alignment inside `#artists` is driven by a custom property**
   (`--reach-align`), not by adding a more specific selector in the
   narrow-screen block. Overriding an id-plus-two-class rule needs a
@@ -335,23 +329,24 @@ presentation.
   invalid — which silently stripped all the padding off the rail and
   put the ticket button flush against the bottom edge of the screen.
   Nothing errored; the padding simply computed to zero.
-- Scroll snapping is `mandatory`, which is honest here because every
-  section really is exactly one screen. The one exception is a phone
-  held sideways, where there is so little height that the sections are
-  allowed to grow and snapping is switched off — squeezing the
-  photographs to fit that would leave nothing to look at.
+- The lock is absolute — a gesture moves exactly one section, never a
+  fraction and never two — which is honest here because every section
+  really is exactly one screen, on every size checked including a phone
+  held sideways.
 - The figure beside the verse is pinned to the panel rather than sized
   by a grid track. A grid item's height comes from its content, so
   `max-height:100%` had nothing to resolve against and the photograph
   was capped on width while its height ran free — 719x1079 rendered
   575x1079, visibly squashed. Against the panel, which is exactly one
   screen, both limits resolve.
-- Which section you are in is decided by scroll position — the panel
-  whose middle is nearest the middle of the viewport — not by
-  intersection, which lights the wrong one during a transition.
+- Which section you are in is not deduced from anything. It is the
+  deck's index, and the dots, the links and the address bar's hash are
+  all set from it, so they cannot disagree with what is on screen. The
+  earlier build inferred it from scroll position, and before that from
+  intersection, which lit the wrong dot mid-transition.
 - Motion respects `prefers-reduced-motion`: the reveals, the letter rise
-  and the scroll cue all stop for anyone who has asked their device for
-  that, and section jumps become instant.
+  and the glide between sections all stop for anyone who has asked
+  their device for that; a section change is then instant.
 - Everything that animates is compositor-only (opacity and transform).
   The title's halo is one painted-once gradient rather than a
   text-shadow. Layers are asked for a frame before they are needed and
