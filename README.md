@@ -410,6 +410,27 @@ lightness and fluidity, and that is what separates the two.
 [fp1]: https://github.com/alvarotrigo/fullPage.js/issues/4733
 [fp2]: https://github.com/alvarotrigo/fullPage.js/issues/2414
 
+- **The box that CLIPS must be the visual viewport, not the layout
+  viewport, and on iOS those are different numbers.** `bottom:0` on a
+  fixed body sizes it to the layout viewport, which includes the strip
+  behind Safari's toolbars; `--screen` is the visual viewport, what is
+  actually on screen. The deck came out shorter than the box clipping
+  it, and the second section sat in the gap between them, in plain view
+  under the first. Body is `height:var(--screen,100%)` now, with
+  `bottom:auto`.
+
+  **The clip cannot go on the deck instead**, which is the obvious fix
+  and a wrong one: the deck is what carries the transform, and overflow
+  clips a transformed element in its own coordinate space — the window
+  would travel with the content and show nothing at all. It belongs on
+  the ancestor that never moves.
+
+  Headless Chromium has no toolbar, so the layout and visual viewports
+  are equal there and this bug cannot appear on its own.
+  `scratchpad/ios.js` forces it, setting `--screen` short at five phone
+  sizes and asserting both that the second section is clipped and that
+  the deck still steps.
+
 - **Without script it is an ordinary long page.** Every deck rule is
   gated on `html.js`, and the class is set in a one-line script in the
   `<head>` rather than at the end of the body, so the deck layout is
