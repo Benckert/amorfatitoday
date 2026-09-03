@@ -480,8 +480,15 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    the company speaking plainly. */
 .lede{
   font-family:var(--micro);font-weight:400;
-  font-size:clamp(.72rem,1.6vw,.95rem);
-  letter-spacing:.22em;text-indent:.22em;text-transform:lowercase;
+  /* Capitals, tracked wider than the lowercase setting was and set a
+     step smaller: capitals at the same nominal size stand about a
+     third taller and read that much louder, and this line stands over
+     the verse, which is the voice on this section. */
+  font-size:clamp(.62rem,1.35vw,.82rem);
+  letter-spacing:.28em;text-indent:.28em;text-transform:uppercase;
+  /* On a phone it takes two lines. Balanced, so it breaks into two
+     even ones rather than a full line and a single word under it. */
+  text-wrap:balance;
   color:var(--gold);
   margin:0 0 clamp(1.4rem,4.5svh,2.6rem);
   max-width:100%;
@@ -572,6 +579,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   justify-content:center;
 }
 #artists .who-company{grid-column:3;grid-row:1}
+/* The container the credits are sized against. Nothing else reads it;
+   it is here so that cqw on .roster li means "per cent of this
+   column". */
+.who-company{container-type:inline-size}
 #artists .beside img{max-height:100%;max-width:100%;width:auto;height:auto}
 #artists .beside::before{display:none}
 
@@ -593,7 +604,13 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    its own padding and its own horizon, so the name came out with two
    rules under it, one under the block and one under the word.
 
-   The horizon is drawn on the span, which is shrink-wrapped to the
+   On a wide screen the horizon has moved off this span and onto the
+   role, where it draws between the name and the word rather than under
+   both — see `.lead-name .role` below. The span keeps the rule that
+   describes it, because the narrow setting still hides one and keeps
+   its room, and because the geometry note is the same either way.
+
+   The horizon is drawn on a box that is shrink-wrapped to the
    words, so it is the width of her name and centred under it at every
    size — rather than the width of whatever column the paragraph
    happens to fill, anchored to one edge of that and hanging off the
@@ -607,13 +624,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    before the first, so the glyphs sit centred inside the box. */
 .lead-name > span{
   position:relative;display:inline-block;
-  padding-bottom:clamp(.7rem,2.2svh,1.1rem);
-}
-.lead-name > span::after{
-  content:"";position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(to right,
-    rgba(246,227,189,0) 0%,rgba(246,227,189,.30) 22%,
-    rgba(246,227,189,.30) 78%,rgba(246,227,189,0) 100%);
 }
 /* Under the name and above the horizon, so the rule still draws
    itself across the widest of the two — which is the name, since a
@@ -626,10 +636,25 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   font-size:clamp(.62rem,1.1vw,.74rem);
   letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;
   color:var(--mist);
-  margin-top:clamp(.35rem,1.1svh,.6rem);
-  /* Centred inside the span, which is the width of her name — so it
-     sits with the horizon under it rather than hanging off one end of
-     a rule that is symmetrical. */
+  /* THE HORIZON, drawn between her name and her role rather than under
+     the pair of them. It is a background rather than a pseudo-element
+     because ::before on this box is the dash the narrow setting puts
+     back on the line, and one box cannot have two of either.
+
+     It comes out the width of her NAME without being told to: the role
+     is a block inside a span that is shrink-wrapped to its widest
+     line, and a single word set this small is never that. The gradient
+     arrives out of nothing and leaves into nothing, so nothing has to
+     be anchored to an edge.
+
+     The space is split either side of it — a little more above, since
+     the name above is the larger of the two. */
+  margin-top:clamp(.62rem,2svh,1rem);
+  padding-top:clamp(.5rem,1.6svh,.82rem);
+  background-image:linear-gradient(to right,
+    rgba(246,227,189,0) 0%,rgba(246,227,189,.30) 22%,
+    rgba(246,227,189,.30) 78%,rgba(246,227,189,0) 100%);
+  background-size:100% 1px;background-repeat:no-repeat;background-position:top left;
   text-align:center;
 }
 .company-label{
@@ -648,7 +673,15 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      than merely allowed to wrap: on a squarer screen the longest
      credit still needs two lines, and two even ones read as intended
      where a long line and a stub does not. */
-  font-size:clamp(.72rem,1.05vw,.92rem);
+  /* Sized from the COLUMN, not from the viewport, because the column
+     is what the credit has to fit. cqw against .who-company: the
+     coefficient is 100 divided by how many ems wide the longest credit
+     sets, so that credit lands just inside its column at every width
+     and every other one lands short of it. A vw curve cannot do this —
+     the column is what is left over after a photograph sized by the
+     screen's HEIGHT, so at 1440x900 it is 311px and at 1920x1080 it is
+     478px, and no function of the width alone knows that. */
+  font-size:clamp(.6rem,4.05cqw,.92rem);
   letter-spacing:.14em;text-indent:.14em;text-transform:uppercase;
   text-wrap:balance;
   color:var(--cream);
@@ -657,32 +690,38 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   text-shadow:0 1px 3px rgba(0,0,0,1),0 2px 14px rgba(0,0,0,.95);
 }
 /* The name is what you scan for, so the name keeps the cream and the
-   role steps back to the mist. Same size and tracking for both: a
-   second size in a row this small reads as a mistake rather than as a
-   hierarchy, and the colour already says which is which. */
-.roster .r{color:var(--mist)}
-
-/* The awkward band. Above 820px the layout is three columns with the
-   photograph in the middle, and the photograph is sized by height — so
-   the shorter and narrower the screen, the more of the width it takes
-   and the less is left for the two side columns. At 1024x768 the
-   company column comes out about 190px, which no credit fits on one
-   line: twelve of the thirteen wrap, twenty-five lines of them, and at
-   the roomy rhythm that runs past the foot of the panel.
-
-   Wrapping cannot be avoided at that width, so the rhythm gives way
-   instead. The rows keep their size and lose the air between them,
-   which is the right way round: the names stay as legible as they are
-   everywhere else and the block simply sits closer together.
-
-   Bounded below at 1101px because narrower than that the section
-   stacks, and above 540px tall because a sideways phone has its own
-   setting further down — left unbounded, this one's line-height
-   reached it and pushed the last credit through the floor. */
-@media (min-width:1101px) and (max-width:1240px) and (orientation:landscape) and (min-height:541px){
-  .roster li{padding:clamp(.14rem,.75svh,.4rem) 0;line-height:1.25}
-  .company-label{margin-bottom:clamp(.45rem,1.5svh,.8rem)}
+   role steps back to the mist, a little smaller and a little tighter.
+   The size difference does two jobs: it says which half is which
+   without the colour having to carry it alone, and it buys back the
+   width the role costs — a credit is a name AND a role now, and the
+   pair has to sit on one line in a column beside a photograph. */
+.roster .r{color:var(--mist);font-size:.84em;letter-spacing:.08em}
+/* An en dash rather than an em: half the width for the same mark, and
+   the row needs the half. Its own margins rather than spaces on either
+   side, tighter than a word space would be, and no tracking of its own
+   — the .14em the row carries would push the role a further step away.
+   `top` is measured, not guessed: this row is set in capitals and a
+   dash is drawn to cut lowercase, so left alone it sits low against
+   them. scratchpad/dash.js measures the two mid-points. */
+.roster .d,.lead-name .d{
+  display:inline-block;position:relative;
+  /* The space that follows the dash in the markup is what a row breaks
+     at, so it stays — and is pulled back to nothing, because that space
+     plus the row's tracking would leave the dash noticeably closer to
+     the name than to the role. .30em on both sides, either way. */
+  letter-spacing:0;margin:0 -.09em 0 .16em;
+  color:var(--mist);
+  /* Measured, not guessed. A dash is drawn to cut lowercase, so in a
+     row set in capitals it sits well below the middle of them: the
+     ink of a capital runs 0 to .625em above the baseline, mid .3125em,
+     and the en dash sits .17 to .21em, mid .19em. The role is set at
+     .84, so the middle of ITS capitals is .2625em; the dash stands
+     between the two and is levelled with the mean of them. */
+  top:-.098em;
 }
+/* On a wide screen her role has a line and a horizon of its own, and a
+   dash between things on separate lines divides nothing. */
+.lead-name .d{display:none}
 
 /* ────────────────────────  IV. attend  (tickets)  ──────────────────── */
 
@@ -849,17 +888,17 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    whole-photograph rule letterboxes them by width instead of standing
    them by height. Everything else goes to one column and every size is
    in svh, so a section is still exactly one screen and still fits. */
-/* 1100px, not 820. A credit is a name AND a role now, and one needs
-   about 400px to set on a line. Three columns can only give it that
-   when the whole screen is wide enough for two of them beside a
-   photograph that is sized by the screen's height: about 1530px at
-   900 tall. Below that some credits wrap, which the roster is built to
-   take — but at 1024x768 the side column comes out near 190px, eleven
-   of the thirteen wrap and the column reads as a stack of fragments.
-   Stacked, at the full width of the screen, they are thirteen clean
-   lines. The threshold moved with the content, which is the point of
-   measuring it rather than picking a device. */
-@media (max-width:1100px),(orientation:portrait){
+/* 1240px, not 820. The credits size themselves to their column, so
+   three columns hold them wherever that column can carry the type at a
+   size worth reading. The floor is where it cannot: at 1152x864 — four
+   by three, where a photograph sized by the screen's HEIGHT takes half
+   its width — the side column comes out at 200px against the 229px the
+   longest credit needs even at the smallest size the clamp allows.
+   Below 1240 the section stacks instead, and at the full width of the
+   screen the credits set at their largest. The threshold is measured,
+   not a device: it is the width at which the column stops being able
+   to hold a name and a role on one line. */
+@media (max-width:1240px),(orientation:portrait){
   :root{--gutter:1.4rem;--rail:3.5rem}
 
   /* the landing's words move off the photograph's centre and sit under
@@ -964,7 +1003,12 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      taken off the bottom: the top of the frame is pinned */
   .split .beside{align-items:flex-start}
 
-  .roster li{font-size:.8rem;letter-spacing:.16em;text-indent:.16em;padding:clamp(.24rem,.9svh,.46rem) 0}
+  /* Same coefficient as the wide setting — the credit is measured
+     against its column either way — with bounds for a column that is
+     now the whole screen. */
+  .roster li{font-size:clamp(.56rem,4.05cqw,.8rem);
+             letter-spacing:.16em;text-indent:.16em;
+             padding:clamp(.24rem,.9svh,.46rem) 0}
 
   /* one column: her name, then the company, then the room — the two
      text blocks come first in the markup for exactly this */
@@ -1015,14 +1059,19 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     text-transform:uppercase;
     line-height:1.15;
   }
-  /* Her role goes back onto the line here, with the dash the roster
-     rows carry in their own text — set like them, because on a screen
-     this narrow she is set like them. */
+  /* Her role goes back onto the line here, with a dash of its own —
+     set like the roster rows, because on a screen this narrow she is
+     set like them. The horizon goes with it: a rule between a name and
+     a word that are now on the same line has nothing to divide. */
   #artists .lead-name .role{
     display:inline;font-size:inherit;letter-spacing:inherit;
-    text-indent:0;margin-top:0;
+    text-indent:0;margin-top:0;padding-top:0;background-image:none;
   }
-  #artists .lead-name .role::before{content:"— ";margin-left:.4em;letter-spacing:inherit}
+  /* The dash comes back, and it is the roster's own element under the
+     roster's own rule — not a second one built out of ::before, which
+     is how her dash came to sit tight against her role while every
+     other row had air on both sides of its own. */
+  #artists .lead-name .d{display:inline-block}
   #artists .who-company{grid-row:2}
   /* grid-column too, not just the row: left at the desktop value it
      lands in an implicit second column sized to its own content, which
@@ -1068,11 +1117,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
         rgba(0,0,0,.06) 66%,rgba(0,0,0,.44) 100%);
   }
   .lead-name{font-size:1.3rem}
-  /* The rule goes here, the room it took does not: the padding stays
-     on the span, so the gap between her name and the company is the
-     one the horizon used to sit in. */
+  /* The rule goes, the room it took does not: the padding stays on the
+     span, so the gap between her name and the company is the one the
+     horizon used to sit in. */
   .lead-name > span{padding-bottom:.6rem}
-  .lead-name > span::after{display:none}
   .company-label{margin-bottom:clamp(.4rem,1.4svh,.8rem)}
 
   /* the links wrap out to the screen edges here, so the toggle cannot
@@ -1131,7 +1179,21 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   .lead-name{font-size:clamp(.9rem,2.4vw,1.2rem)}
   .lead-name > span{padding-bottom:.45rem}
   .company-label{margin-bottom:.35rem}
-  .roster li{font-size:clamp(.58rem,1.3vw,.72rem);padding:.1rem 0;letter-spacing:.12em;text-indent:.12em}
+  .roster li{font-size:clamp(.5rem,4.05cqw,.72rem);padding:.1rem 0;
+             letter-spacing:.12em;text-indent:.12em}
+}
+
+/* THE ONE PLACE THE PHOTOGRAPH GIVES WAY, and it is a last resort.
+   A phone held sideways is about 667x375; the figure stands the full
+   375 and takes 250 of the 667 across, which leaves each side column
+   174px against the 188 the longest credit needs — and the credits are
+   already at the smallest size this setting allows. Everywhere else
+   the way out was type. Here there is none left, so the figure comes
+   down to 78% of the height and gives the columns the 27px each that
+   the last credit wants. It is bounded to screens under 760px wide, so
+   the figure keeps its full height on every other screen on the page. */
+@media (orientation:landscape) and (max-height:540px) and (max-width:760px){
+  #artists .beside img{max-height:78%}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -1241,7 +1303,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
            on it, and an inline-block is the only box on the page that is
            exactly as wide as the words inside it. On the <p>, which fills
            its column, the rule came out 208px under a 143px name. -->
-      <p class="lead-name" data-reveal style="--d:.12s"><span>Vallerie O<span class="role">Voice</span></span></p>
+      <p class="lead-name" data-reveal style="--d:.12s"><span>Vallerie O<span class="d">&#8211;</span> <span class="role">Voice</span></span></p>
     </div>
 
     <div class="says who-company">
@@ -1251,26 +1313,28 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
            place, since the tracking and the capitals make the two
            disagree. scratchpad/widths2.js does the measuring whenever
            anyone is added.
-           The dash is tied to the name with a no-break space, so the
-           only place a row can break is after it: a wrapped credit
-           reads "ELIAS LJUNGBERG —" and then the role, never a line
-           that opens with a dash.
+           The dash carries its own margins and there is no space
+           before it, so the row has exactly one place it could break
+           and it is after the dash. It should never come to that --
+           the type is sized from the column so the credit fits on one
+           line -- but if it ever does, it reads "ELIAS LJUNGBERG -"
+           and then the role, never a line that opens with a dash.
            Vallerie is not in this list; she is the lead name in the
            column opposite, with her own role under it. -->
       <ul class="roster">
-        <li data-reveal style="--d:0.22s"><span class="n">Cornelia</span>&#160;&#8212; <span class="r">Dance</span></li>
-        <li data-reveal style="--d:0.26s"><span class="n">Yazz Meavis</span>&#160;&#8212; <span class="r">Harp</span></li>
-        <li data-reveal style="--d:0.30s"><span class="n">Amina Avdić</span>&#160;&#8212; <span class="r">Dance</span></li>
-        <li data-reveal style="--d:0.34s"><span class="n">Carl Backman</span>&#160;&#8212; <span class="r">Voice</span></li>
-        <li data-reveal style="--d:0.38s"><span class="n">Lova Hellberg</span>&#160;&#8212; <span class="r">Dance</span></li>
-        <li data-reveal style="--d:0.42s"><span class="n">Eliot Charoff</span>&#160;&#8212; <span class="r">Poetry</span></li>
-        <li data-reveal style="--d:0.46s"><span class="n">Andreas</span>&#160;&#8212; <span class="r">Sound Design</span></li>
-        <li data-reveal style="--d:0.50s"><span class="n">Joakim Benckert</span>&#160;&#8212; <span class="r">Music</span></li>
-        <li data-reveal style="--d:0.54s"><span class="n">Zean Farence Diaz</span>&#160;&#8212; <span class="r">Music</span></li>
-        <li data-reveal style="--d:0.58s"><span class="n">Simon</span>&#160;&#8212; <span class="r">Event Production</span></li>
-        <li data-reveal style="--d:0.62s"><span class="n">Elias Ljungberg</span>&#160;&#8212; <span class="r">Photography</span></li>
-        <li data-reveal style="--d:0.66s"><span class="n">Ella Elvida</span>&#160;&#8212; <span class="r">Shibari, Set Design</span></li>
-        <li data-reveal style="--d:0.70s"><span class="n">Kristoffer Benckert</span>&#160;&#8212; <span class="r">Music, Web Design</span></li>
+        <li data-reveal style="--d:0.22s"><span class="n">Cornelia</span><span class="d">&#8211;</span> <span class="r">Dance</span></li>
+        <li data-reveal style="--d:0.26s"><span class="n">Yazz Meavis</span><span class="d">&#8211;</span> <span class="r">Harp</span></li>
+        <li data-reveal style="--d:0.30s"><span class="n">Amina Avdić</span><span class="d">&#8211;</span> <span class="r">Dance</span></li>
+        <li data-reveal style="--d:0.34s"><span class="n">Carl Backman</span><span class="d">&#8211;</span> <span class="r">Voice</span></li>
+        <li data-reveal style="--d:0.38s"><span class="n">Lova Hellberg</span><span class="d">&#8211;</span> <span class="r">Dance</span></li>
+        <li data-reveal style="--d:0.42s"><span class="n">Eliot Charoff</span><span class="d">&#8211;</span> <span class="r">Poetry</span></li>
+        <li data-reveal style="--d:0.46s"><span class="n">Andreas</span><span class="d">&#8211;</span> <span class="r">Sound Design</span></li>
+        <li data-reveal style="--d:0.50s"><span class="n">Joakim Benckert</span><span class="d">&#8211;</span> <span class="r">Music</span></li>
+        <li data-reveal style="--d:0.54s"><span class="n">Zean Farence Diaz</span><span class="d">&#8211;</span> <span class="r">Music</span></li>
+        <li data-reveal style="--d:0.58s"><span class="n">Simon</span><span class="d">&#8211;</span> <span class="r">Event Production</span></li>
+        <li data-reveal style="--d:0.62s"><span class="n">Elias Ljungberg</span><span class="d">&#8211;</span> <span class="r">Photography</span></li>
+        <li data-reveal style="--d:0.66s"><span class="n">Ella Elvida</span><span class="d">&#8211;</span> <span class="r">Shibari, Set Design</span></li>
+        <li data-reveal style="--d:0.70s"><span class="n">Kristoffer Benckert</span><span class="d">&#8211;</span> <span class="r">Music, Web Design</span></li>
       </ul>
     </div>
 

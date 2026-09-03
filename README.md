@@ -85,15 +85,39 @@ Charoff" sets narrower than "Lova Hellberg" though both are thirteen.
 Counted rather than measured, several sit in the wrong place and the
 ramp has kinks in it.
 
-The dash is tied to the name with a no-break space, so a credit too
-long for its column can only break after it: "ELIAS LJUNGBERG —" and
-then the role. Left to itself the line breaking put the dash at the
-head of the next line on some rows and the tail of the previous one on
-others, which read as two different mistakes in one list. The name
-keeps the cream and the role steps back to the mist — one size for
-both, because a second size in a row set this small reads as an error
-rather than as a hierarchy, and the colour has already said which is
-which. Vallerie is outside
+**No credit wraps, at any size, and the way that is held is that the
+type is sized from its COLUMN rather than from the viewport.**
+`.who-company` is a container and `.roster li` is
+`clamp(.6rem, 4.05cqw, .92rem)` — the coefficient is 100 divided by the
+23.9em the longest credit sets in, so that credit lands just inside its
+column everywhere and every other one lands short. A vw curve cannot do
+this: the column is what is left over after a photograph sized by the
+screen's *height*, so at 1440x900 it is 311px and at 1920x1080 it is
+478px, and no function of the width alone knows that. The same
+coefficient is used in all three layouts; only the floor and the
+ceiling change.
+
+Three things bought the width that made it possible. The role is set at
+.84 of the name with .08em of tracking against the name's .14em — which
+also says which half is which, so the mist no longer has to carry that
+alone. The dash is an en rather than an em, half the width for the same
+mark. And it carries its own margins instead of sitting between two
+word spaces. The space after it stays, because it is the one place the
+row could break if a name ever outgrew this, and it is pulled back to
+nothing with a -.09em margin so the dash sits .30em from the name and
+.30em from the role rather than noticeably nearer the name.
+
+**The dash is levelled with the capitals, and the number is measured.**
+A dash is drawn to cut lowercase, so in a row set in capitals it sits
+low: the ink of a capital runs 0 to .625em above the baseline, mid
+.3125em, while the en dash runs .17 to .21em, mid .19em. The role is
+set at .84, so the middle of its capitals is .2625em. `top:-.098em`
+levels the dash with the mean of the two. `scratchpad/dash.js` measures
+it off the painted glyphs — a canvas, not the line boxes, which say
+nothing about where a glyph actually is — and `scratchpad/gaps.js`
+checks the two gaps either side.
+
+Vallerie is outside
 that order — she leads, so she is set apart above it in gold rather
 than made loud within it, a step larger than the rest, and centred on
 the rule beneath her so the name and its horizon share a mid-point. The
@@ -274,8 +298,19 @@ same size, tracking and capitals, upright rather than italic — and only
 the gold says which one she is. At nearly twice the size and leaning,
 it was a second thing happening in a column with room for one. Her role
 follows the same rule: its own line under the name on a wide screen,
-where the column has the room and the horizon can sit under both;
-back on the line behind a dash on a phone, set like every other credit.
+where the column has the room; back on the line behind a dash on a
+phone, set like every other credit — and it is the roster's own dash
+element under the roster's own rule, not a second one built out of
+`::before`. Built separately, hers came out tight against her role
+while every other row had air on both sides of it.
+
+**The horizon draws between her name and her role, not under the pair.**
+It is a background image on the role — `background-size:100% 1px` at
+the top — rather than a pseudo-element, because `::before` on that box
+is the dash the narrow setting puts back on the line, and one box
+cannot have two of either. It comes out the width of her name without
+being told to: the role is a block inside a span shrink-wrapped to its
+widest line, and a single word set this small is never that.
 
 **`.lead-name > span`, and the child combinator is load-bearing.** Her
 role is a span inside the span the horizon is drawn on, so a bare
@@ -285,19 +320,35 @@ the word. Nothing that measures position or size can see that, which is
 why `scratchpad/credits.js` counts the elements under `.lead-name` with
 a painted `::after` and requires at most one.
 
-**The stacked layout starts at 1100px, not 820.** A credit is a name
-AND a role now, and one needs about 400px to set on a line. Three
-columns can only give it that when the screen is wide enough for two of
-them beside a photograph sized by the screen's *height* — about 1530px
-at 900 tall. Below that some credits wrap, which the roster is built to
-take. But at 1024x768 the side column comes out near 190px: eleven of
-the thirteen wrap and the column reads as a stack of fragments, running
-past the foot of the panel. Stacked at the full width of the screen
-they are thirteen clean lines. The threshold moved because the content
-did, which is the point of measuring it rather than naming a device.
-Between 1101 and 1240px the rows keep their size and give up the air
-between them instead — the names stay as legible as they are
-everywhere else and the block simply sits closer together.
+**The stacked layout starts at 1240px, not 820.** Sized from their
+column, the credits hold three columns wherever that column can carry
+the type at a size worth reading. The floor is where it cannot: at
+1152x864 — four by three, where a photograph sized by the screen's
+*height* takes half its width — the side column is 200px against the
+229px the longest credit needs even at the smallest size the clamp
+allows. Below 1240 the section stacks, and at the full width of the
+screen the credits set at their largest. The threshold is measured, not
+a device: it is the width at which a column stops being able to hold a
+name and a role on one line.
+
+**One place the photograph gives way, and it is a last resort.** A
+phone held sideways is about 667x375; the figure stands the full 375
+and takes 250 of the 667 across, leaving each side column 174px against
+the 188 the longest credit needs — with the type already at the
+smallest this setting allows. Everywhere else the way out was type;
+there it has run out, so the figure comes down to 78% of the height and
+gives each column the 27px it wants. It is bounded to screens under
+760px wide, so the figure keeps its full height everywhere else. That
+rule has to sit *after* the sideways-phone block, not before it: that
+block sets `max-height:100%` on the same element, and source order
+decides.
+
+**The headline over the verse is capitals**, tracked to .28em and set a
+step smaller than the lowercase setting was — capitals at the same
+nominal size stand about a third taller and read that much louder, and
+this line stands over the verse, which is the voice on that section. It
+takes two lines on a phone, balanced, so it breaks into two even ones
+rather than a full line and a single word under it.
 
 **The verse ranges left, and its spacing is measured off the
 photograph rather than chosen.** Centring turned the stanza into a
