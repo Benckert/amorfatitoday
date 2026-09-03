@@ -11,12 +11,20 @@ exactly one screen tall, plus a **Tickets** button that leaves the site.
 Nothing in the page is a placeholder any more. The ticket button in
 `<nav class="jump">` points at the Billetto listing (the `bref` query
 parameter is Billetto's own referral tag, supplied with the link — it
-is not tracking added here). The title, the subtitle, the dates, the
-verse and all ten artists are set.
+is not tracking added here). The title, the subtitle, the date, the
+venue, the headline, the verse and all fourteen artists are set.
 
-There is no venue/price section, and no social links: those details
-live on the ticket page, which is where anyone reading them is going
-anyway.
+The venue sits under the date on the landing, as a link to the map
+Google itself shares (its `g_st` parameter is Google's, part of that
+link, not tracking added here). There is no price section and no social
+links: those live on the ticket page, which is where anyone reading
+them is going anyway.
+
+Each credit is a name and a role — `<span class="n">` and
+`<span class="r">` with an em dash between them. To add one, write the
+row, run `scratchpad/widths2.js`, and put it where that says: the order
+is by rendered width, and the script prints the list sorted so the
+placement is read off rather than guessed.
 
 ## What the design holds to
 
@@ -69,12 +77,23 @@ the gutter on a narrow screen, half the slack beside `--measure` on a
 wide one — so the first letter of every section lands on the same
 vertical line at any width. Measured at 1440px: 160px on all three.
 
-**The roster is ordered by how wide each name is set, not by how many
-letters it has.** They were measured in a browser at the real tracking:
-"Amina Avdić" is the same eleven characters as "Yazz Meavis" but sets
-wider, and "Eliot Charoff" sets narrower than "Lova Hellberg" though
-both are thirteen. Counted rather than measured, three of the nine sit
-in the wrong place and the ramp has kinks in it. Vallerie is outside
+**The roster is ordered by how wide each credit is set, not by how many
+letters it has.** The whole row counts, name and role together, and it
+is measured in a browser at the real tracking: "Amina Avdić" is the
+same eleven characters as "Yazz Meavis" but sets wider, and "Eliot
+Charoff" sets narrower than "Lova Hellberg" though both are thirteen.
+Counted rather than measured, several sit in the wrong place and the
+ramp has kinks in it.
+
+The dash is tied to the name with a no-break space, so a credit too
+long for its column can only break after it: "ELIAS LJUNGBERG —" and
+then the role. Left to itself the line breaking put the dash at the
+head of the next line on some rows and the tail of the previous one on
+others, which read as two different mistakes in one list. The name
+keeps the cream and the role steps back to the mist — one size for
+both, because a second size in a row set this small reads as an error
+rather than as a hierarchy, and the colour has already said which is
+which. Vallerie is outside
 that order — she leads, so she is set apart above it in gold rather
 than made loud within it, a step larger than the rest, and centred on
 the rule beneath her so the name and its horizon share a mid-point. The
@@ -253,7 +272,32 @@ re-measure rather than keeping the numbers.
 **On a phone her name is set exactly like the rest of the roster** —
 same size, tracking and capitals, upright rather than italic — and only
 the gold says which one she is. At nearly twice the size and leaning,
-it was a second thing happening in a column with room for one.
+it was a second thing happening in a column with room for one. Her role
+follows the same rule: its own line under the name on a wide screen,
+where the column has the room and the horizon can sit under both;
+back on the line behind a dash on a phone, set like every other credit.
+
+**`.lead-name > span`, and the child combinator is load-bearing.** Her
+role is a span inside the span the horizon is drawn on, so a bare
+`.lead-name span` matched it too and gave it its own rule — the name
+came out with two hairlines under it, one under the block and one under
+the word. Nothing that measures position or size can see that, which is
+why `scratchpad/credits.js` counts the elements under `.lead-name` with
+a painted `::after` and requires at most one.
+
+**The stacked layout starts at 1100px, not 820.** A credit is a name
+AND a role now, and one needs about 400px to set on a line. Three
+columns can only give it that when the screen is wide enough for two of
+them beside a photograph sized by the screen's *height* — about 1530px
+at 900 tall. Below that some credits wrap, which the roster is built to
+take. But at 1024x768 the side column comes out near 190px: eleven of
+the thirteen wrap and the column reads as a stack of fragments, running
+past the foot of the panel. Stacked at the full width of the screen
+they are thirteen clean lines. The threshold moved because the content
+did, which is the point of measuring it rather than naming a device.
+Between 1101 and 1240px the rows keep their size and give up the air
+between them instead — the names stay as legible as they are
+everywhere else and the block simply sits closer together.
 
 **The verse ranges left, and its spacing is measured off the
 photograph rather than chosen.** Centring turned the stanza into a
