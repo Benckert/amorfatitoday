@@ -59,13 +59,19 @@
    sans is drawn with a compass and stands still. This one moves. The
    italic is used for exactly one thing, her name.
 
-   Cormorant SC comes with it, for the title alone. Like Alegreya Sans
-   SC before it, it is a small-caps FAMILY rather than a font with an
-   smcp feature: its lowercase glyphs ARE the small capitals. So the
-   title is written "Amor Fati" and given NO text-transform —
-   uppercasing it would throw the small caps away and hand back plain
-   capitals, which is what the page had before. It has no italic, which
-   is why her name stays on Cormorant Garamond.
+   Two other faces come with it, each for one job.
+
+   Jost 300 sets the title, and only the title: a geometric sans, drawn
+   with a compass rather than with a pen, which is the opposite of
+   everything else here — and that is the point of it. One word set
+   against the grain reads as a mark rather than as more text.
+
+   Allura sets the verse on `about`, which used to be a photograph of
+   handwriting. It is a monoline formal roundhand, chosen by holding
+   nine scripts up against that photograph: Allura's letterforms are
+   the ones that match it — round, barely slanted, evenly stroked —
+   where Herr Von Muellerhoff leans much further and Cedarville Cursive
+   is a school hand rather than a formal one.
 
    Latin and latin-ext only, and latin-ext is not optional: the Ć in
    Amina Avdić's name is U+0106, which lives only in that subset, and
@@ -131,19 +137,35 @@
 }
 
 @font-face {
-  font-family: 'Cormorant SC';
+  font-family: 'Allura';
   font-style: normal;
-  font-weight: 300;
+  font-weight: 400;
   font-display: swap;
-  src: url(fonts/cormsc-300-latin.woff2) format('woff2');
+  src: url(fonts/allura-400-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: 'Cormorant SC';
+  font-family: 'Allura';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/allura-400-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Jost';
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url(fonts/cormsc-300-latin-ext.woff2) format('woff2');
+  src: url(fonts/jost-300-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(fonts/jost-300-latin-ext.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -163,8 +185,9 @@
      Cormorant's x-height is small for its em, which is most of where
      its air comes from — and it means every size below is set larger
      than the sans it replaced. Do not "restore" those numbers. */
-  --display:"Cormorant SC","Cormorant Garamond",Cormorant,Georgia,"Times New Roman",serif;
+  --display:"Jost",Futura,"Century Gothic","Avenir Next",Avenir,sans-serif;
   --micro:"Cormorant Garamond",Cormorant,Garamond,Georgia,"Times New Roman",serif;
+  --hand:"Allura","Snell Roundhand","Apple Chancery",cursive;
 
   --gutter:clamp(1.25rem,5vw,5rem);
   /* On :root, not on .panel: the link rail is fixed to the viewport and
@@ -321,17 +344,19 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .title{
   font-family:var(--display);
   font-weight:300;
-  /* Larger than the all-caps setting it replaces, and it has to be:
-     small capitals stand about three quarters the height of the full
-     ones, so matched by nominal size the mark reads much smaller. */
-  font-size:clamp(2.7rem,11.5vw,8rem);
+  /* Smaller than the small-caps setting it replaces, and it has to be:
+     these are full capitals, so at the same nominal size the mark
+     stands about a third taller. */
+  font-size:clamp(2.1rem,8.4vw,5.6rem);
   line-height:1;
-  letter-spacing:.11em;
-  text-indent:.11em;              /* the tracking is added to the right of
+  letter-spacing:.24em;
+  text-indent:.24em;              /* the tracking is added to the right of
                                      the last letter too; this re-centres it */
-  /* NO text-transform. Cormorant SC's lowercase glyphs are the small
-     capitals; uppercasing "Amor Fati" would discard them and give back
-     the plain capitals this is moving away from. */
+  /* Full capitals now. A geometric sans has no small-caps cut and no
+     business pretending to one; tracked out this far, capitals are
+     what the shape wants. Change to `lowercase` for the other reading
+     of it — the letterforms take either. */
+  text-transform:uppercase;
   color:var(--cream);
   margin:0;
   text-shadow:0 2px 30px rgba(0,0,0,.85);
@@ -389,10 +414,27 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 }
 
 /* ─────────────────────────  II. about  (verse)  ───────────────────── */
-/* the verse in the company's own hand, sized by height so it sits in
-   the column the same way a paragraph would */
+/* The verse, in a hand. It is set rather than photographed, so it is
+   sharp at any size, selectable, searchable, and read aloud by a
+   screen reader like the sentence it is.
+
+   Sized against BOTH axes: vw so it keeps its proportion to the column,
+   svh so a short screen cannot push it past the foot of the panel.
+   min() of the two, because either one alone is wrong somewhere. */
 #about .verse{display:flex;align-items:center;justify-content:flex-start}
-#about .verse img{max-height:min(66svh,660px);max-width:100%;width:auto;height:auto}
+.hand{
+  margin:0;
+  font-family:var(--hand);font-weight:400;
+  font-size:clamp(1.25rem,min(2.7vw,4.6svh),2.4rem);
+  line-height:1.75;
+  /* a little air between the words, which is what the photograph had
+     and what keeps a joined hand from reading as one long word */
+  letter-spacing:.03em;word-spacing:.16em;
+  color:var(--cream);
+  text-shadow:0 1px 10px rgba(0,0,0,.95),0 2px 26px rgba(0,0,0,.8);
+}
+.hand p{margin:0 0 .7em}
+.hand .sign{margin:1.35em 0 0;padding-left:2.4em}
 #about .beside img{--flip:scaleX(-1)}
 #about{--focus:50% 0%}          /* on a phone, keep her head, crop the floor */
 
@@ -681,7 +723,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      and broke onto two lines. At 9.4vw with .14em of tracking it needs
      ~301px there, and still fits at 320px wide, which is the narrowest
      screen this is checked against. */
-  .title{font-size:clamp(2.5rem,12.6vw,4.2rem);letter-spacing:.09em;text-indent:.09em}
+  .title{font-size:clamp(1.75rem,8.6vw,3rem);letter-spacing:.2em;text-indent:.2em}
   .subtitle{font-size:.8rem;letter-spacing:.22em;text-indent:.22em}
   .when{font-size:.78rem}
 
@@ -705,7 +747,9 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      the full-bleed figure comes up short of the right edge */
   #artists{padding-right:0}
   #about .verse{justify-content:center}
-  #about .verse img{max-height:34svh}
+  #about .hand{font-size:clamp(1rem,min(5.6vw,3.1svh),1.5rem);line-height:1.6}
+  #about .hand p{margin:0 0 .5em}
+  #about .hand .sign{margin:.9em 0 0;padding-left:1.6em}
   /* align-self, and it is load-bearing: .split centres its items, which
      leaves this box sized by its content rather than by its row. With
      no definite height, height:100% on the image below resolves to
@@ -799,7 +843,18 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   #artists .lead-name,#artists .who-company{
     grid-column:1;text-align:left;position:relative;z-index:2;
   }
-  #artists .lead-name{padding-inline:var(--inset);grid-row:1}
+  /* Her name is set like every other name here — same size, same
+     tracking, same capitals, upright rather than italic. Only the gold
+     says which one she is, which is enough on a screen this narrow;
+     the italic at nearly twice the size was a second thing happening
+     in a column that only has room for one. */
+  #artists .lead-name{
+    padding-inline:var(--inset);grid-row:1;
+    font-family:var(--micro);font-weight:400;font-style:normal;
+    font-size:.8rem;letter-spacing:.16em;text-indent:.16em;
+    text-transform:uppercase;
+    line-height:1.15;
+  }
   #artists .who-company{grid-row:2}
   /* grid-column too, not just the row: left at the desktop value it
      lands in an implicit second column sized to its own content, which
@@ -876,7 +931,9 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
   #about{padding-right:44%}
   #about .verse{justify-content:flex-start}
-  #about .verse img{max-height:74svh}
+  #about .hand{font-size:clamp(.95rem,min(2.4vw,5.4svh),1.6rem);line-height:1.5}
+  #about .hand p{margin:0 0 .45em}
+  #about .hand .sign{margin:.8em 0 0}
 
   #artists{
     grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
@@ -966,9 +1023,19 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   <!-- The verse in the company's own hand. The words live in the alt
        text, so screen readers and link previews still get them. -->
   <section class="panel split" id="about">
+    <!-- Type, not a photograph of type. It was images/text-cropped.png,
+         a scan of the verse in Vallerie's hand: 1001x854, soft at any
+         size the layout wanted, and invisible to anything that reads a
+         page. Allura was picked by holding nine scripts against that
+         scan; see "the faces" at the top of the stylesheet. -->
     <div class="says verse" data-reveal>
-      <img src="images/text-cropped.png" width="1001" height="854"
-           alt="Each moment of all time gifted us movement, music, togetherness. Come bask with us in this aliveness! We honour your attention. — Vallerie with Company">
+      <blockquote class="hand">
+        <p>each moment of all time gifted us</p>
+        <p>movement, music, togetherness!</p>
+        <p>come, bask in this aliveness!</p>
+        <p>we honour your attention</p>
+        <p class="sign">Vallerie with Company</p>
+      </blockquote>
     </div>
     <div class="beside" data-reveal style="--d:.2s">
       <img src="images/dancer.jpg" width="719" height="1079" alt="">
@@ -1119,11 +1186,13 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     document.body.appendChild(probe);
     /* Two families whose widths differ enough to tell apart at 100px:
        Cormorant is markedly narrower than Georgia. */
+    /* Two families whose widths differ enough to tell apart at 100px:
+       Jost is markedly narrower than Georgia. */
     var fallback = 'Georgia,"Times New Roman",serif';
     function ready(){
       probe.style.fontFamily = fallback;
       var without = probe.getBoundingClientRect().width;
-      probe.style.fontFamily = '"Cormorant SC",' + fallback;
+      probe.style.fontFamily = '"Jost",' + fallback;
       return Math.abs(probe.getBoundingClientRect().width - without) > 0.5;
     }
     function go(){
