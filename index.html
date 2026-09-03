@@ -533,7 +533,13 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    the mark is not emphasis and is not being marked up as anything —
    there is simply nowhere else to hang a margin. */
 .hand span{margin-left:.28em}
-.hand .sign{margin:calc((var(--sign) - var(--lh)) * 1em) 0 0 2.07em}
+/* 2.07em in from the left, which is where the photograph puts it —
+   see the measurements above. Held as a property because a stacked
+   screen centres it instead: with the figure below rather than beside,
+   the block sits in the middle of the panel and a signature indented
+   from its left edge reads as sitting off to one side of it. */
+.hand{--sign-in:2.07em}
+.hand .sign{margin:calc((var(--sign) - var(--lh)) * 1em) 0 0 var(--sign-in)}
 #about .beside img{--flip:scaleX(-1)}
 #about{--focus:50% 0%}          /* on a phone, keep her head, crop the floor */
 
@@ -595,7 +601,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   font-family:var(--micro);font-weight:300;font-style:italic;
   font-size:clamp(1.3rem,3vw,2.05rem);
   letter-spacing:.08em;text-indent:.08em;
-  color:var(--gold);
+  /* The same cream as every other name. Set apart by where she is and
+     how she is set — her own column, larger, the one italic on the
+     page, a horizon under her name — rather than by a colour the rest
+     of the list does not get. */
+  color:var(--cream);
   margin:0;
   text-shadow:0 1px 4px rgba(0,0,0,1),0 2px 18px rgba(0,0,0,.9);
 }
@@ -647,10 +657,16 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      arrives out of nothing and leaves into nothing, so nothing has to
      be anchored to an edge.
 
-     The space is split either side of it — a little more above, since
-     the name above is the larger of the two. */
-  margin-top:clamp(.62rem,2svh,1rem);
-  padding-top:clamp(.5rem,1.6svh,.82rem);
+     It sits close under the name and well clear of the role, so it
+     reads as belonging to the name and dividing the role off from it.
+     The two numbers are not the two gaps: the italic line above ends
+     at its baseline and carries about 16px of its own descender space
+     below that, so 4px of margin makes a 20px gap while 27px of
+     padding makes a 30px one. Measured off the pixels — see
+     scratchpad/lead.js, which hides the photograph, flattens the
+     reveal and scans the ink bands. */
+  margin-top:clamp(.15rem,.5svh,.3rem);
+  padding-top:clamp(1.1rem,3.2svh,1.7rem);
   background-image:linear-gradient(to right,
     rgba(246,227,189,0) 0%,rgba(246,227,189,.30) 22%,
     rgba(246,227,189,.30) 78%,rgba(246,227,189,0) 100%);
@@ -899,7 +915,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    not a device: it is the width at which the column stops being able
    to hold a name and a role on one line. */
 @media (max-width:1240px),(orientation:portrait){
-  :root{--gutter:1.4rem;--rail:3.5rem}
+  /* The stacked layout reaches from a 320px phone to a 1240px tablet
+     now, and a flat 1.4rem inset that is right at one end is mean at
+     the other. It grows with the screen and stops. */
+  :root{--gutter:clamp(1.4rem,3.2vw,2.75rem);--rail:3.5rem}
 
   /* the landing's words move off the photograph's centre and sit under
      it, over the black, where nothing has to be read through a picture */
@@ -942,13 +961,21 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      the full-bleed figure comes up short of the right edge */
   #artists{padding-right:0}
   #about .verse{align-items:center}
-  #about .lede{font-size:clamp(.64rem,3.1vw,.8rem);letter-spacing:.18em;
+  #about .lede{font-size:clamp(.72rem,3.1vw,.95rem);letter-spacing:.18em;
                text-indent:.18em;text-align:center;
                margin-bottom:clamp(1rem,3.2svh,1.8rem)}
   /* Tighter than the photograph on purpose: five lines of its leading
      do not fit a phone. The ratio between the two gaps is kept. */
-  #about .hand{font-size:clamp(1rem,min(5.6vw,3.1svh),1.5rem);
+  /* Both axes still, but a little more of the height: at 320x568 the
+     svh term was what bound, and 17.6px of a hand this light is not
+     enough to read comfortably. */
+  #about .hand{font-size:clamp(1.05rem,min(5.6vw,3.6svh),1.6rem);
                --lh:1.6;--adv:2.25;--sign:2.64}
+  /* Stacked, the block sits in the middle of the panel; a signature
+     indented from its left edge would read as sitting off to one side
+     of it. Centred on the widest line instead. */
+  #about .hand{--sign-in:0}
+  #about .hand .sign{text-align:center}
   /* align-self, and it is load-bearing: .split centres its items, which
      leaves this box sized by its content rather than by its row. With
      no definite height, height:100% on the image below resolves to
@@ -1006,9 +1033,14 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* Same coefficient as the wide setting — the credit is measured
      against its column either way — with bounds for a column that is
      now the whole screen. */
-  .roster li{font-size:clamp(.56rem,4.05cqw,.8rem);
+  /* The ceiling rises with the screen and the floor does not, so a
+     phone is untouched and a tablet stops setting its credits at phone
+     size — 12.8px on a 768px screen was the whole list whispering. The
+     row's air comes from svh and was capped at .46rem, which a tall
+     screen hit immediately; the cap is raised to let it breathe. */
+  .roster li{font-size:clamp(.56rem,4.05cqw,clamp(.8rem,1.4vw + .35rem,1.15rem));
              letter-spacing:.16em;text-indent:.16em;
-             padding:clamp(.24rem,.9svh,.46rem) 0}
+             padding:var(--row-pad) 0}
 
   /* one column: her name, then the company, then the room — the two
      text blocks come first in the markup for exactly this */
@@ -1026,7 +1058,12 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
        leaves the lit half of the picture, the cloth and the candle,
        clear above them. */
     align-content:end;
-    gap:clamp(.4rem,1.4svh,1rem);
+    /* Held as properties so the gap above "with company" and the gap
+       below it are written from the same two numbers and cannot drift
+       apart. See .company-label below for how the second is built. */
+    --row-gap:clamp(.4rem,1.4svh,1rem);
+    --row-pad:clamp(.24rem,.9svh,.85rem);
+    gap:var(--row-gap);
     /* Room under the socials for the link rail AND its feather, now
        that the names are pushed down onto it rather than ending well
        above it. */
@@ -1055,7 +1092,8 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   #artists .lead-name{
     padding-inline:var(--inset);grid-row:1;
     font-family:var(--micro);font-weight:400;font-style:normal;
-    font-size:.8rem;letter-spacing:.16em;text-indent:.16em;
+    font-size:clamp(.8rem,1.4vw + .35rem,1.15rem);
+    letter-spacing:.16em;text-indent:.16em;
     text-transform:uppercase;
     line-height:1.15;
   }
@@ -1121,7 +1159,17 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      span, so the gap between her name and the company is the one the
      horizon used to sit in. */
   .lead-name > span{padding-bottom:.6rem}
-  .company-label{margin-bottom:clamp(.4rem,1.4svh,.8rem)}
+  /* The same air above this line and below it, measured between the
+     INK rather than between the boxes. Above it: the .6rem the horizon
+     used to occupy, plus the row gap. Below it: this margin plus the
+     first credit's own top padding. Setting the two box gaps equal
+     leaves the eye with unequal ones, because the name above is set
+     larger and carries more space under its baseline than this line
+     does — that bias measures 3-4px across every screen, so it is
+     added back here. Verified by scanning the painted rows at
+     320x568, 390x844 and 768x1024: within a pixel at all three. */
+  .company-label{font-size:clamp(.68rem,.75vw + .42rem,.92rem);
+                 margin-bottom:calc(.6rem + var(--row-gap) - var(--row-pad) + 3.7px)}
 
   /* the links wrap out to the screen edges here, so the toggle cannot
      keep the bottom-left corner */
@@ -1145,12 +1193,49 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 @media (orientation:landscape) and (max-height:540px){
   .panel{padding-block:clamp(.5rem,3svh,1rem)}
 
-  #about{padding-right:44%}
-  #about .verse{align-items:flex-start}
-  #about .lede{font-size:clamp(.58rem,1.4vw,.72rem);letter-spacing:.16em;
+  /* Back out of the stacked arrangement, the way #artists does below.
+     This section used to fall outside the stacked block entirely — it
+     began at 820px and a sideways phone is wider than that — so the
+     wide rules reached it and `padding-right:44%` was the only
+     adjustment it needed. The block starts at 1240px now, which caught
+     this section as well: the words kept their inset and the figure
+     went under them as a full-bleed strip about 130px tall, cropped to
+     her shoulder, with the reserved 44% standing empty beside it.
+     Everything the stacked block sets on the pair has to be undone
+     here, not just the padding. */
+  #about{
+    grid-template-columns:1fr;
+    grid-template-rows:minmax(0,1fr);
+    gap:0;
+    padding:clamp(.5rem,3svh,1rem) 44% clamp(.5rem,3svh,1rem) var(--inset);
+  }
+  #about .verse{align-items:flex-start;padding-inline:0}
+  #about .beside{
+    position:absolute;top:0;right:0;bottom:0;left:auto;
+    width:42%;height:auto;align-self:auto;min-height:0;
+    justify-content:flex-end;overflow:visible;
+  }
+  /* whole, and limited by the height it has — not the stacked block's
+     full-bleed crop, which has no meaning in a column beside the words */
+  #about .beside img{
+    width:auto;height:auto;max-width:100%;max-height:100%;
+    object-fit:initial;object-position:initial;
+  }
+  #about .beside::before{
+    background:linear-gradient(to right,#000 0%,rgba(0,0,0,.45) 6%,rgba(0,0,0,0) 14%);
+  }
+  /* side by side again, so the signature is indented again */
+  #about .hand{--sign-in:2.07em}
+  #about .hand .sign{text-align:left}
+  #about .lede{font-size:clamp(.66rem,1.4vw,.8rem);letter-spacing:.16em;
                text-indent:.16em;margin-bottom:clamp(.7rem,2.6svh,1.2rem)}
-  #about .hand{font-size:clamp(.95rem,min(2.4vw,5.4svh),1.6rem);
-               --lh:1.5;--adv:2;--sign:2.35}
+  /* The size comes up and the leading comes down to pay for it. At
+     844x390 the larger hand left 11px between the last line and the
+     link rail, which is not clearance, it is luck; at 1.85 it is
+     around 28px and the type is the size that made it worth doing.
+     The ratio between the two gaps is kept, as everywhere else. */
+  #about .hand{font-size:clamp(1.05rem,min(2.6vw,5.8svh),1.7rem);
+               --lh:1.5;--adv:1.75;--sign:2.06}
 
   #artists{
     grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);

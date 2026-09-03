@@ -293,9 +293,15 @@ caps to Jost capitals meant `clamp(2.7rem,11.5vw,8rem)` down to
 8.6vw. One line at every width from 320px up. Change the case again and
 re-measure rather than keeping the numbers.
 
+**Her name is set in the same cream as every other one.** What sets
+her apart is where she is and how she is set — her own column on a wide
+screen, larger, the one italic on the page, a horizon under the name —
+rather than a colour the rest of the list does not get. On a phone,
+where she is set exactly like the roster, it is her place above "with
+company" that says it.
+
 **On a phone her name is set exactly like the rest of the roster** —
-same size, tracking and capitals, upright rather than italic — and only
-the gold says which one she is. At nearly twice the size and leaning,
+same size, tracking and capitals, upright rather than italic. At nearly twice the size and leaning,
 it was a second thing happening in a column with room for one. Her role
 follows the same rule: its own line under the name on a wide screen,
 where the column has the room; back on the line behind a dash on a
@@ -312,6 +318,26 @@ cannot have two of either. It comes out the width of her name without
 being told to: the role is a block inside a span shrink-wrapped to its
 widest line, and a single word set this small is never that.
 
+It sits close under the name and well clear of the role — 20px above,
+31px below — so it reads as belonging to the name and dividing the role
+off from it. The two CSS numbers are nothing like the two gaps: the
+italic line above ends at its baseline and carries about 16px of its
+own descender space below that, so 4px of margin makes the 20px gap
+while 27px of padding makes the 31px one. That is why they are measured
+off the pixels rather than set by eye — `scratchpad/lead.js` hides the
+photograph, flattens the reveal, and scans the ink bands.
+
+**On a phone, the air either side of "with company" is equal**, and
+equal between the *ink*, not between the boxes. Setting the two box
+gaps the same leaves the eye with unequal ones: the name above is set
+larger and carries more space under its baseline than that line does,
+a bias that measures 3-4px on every screen. So the row gap and the
+credit's own top padding are held as `--row-gap` and `--row-pad` on
+`#artists`, the label's margin is built from both plus the bias, and
+the two cannot drift apart when either changes. Scanned at 320x568,
+375x704, 390x844, 768x1024 and 820x1180: equal within a pixel at all
+five.
+
 **`.lead-name > span`, and the child combinator is load-bearing.** Her
 role is a span inside the span the horizon is drawn on, so a bare
 `.lead-name span` matched it too and gave it its own rule — the name
@@ -319,6 +345,17 @@ came out with two hairlines under it, one under the block and one under
 the word. Nothing that measures position or size can see that, which is
 why `scratchpad/credits.js` counts the elements under `.lead-name` with
 a painted `::after` and requires at most one.
+
+**A tablet is not a large phone.** The stacked layout now reaches from
+a 320px phone to a 1240px tablet, and everything in it was sized for
+the small end: a flat `--gutter:1.4rem` and credits that stayed at
+12.8px on a 768px screen, which was the whole list whispering. The
+credits' ceiling rises with the width (`clamp(.8rem, 1.4vw + .35rem,
+1.15rem)`) while the floor does not, so a phone is untouched and an
+iPad sets its names at 16.4px, an iPad Air at 17.1 and a landscape iPad
+at 18.4. The row's air comes from `svh` and was capped at `.46rem`,
+which any tall screen hit at once; the cap is raised so it can breathe.
+The gutter grows with the width and stops.
 
 **The stacked layout starts at 1240px, not 820.** Sized from their
 column, the credits hold three columns wherever that column can carry
@@ -330,6 +367,38 @@ allows. Below 1240 the section stacks, and at the full width of the
 screen the credits set at their largest. The threshold is measured, not
 a device: it is the width at which a column stops being able to hold a
 name and a role on one line.
+
+**`about` had to be backed out of the stacked layout on a sideways
+phone, and that was a regression from moving the breakpoint.** The
+section used to fall outside the stacked block entirely — it began at
+820px and a sideways phone is wider than that — so the wide rules
+reached it and `padding-right:44%` was the only adjustment it needed.
+At 1240px the block caught it too: the words kept their inset and the
+figure went underneath them as a full-bleed strip about 130px tall,
+cropped to her shoulder, with the reserved 44% standing empty beside
+it. Everything the stacked block sets on the pair is undone there now,
+not just the padding.
+
+**The verse holds a readable size on the small screens.** It is sized
+against both axes, and on the short ones the `svh` term is what binds:
+at 320x568 that put the hand at 17.6px, which is not enough of a script
+this light to read comfortably. The height coefficient goes from 3.1 to
+3.6 on a phone and from 5.4 to 5.8 on a sideways one, with the floors
+raised to match, and the headline over it comes up too.
+
+On a sideways phone the leading pays for the size: `--adv` goes to
+1.75, against the photograph's 2.53 and the phone's 2.25. At the larger
+size and the old leading the last line came within 11px of the link
+rail at 844x390, which is not clearance, it is luck. It is 24-52px
+across every sideways phone in the suite now — 812x375, 736x414,
+896x414 and 926x428 were added to `fits.js` for exactly this, because
+390 tall was the only one of that shape it had been checking.
+
+**The signature is centred wherever the verse and the figure stack.**
+Beside the figure it sits 2.07em in, which is where the photograph puts
+it. Stacked, the block sits in the middle of the panel and an indent
+from its left edge reads as sitting off to one side of it, so the
+indent is held as `--sign-in` and set to zero there.
 
 **One place the photograph gives way, and it is a last resort.** A
 phone held sideways is about 667x375; the figure stands the full 375
