@@ -255,6 +255,23 @@ same size, tracking and capitals, upright rather than italic — and only
 the gold says which one she is. At nearly twice the size and leaning,
 it was a second thing happening in a column with room for one.
 
+**The verse is centred.** Left-aligned inside a centred block, which is
+what it was, reads as neither one thing nor the other: a ragged right
+edge hanging in the middle of the column. Right-aligning it is the
+other reading — it would put the flush edge nearest the figure — and is
+a one-word change on `.hand`.
+
+**Everything in the link rail is on a vw curve, and it has to be.** At
+a fixed .66rem the row needed 373px, which is more than a 320 or 360px
+phone has, so the ticket button dropped onto a second row — measured
+wrapping at 320, 340 and 360, with two pixels to spare at 375. Sizes,
+tracking, link padding and the button's own padding all shrink with the
+screen now: 302px of 320 at the narrowest, one row from 320 to 1440.
+`scratchpad/rail.js` measures it. Note that counting rows by comparing
+each child's `top` does not work here — the button is taller than the
+links, so their tops differ on one row; compare the row's height to its
+tallest child instead.
+
 The choice is about the work rather than about taste. Cormorant is a
 high-contrast old-style face: the strokes swell and thin the way a pen
 does, so every letter has a direction and a speed in it. A geometric
