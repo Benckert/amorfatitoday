@@ -219,9 +219,41 @@ presentation.
 
 ## The type
 
-**Cormorant Garamond, one family, three cuts** — roman 300 for the
-mark, roman 400 for every line of text, italic 300 for exactly one
-thing: her name. Self-hosted in `fonts/`, latin and latin-ext.
+**Three faces, each with one job.** Cormorant Garamond carries the
+page — roman 400 for text, italic 300 for exactly one thing, her name.
+Jost 300 sets the title and nothing else. Allura sets the verse on
+`about`. All self-hosted in `fonts/`, latin and latin-ext.
+
+**The title is a geometric sans against a page of serif, on purpose.**
+Jost is drawn with a compass where everything else is drawn with a pen,
+and one word set against the grain reads as a mark rather than as more
+text. Full capitals, tracked to .24em; `lowercase` is the other reading
+and the letterforms take it — a one-word change on `.title`.
+
+**The verse is set, not photographed.** It was `images/text-cropped.png`,
+a 1001x854 scan of the verse in Vallerie's hand: soft at any size the
+layout wanted, and invisible to anything that reads a page. Allura was
+chosen by holding nine scripts against that scan — its letterforms are
+the ones that match, round and barely slanted and evenly stroked, where
+Herr Von Muellerhoff leans much further and Cedarville Cursive is a
+school hand rather than a formal one. Sized against both axes,
+`min(vw, svh)`, so it keeps its proportion to the column without a
+short screen pushing it past the foot of the panel. Checked at 15 sizes
+from 320x568 to 1920x1080 for spill, and for collision with the rail
+and the figure.
+
+**Every change of case or family on the title moves its size with it.**
+Small capitals stand about three quarters the height of full ones, so
+the same nominal size reads a third smaller: going from Cormorant small
+caps to Jost capitals meant `clamp(2.7rem,11.5vw,8rem)` down to
+`clamp(2.1rem,8.4vw,5.6rem)`, and the narrow setting from 12.6vw to
+8.6vw. One line at every width from 320px up. Change the case again and
+re-measure rather than keeping the numbers.
+
+**On a phone her name is set exactly like the rest of the roster** —
+same size, tracking and capitals, upright rather than italic — and only
+the gold says which one she is. At nearly twice the size and leaning,
+it was a second thing happening in a column with room for one.
 
 The choice is about the work rather than about taste. Cormorant is a
 high-contrast old-style face: the strokes swell and thin the way a pen

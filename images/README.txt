@@ -6,18 +6,18 @@ What the page uses, and how:
                 mirrored while the words were in a column beside it.
 
   text-cropped.png
-                the verse, in the company's own hand — the cropped
-                artwork, which holds far more of the frame than the
-                original did and so is readable at a glance. This is
-                the one the page uses. Shown whole, like everything
-                else: the crop came from you, the page adds none. It
-                is black to its own edges, so it has no visible frame
-                on the page's black — the words simply stand there.
-                The verse also lives in the image's alt text, so screen
-                readers and link previews still get it.
+  text.jpg      the verse in the company's own hand. NEITHER IS USED BY
+                THE PAGE ANY MORE. The verse is set as type now, in
+                Allura, which is sharp at any size, selectable, and
+                read aloud by a screen reader like the sentence it is —
+                see "the faces" at the top of index.html for how that
+                script was chosen against this artwork.
 
-  text.jpg      the original, uncropped artwork. No longer used; kept
-                because it is the source the cropped one came from.
+                Both are kept because they are the source: the hand
+                here is what the type is matched to, and if the type
+                is ever judged not close enough, this is what to hold
+                it against. text.jpg is the original; text-cropped.png
+                is your crop of it, which holds more of the frame.
 
   dancer.jpg    the figure alone, standing the full height of the
                 screen at the outer edge of `about`, beside the verse.
