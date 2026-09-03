@@ -410,26 +410,41 @@ lightness and fluidity, and that is what separates the two.
 [fp1]: https://github.com/alvarotrigo/fullPage.js/issues/4733
 [fp2]: https://github.com/alvarotrigo/fullPage.js/issues/2414
 
-- **The box that CLIPS must be the visual viewport, not the layout
-  viewport, and on iOS those are different numbers.** `bottom:0` on a
-  fixed body sizes it to the layout viewport, which includes the strip
-  behind Safari's toolbars; `--screen` is the visual viewport, what is
-  actually on screen. The deck came out shorter than the box clipping
-  it, and the second section sat in the gap between them, in plain view
-  under the first. Body is `height:var(--screen,100%)` now, with
-  `bottom:auto`.
+- **ONE height, and everything uses it: the body, the deck, the
+  sections.** The body is fixed to the four edges, so that height is
+  the layout viewport — the whole screen, including the strip behind a
+  phone browser's toolbars. A section covers all of it. Nothing is
+  sized from `--screen`.
 
-  **The clip cannot go on the deck instead**, which is the obvious fix
-  and a wrong one: the deck is what carries the transform, and overflow
-  clips a transformed element in its own coordinate space — the window
-  would travel with the content and show nothing at all. It belongs on
-  the ancestor that never moves.
+  That is the bug that put two sections on screen at once. The deck was
+  sized from `--screen`, the VISUAL viewport, which on iOS is shorter
+  than the layout viewport by the height of those toolbars — while the
+  box that clips, the body, was still the taller one. The sections
+  below the first sat in the gap between the two and were in plain
+  view. Reproduced at 393x852 with `--screen` forced to 580: body 852,
+  deck 580, section two at y=580.
 
-  Headless Chromium has no toolbar, so the layout and visual viewports
-  are equal there and this bug cannot appear on its own.
-  `scratchpad/ios.js` forces it, setting `--screen` short at five phone
-  sizes and asserting both that the second section is clipped and that
-  the deck still steps.
+  **Two fixes that look right and are not.** Sizing the body down to
+  `--screen` also closes the gap, and makes a section stop at the
+  toolbar instead of running behind it — the opposite of every section
+  covering the whole screen. And the clip cannot go on the deck: the
+  deck carries the transform, and overflow clips a transformed element
+  in its own coordinate space, so the window would travel with the
+  content and show nothing at all. The clip belongs on an ancestor that
+  never moves.
+
+  `--screen` is still measured, for the drag threshold and for telling
+  whether the reader has pinch-zoomed. Nothing is sized from it, and
+  `scratchpad/ios.js` asserts that: it forces `--screen` short at six
+  phone sizes and checks that the section still covers the screen, that
+  the next one cannot show through, that the deck's height did not
+  move, and that stepping still lands.
+
+  Headless Chromium has no toolbar, so the two viewports are equal
+  there and this cannot appear on its own — which is why it survived
+  every suite until it was seen on a phone. **The version approved
+  before this had the same bug**; it was latent because the strip of
+  the next section happened to be black.
 
 - **Without script it is an ordinary long page.** Every deck rule is
   gated on `html.js`, and the class is set in a one-line script in the

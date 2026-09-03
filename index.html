@@ -248,31 +248,39 @@ body{
    Without script this all collapses to an ordinary long page that
    scrolls normally: the rules below are gated on html.js. */
 html.js,html.js body{height:100%;overflow:hidden;overscroll-behavior:none}
-/* Body is the thing that CLIPS, and it has to be exactly as tall as
-   what the reader can see — not as tall as the layout viewport.
+/* ONE HEIGHT, and everything uses it: the body, the deck, the sections.
+   The body is fixed to the four edges, so that height is the layout
+   viewport — the whole screen, including the strip behind a phone
+   browser's toolbars. A section covers all of it.
 
-   On iOS those two are different numbers. `bottom:0` on a fixed body
-   sizes it to the LAYOUT viewport, which includes the strip behind
-   Safari's toolbars; --screen is the VISUAL viewport, what is actually
-   on screen. So the deck came out shorter than the box clipping it,
-   and the second section sat in the gap between them, in plain view
-   under the first. Measured on the reported device and reproduced at
-   393x852 with --screen at 580: body 852, deck 580, section two at
-   y=580 and visible.
+   This is the bug that put two sections on screen at once. The deck
+   used to be sized from --screen, the VISUAL viewport, which on iOS is
+   shorter than the layout viewport by the height of those toolbars —
+   while the box that clips, the body, was still the taller one. The
+   sections below the first sat in the gap between the two and were in
+   plain view. Reproduced at 393x852 with --screen forced to 580: body
+   852, deck 580, section two at y=580.
 
-   The clip cannot go on the deck instead. The deck is what carries the
+   Sizing the body down to --screen instead would also close the gap,
+   and is wrong: a section would then stop at the toolbar rather than
+   run behind it, which is the opposite of every section covering the
+   whole screen.
+
+   The clip cannot go on the deck either. The deck carries the
    transform, and overflow clips a transformed element in its OWN
-   space — the window would travel with the content and show nothing.
-   It belongs on the ancestor that never moves. */
-html.js body{position:fixed;top:0;left:0;right:0;bottom:auto;
-             height:var(--screen,100%)}
+   space — the window would travel with the content and show nothing at
+   all. It belongs on an ancestor that never moves.
+
+   --screen is still measured, for the drag threshold and for telling
+   whether the reader has pinch-zoomed. Nothing is SIZED from it. */
+html.js body{position:fixed;top:0;left:0;right:0;bottom:0}
 
 .deck{position:relative}
 html.js .deck{
   position:absolute;top:0;left:0;right:0;
-  /* the measured screen, with the fixed body's own height as the
-     fallback; they agree, and the measurement is the belt */
-  height:var(--screen,100%);
+  /* the body's height, which is the layout viewport — the same number
+     the body clips at, so nothing can ever sit between the two */
+  height:100%;
   display:flex;flex-direction:column;
   transform:translate3d(0,calc(var(--at,0) * -100%),0);
   /* pinch-zoom stays; one-finger panning is ours to interpret. When
