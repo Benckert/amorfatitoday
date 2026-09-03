@@ -435,10 +435,47 @@ lightness and fluidity, and that is what separates the two.
 
   `--screen` is still measured, for the drag threshold and for telling
   whether the reader has pinch-zoomed. Nothing is sized from it, and
-  `scratchpad/ios.js` asserts that: it forces `--screen` short at six
-  phone sizes and checks that the section still covers the screen, that
-  the next one cannot show through, that the deck's height did not
+  `scratchpad/ios.js` asserts that: it shortens the visual viewport at
+  six phone sizes and checks that the section still covers the screen,
+  that the next one cannot show through, that the deck's height did not
   move, and that stepping still lands.
+
+  **A finger has to hold the pixels it landed on.** Two separate things
+  used to pull the page out from under it, and both are worth keeping
+  written down because both were invisible on a desktop.
+
+  The resting place of section n is `calc(var(--at) * -100%)` — a
+  percentage of the deck, so `-n x deck-height`. The drag used to put
+  the deck at `-n x --screen` instead. Those agree on section one,
+  where both are nothing, and they agree wherever the two viewports do;
+  on a phone anywhere else they differ by the height of the toolbar, so
+  the page jumped by that much on the first millimetre of every drag,
+  and by twice that on the section after. The drag now starts from the
+  deck's actual computed transform, which is right whatever the unit,
+  and cannot drift apart from the resting rule again.
+
+  And a finger landing during a glide used to call `land()`, which
+  drops the transition and puts the deck on its destination in one
+  frame. Grabbing something in motion should stop it where it is, not
+  throw it the rest of the way first — so touch now freezes the deck at
+  the position it reads off the transform, and the glide's bookkeeping
+  is cleared without the snap. `land()` still serves the wheel and the
+  keyboard, where there is nothing under a finger to hold still.
+
+  `scratchpad/grab.js` holds both: it tracks the deck against the
+  finger on every touchmove the browser delivers, at four sizes and two
+  sections, and it presses mid-glide and requires the deck to be still
+  at +16ms, +120ms and +300ms without having reached the destination.
+  Against the build before the fix it reports 72px of slip on section
+  one, 144px on section two, and a deck that keeps travelling under a
+  finger that has already landed.
+
+  A note on testing this at all: the fake has to be
+  `visualViewport.height` itself, installed before the page's scripts
+  run. Writing `--screen` from outside looks equivalent and is not —
+  the page's own JS keeps its own measurement, so the whole JS half of
+  the bug goes unseen. That mistake is why `grab.js` passed on the
+  broken build the first time it was run.
 
   Headless Chromium has no toolbar, so the two viewports are equal
   there and this cannot appear on its own — which is why it survived

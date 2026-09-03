@@ -1457,16 +1457,42 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      reader nothing to read the gesture by, and a drag that goes
      nowhere until it is over is exactly what "jumpy" describes. Past
      the first and last section the pull is damped to a fifth rather
-     than stopped, so the end of the page announces itself. */
-  var drag = 0, from = 0, began = 0, held = false;
+     than stopped, so the end of the page announces itself.
+
+     A drag starts from where the pixels ACTUALLY are — read off the
+     computed transform — and never from a resting place worked out
+     afresh. Two separate things used to shift the page out from under
+     the finger on the first millimetre of a drag:
+
+     The resting position is a percentage of the deck, so section n
+     sits at -n x deck-height. The drag used to place it at
+     -n x --screen instead. Those two agree on a desktop and on
+     section one, where both are nothing; on iOS anywhere else they
+     differ by the height of the toolbar, and the page jumped by that
+     much the moment a finger moved.
+
+     And a finger landing during a glide used to call land(), which
+     drops the transition and snaps to the destination in a single
+     frame. Grabbing a moving page should stop it where it is, not
+     throw it the rest of the way first. */
+  var drag = 0, from = 0, began = 0, held = false, base = 0;
   function screen(){ return lastScreen || window.innerHeight; }
+  function offsetNow(){
+    var m = getComputedStyle(deck).transform, v;
+    if ((v = /matrix3d\(([^)]+)\)/.exec(m))) return parseFloat(v[1].split(",")[13]);
+    if ((v = /matrix\(([^)]+)\)/.exec(m)))   return parseFloat(v[1].split(",")[5]);
+    return 0;                                  /* "none": at the top */
+  }
   window.addEventListener("touchstart", function(e){
     if (e.touches.length !== 1 || root.classList.contains("zoomed")) {
       held = false; return;
     }
-    land();                       /* a finger outranks a glide in flight */
+    base = offsetNow();               /* where the pixels are, right now */
+    deck.classList.remove("glide");   /* stop it there — do not snap on  */
+    deck.style.transform = "translate3d(0," + base + "px,0)";
+    clearTimeout(settle);
+    gliding = false;
     held = true; drag = 0; from = e.touches[0].clientY; began = Date.now();
-    deck.classList.remove("glide");
   }, { passive: true });
   window.addEventListener("touchmove", function(e){
     if (!held) return;
@@ -1475,7 +1501,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     drag = e.touches[0].clientY - from;
     var edge = (at === 0 && drag > 0) || (at === panels.length - 1 && drag < 0);
     var by = edge ? drag * 0.2 : drag;
-    deck.style.transform = "translate3d(0," + (-at * screen() + by) + "px,0)";
+    deck.style.transform = "translate3d(0," + (base + by) + "px,0)";
   }, { passive: false });
   function release(){
     if (!held) return;
