@@ -19,6 +19,14 @@ What the page uses, and how:
                 it against. text.jpg is the original; text-cropped.png
                 is your crop of it, which holds more of the frame.
 
+                text.jpg is also the measurement, not only the
+                reference. Its word gaps, leading, signature indent
+                and the gap it leaves before a comma were all read off
+                it in pixels, divided by its own 21px x-height, and
+                set as ems on `.hand` -- see "the verse ranges left"
+                in README.md. Re-measure from this file if the setting
+                is ever revisited; do not adjust it by eye.
+
   dancer.jpg    the figure alone, standing the full height of the
                 screen at the outer edge of `about`, beside the verse.
                 Mirrored (--flip:scaleX(-1)).

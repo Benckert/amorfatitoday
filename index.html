@@ -447,23 +447,46 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    svh so a short screen cannot push it past the foot of the panel.
    min() of the two, because either one alone is wrong somewhere. */
 #about .verse{display:flex;align-items:center;justify-content:flex-start}
+/* Set from the photograph rather than by eye. Measuring the original
+   against its own x-height gives numbers that survive a change of
+   size: the word gaps run 41-53px against a 21px x-height, so 2.15
+   x-heights; the lines advance 177px, so 8.4; the signature sits 1.175
+   advances below the last line and 6.9 x-heights in from the left.
+   Allura's x-height is .30em, which converts all of those to ems.
+
+   Held as three custom properties, because a short screen has to close
+   the leading up and the ratio between the two gaps should not drift
+   when it does. --lh is the line box, --adv the distance from one line
+   to the next, and the margins are the difference. */
 .hand{
+  --lh:1.75;
+  --adv:2.53;    /* 8.4 x-heights, the photograph's own leading */
+  --sign:2.97;   /* 1.175 of an advance, the pause before the name */
   margin:0;
   font-family:var(--hand);font-weight:400;
   font-size:clamp(1.25rem,min(2.7vw,4.6svh),2.4rem);
-  line-height:1.75;
-  /* a little air between the words, which is what the photograph had
-     and what keeps a joined hand from reading as one long word */
-  letter-spacing:.03em;word-spacing:.16em;
-  /* Centred. Left-aligned inside a centred block, which is what it was,
-     reads as neither one thing nor the other — a ragged right edge
-     hanging in the middle of the column. */
-  text-align:center;
+  line-height:var(--lh);
+  /* 2.15 x-heights between words, less the .219em the font already
+     puts there and the .03em of tracking that lands on the space */
+  letter-spacing:.03em;word-spacing:.4em;
+  /* Every line starts on the same left edge, as it does in the
+     photograph — centring turned the stanza into a funnel. The old
+     objection to ranging it left, that a ragged right edge would hang
+     in the middle of the column, is answered by the block shrinking to
+     its longest line: the left edge IS the edge of the text, and it is
+     the whole block that the layout then places. */
+  text-align:left;
+  width:max-content;max-width:100%;
   color:var(--cream);
   text-shadow:0 1px 10px rgba(0,0,0,.95),0 2px 26px rgba(0,0,0,.8);
 }
-.hand p{margin:0 0 .7em}
-.hand .sign{margin:1.35em 0 0}
+.hand p{margin:0 0 calc((var(--adv) - var(--lh)) * 1em)}
+/* .95 of an x-height before a mark, which is what the photograph has
+   and roughly half of what it puts between words. A bare span, because
+   the mark is not emphasis and is not being marked up as anything —
+   there is simply nowhere else to hang a margin. */
+.hand span{margin-left:.28em}
+.hand .sign{margin:calc((var(--sign) - var(--lh)) * 1em) 0 0 2.07em}
 #about .beside img{--flip:scaleX(-1)}
 #about{--focus:50% 0%}          /* on a phone, keep her head, crop the floor */
 
@@ -781,9 +804,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      the full-bleed figure comes up short of the right edge */
   #artists{padding-right:0}
   #about .verse{justify-content:center}
-  #about .hand{font-size:clamp(1rem,min(5.6vw,3.1svh),1.5rem);line-height:1.6}
-  #about .hand p{margin:0 0 .5em}
-  #about .hand .sign{margin:.9em 0 0}
+  /* Tighter than the photograph on purpose: five lines of its leading
+     do not fit a phone. The ratio between the two gaps is kept. */
+  #about .hand{font-size:clamp(1rem,min(5.6vw,3.1svh),1.5rem);
+               --lh:1.6;--adv:2.25;--sign:2.64}
   /* align-self, and it is load-bearing: .split centres its items, which
      leaves this box sized by its content rather than by its row. With
      no definite height, height:100% on the image below resolves to
@@ -965,9 +989,8 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
   #about{padding-right:44%}
   #about .verse{justify-content:flex-start}
-  #about .hand{font-size:clamp(.95rem,min(2.4vw,5.4svh),1.6rem);line-height:1.5}
-  #about .hand p{margin:0 0 .45em}
-  #about .hand .sign{margin:.8em 0 0}
+  #about .hand{font-size:clamp(.95rem,min(2.4vw,5.4svh),1.6rem);
+               --lh:1.5;--adv:2;--sign:2.35}
 
   #artists{
     grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
@@ -1063,10 +1086,15 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
          page. Allura was picked by holding nine scripts against that
          scan; see "the faces" at the top of the stylesheet. -->
     <div class="says verse" data-reveal>
+      <!-- The hand in the photograph sets its commas and its
+           exclamation marks off from the word before, about half a word
+           gap. It is done here with a margin rather than with a space
+           in the text, so that what is copied, read aloud or indexed
+           is ordinary punctuation. -->
       <blockquote class="hand">
         <p>each moment of all time gifted us</p>
-        <p>movement, music, togetherness!</p>
-        <p>come, bask in this aliveness!</p>
+        <p>movement<span>,</span> music<span>,</span> togetherness<span>!</span></p>
+        <p>come<span>,</span> bask in this aliveness<span>!</span></p>
         <p>we honour your attention</p>
         <p class="sign">Vallerie with Company</p>
       </blockquote>

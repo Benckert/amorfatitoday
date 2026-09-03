@@ -255,11 +255,44 @@ same size, tracking and capitals, upright rather than italic — and only
 the gold says which one she is. At nearly twice the size and leaning,
 it was a second thing happening in a column with room for one.
 
-**The verse is centred.** Left-aligned inside a centred block, which is
-what it was, reads as neither one thing nor the other: a ragged right
-edge hanging in the middle of the column. Right-aligning it is the
-other reading — it would put the flush edge nearest the figure — and is
-a one-word change on `.hand`.
+**The verse ranges left, and its spacing is measured off the
+photograph rather than chosen.** Centring turned the stanza into a
+funnel; every line now starts on one edge, as every line does in
+`images/text.jpg`. The old objection to ranging it left — that a ragged
+right edge would hang in the middle of the column — is answered by the
+block shrinking to its longest line (`width:max-content`), so the left
+edge is the edge of the text and it is the whole block the layout
+places: at the left of the column on a wide screen, centred on a phone.
+
+The numbers come from measuring the original against its own x-height,
+which is what makes them survive a change of size. In the scan the word
+gaps run 41-53px against a 21px x-height, the lines advance 177px, the
+signature sits 208px below the last line and 145px in from the left.
+That is 2.15 x-heights between words, 8.4 between lines, 1.175 of an
+advance before the name and 6.9 in from the edge. Allura's x-height is
+.30em, which turns those into ems: `word-spacing:.4em` once the .219em
+the font already puts in a space and the .03em of tracking that lands
+on it are taken off, an advance of 2.53em, a signature 2.97em below the
+last line and 2.07em in.
+
+Held as three custom properties — `--lh`, `--adv`, `--sign` — because a
+phone has to close the leading up to fit five lines and the ratio
+between the two gaps should not drift when it does. The margins are the
+difference between the advance and the line box, so setting the three
+per breakpoint is the whole adjustment. A phone runs 2.25 and a sideways
+phone 2.0, against the photograph's 2.53.
+
+The hand also sets its commas and exclamation marks off from the word
+before, about half a word gap. That is `.hand span{margin-left:.28em}`
+on a bare span around the mark, rather than a space in the text, so
+what is copied or read aloud is ordinary punctuation.
+
+`scratchpad/verse.js` holds the proportions rather than the pixels: it
+checks that the four lines are flush to within .6px, that none of them
+wraps, that the block stays inside the panel, and that the three ratios
+match the scan at eight sizes. Its line count has to be distinct line
+tops — a range over content holding inline elements returns one rect per
+run, so a line carrying two spans counts as three and reads as wrapped.
 
 **Everything in the link rail is on a vw curve, and it has to be.** At
 a fixed .66rem the row needed 373px, which is more than a 320 or 360px
