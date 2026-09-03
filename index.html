@@ -349,8 +349,8 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      stands about a third taller. */
   font-size:clamp(2.1rem,8.4vw,5.6rem);
   line-height:1;
-  letter-spacing:.24em;
-  text-indent:.24em;              /* the tracking is added to the right of
+  letter-spacing:.15em;
+  text-indent:.15em;              /* the tracking is added to the right of
                                      the last letter too; this re-centres it */
   /* Full capitals now. A geometric sans has no small-caps cut and no
      business pretending to one; tracked out this far, capitals are
@@ -430,11 +430,15 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* a little air between the words, which is what the photograph had
      and what keeps a joined hand from reading as one long word */
   letter-spacing:.03em;word-spacing:.16em;
+  /* Centred. Left-aligned inside a centred block, which is what it was,
+     reads as neither one thing nor the other — a ragged right edge
+     hanging in the middle of the column. */
+  text-align:center;
   color:var(--cream);
   text-shadow:0 1px 10px rgba(0,0,0,.95),0 2px 26px rgba(0,0,0,.8);
 }
 .hand p{margin:0 0 .7em}
-.hand .sign{margin:1.35em 0 0;padding-left:2.4em}
+.hand .sign{margin:1.35em 0 0}
 #about .beside img{--flip:scaleX(-1)}
 #about{--focus:50% 0%}          /* on a phone, keep her head, crop the floor */
 
@@ -566,8 +570,13 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
   padding:0 var(--inset) clamp(1.1rem,3svh,1.8rem);
   font-family:var(--micro);font-weight:400;
-  font-size:clamp(.66rem,1.5vw,.78rem);
-  letter-spacing:.2em;text-transform:uppercase;
+  /* The vw term is what keeps this row on one line. Fixed at .66rem it
+     needed 373px, which is more than a 320px or 360px phone has, and
+     the ticket button dropped onto a second row — measured at 320, 340
+     and 360, and with 2px to spare at 375. Everything in the row is on
+     a vw curve now, so it shrinks with the screen instead of wrapping. */
+  font-size:clamp(.47rem,2.15vw,.78rem);
+  letter-spacing:clamp(.12em,.6vw,.2em);text-transform:uppercase;
 }
 .jump::before{
   content:"";position:absolute;left:0;right:0;bottom:0;top:-70%;z-index:-1;
@@ -594,11 +603,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    hovering never re-rasterises the pill itself. */
 .jump .ticket{
   position:relative;isolation:isolate;
-  display:inline-flex;align-items:center;gap:.55em;
+  display:inline-flex;align-items:center;gap:.5em;
   /* enough to read as a different kind of thing from the three links,
      and no more: it belongs to the same row */
-  margin-left:clamp(.7rem,2.2vw,1.4rem);
-  padding:.72em 1.85em;
+  margin-left:clamp(.45rem,2.2vw,1.4rem);
+  padding:.7em clamp(.85em,4.1vw,1.85em);
   border:2px solid rgba(217,164,65,.62);
   border-radius:999px;
   background:rgba(217,164,65,.08);
@@ -723,7 +732,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      and broke onto two lines. At 9.4vw with .14em of tracking it needs
      ~301px there, and still fits at 320px wide, which is the narrowest
      screen this is checked against. */
-  .title{font-size:clamp(1.75rem,8.6vw,3rem);letter-spacing:.2em;text-indent:.2em}
+  .title{font-size:clamp(1.85rem,9.2vw,3.2rem);letter-spacing:.12em;text-indent:.12em}
   .subtitle{font-size:.8rem;letter-spacing:.22em;text-indent:.22em}
   .when{font-size:.78rem}
 
@@ -749,7 +758,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   #about .verse{justify-content:center}
   #about .hand{font-size:clamp(1rem,min(5.6vw,3.1svh),1.5rem);line-height:1.6}
   #about .hand p{margin:0 0 .5em}
-  #about .hand .sign{margin:.9em 0 0;padding-left:1.6em}
+  #about .hand .sign{margin:.9em 0 0}
   /* align-self, and it is load-bearing: .split centres its items, which
      leaves this box sized by its content rather than by its row. With
      no definite height, height:100% on the image below resolves to
@@ -913,7 +922,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   .dots{gap:.8rem;right:.55rem}
   .dots i{width:5px;height:5px}
   .jump{padding-bottom:clamp(.9rem,2.4svh,1.4rem)}
-  .jump a{padding:.35rem clamp(.5rem,3vw,.9rem);font-size:.66rem;letter-spacing:.16em}
+  .jump a{padding:.35rem clamp(.26rem,2.4vw,.9rem)}
 }
 
 /* a phone held sideways has almost no height: let the sections grow and
