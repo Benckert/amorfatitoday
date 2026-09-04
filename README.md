@@ -592,41 +592,45 @@ WebKit — the same trap the desktop hover's 2px lift is written around.
 The glow is a radial gradient on its own layer with no edge to lose,
 and the border warms with it in colour only.
 
-**The glow holds still and one highlight travels the rim.** A flame
-was too much: anything that changes brightness several times a second
-sits in the corner of the eye and stays there, and this is a button at
-the foot of a page someone is reading. The light around it is a
-constant now, and the only thing that moves is a single pass of
-brighter light along the border — about two seconds to cross, then
-seven of stillness before the next.
+**The glow holds still and the light goes round the rim.** A flame was
+too much: anything that changes brightness several times a second sits
+in the corner of the eye and stays there, and this is a button at the
+foot of a page someone is reading. The light around it is a constant
+now, and the only thing that moves is a highlight travelling the
+border — with a dimmer reflection 180 degrees opposite, so there is
+always something on the rim and the far side answers the near one. It
+measures at .64 of the bright lobe: secondary, and readable.
 
-The rim is a RING rather than a border: a gradient three times the
-width of the button is swept across it and then masked to the border
-area alone, two masks — one clipped to the content box, one to the
-whole — excluded from each other. That is what lets the highlight ride
-the curve at the ends instead of stopping at the straight edges.
-`inset:-2px` because an absolutely positioned child resolves against
-the padding box, which is inside the border. The whole rule is behind
-`@supports` for that mask: without it the gradient would paint across
-the entire button rather than its rim, which is worse than no shimmer,
-and the button simply sits lit instead.
+The rim is a RING rather than a border, and it takes two boxes rather
+than one. A conic gradient sits on a square half again as wide as the
+button — wide enough that the disc it covers as it turns always
+reaches the corners — and that square TURNS, while the ring that shows
+it holds still. The ring is two masks, one clipped to the content box
+and one to the whole, excluded from each other, which is what lets the
+light ride the curve at the ends instead of stopping at the straight
+edges. A pseudo-element cannot nest inside another, so this is the one
+place the button carries real markup for something decorative. The
+whole thing is behind `@supports` for the mask: without it the
+gradient would paint across the entire button rather than its rim,
+which is worse than no shimmer.
 
-**It stands aside while the page is turning.** The sweep is a
-`background-position`, which repaints the ring on the main thread every
-frame — small, but it is the same thread the turn is on, and one run in
-six dropped a frame to it. A page turn is the one moment this page has
-to be smooth; a highlight crossing a button can wait 600ms. It is
-paused by `body:has(.deck.glide)`, using `:has()` because the rail is a
-*sibling* of the deck and there is no previous-sibling combinator;
-where `:has()` is unsupported the shimmer keeps running, which is where
-this started. Six runs after: 60fps, no dropped frames.
+**It turns on `rotate`, and that is the whole performance story.**
+`rotate` is a transform property and runs on the compositor, so the
+animation never touches the thread a page turn is on and needs no
+gating at all. Ten turns with the ring against ten with it removed:
+0 late frames against 1.
 
-`scratchpad/sheen2.js` traces the highlight along the rim frame by
-frame — it enters at column 32, crosses to 127 and 222, leaves at 253,
-and the rim sits at its resting brightness for the rest of the cycle.
-`navcheck.js` fails if the glow or the border ever animates again.
-
-**The button is frosted on a phone, and the brightness does the work.**
+**The version before this got that wrong twice over.** It swept a
+`background-position`, which repaints on the main thread every frame,
+and then tried to buy the frames back by pausing the animation while
+the deck carried `.glide`. That class does not mean what it looks like
+it means: `transitionend` clears the `gliding` *flag* and leaves the
+*class* on, so after the first turn it is on for good — and the
+shimmer stopped for good with it, running only in the moment between a
+finger landing and lifting. `navcheck.js` now turns the page, waits
+for it to settle, and fails if the animation is anything but running;
+re-introducing the pause rule makes it fail, which is how that check
+was checked.**The button is frosted on a phone, and the brightness does the work.**
 On `about` the figure runs the full width under the row and the button
 sat on the lit half of it — the shirt and her leg read straight
 through a background that is 8% gold over nothing. A blur alone does

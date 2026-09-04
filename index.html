@@ -997,17 +997,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .dots button:focus-visible i{background:rgba(246,227,189,.6)}
 .dots button[aria-current="true"] i{background:var(--gold);transform:scale(1.5)}
 
-/* One pass of the highlight along the rim and then a long way round
-   before the next. 300% of the box wide with the light in the middle
-   fifth of it, so most of the cycle is the dark part of the gradient
-   crossing and the button simply sits there lit. linear, because a
-   reflection travelling at an even rate is what a curved edge does
-   under a moving light; easing it would read as a thing being
-   animated. */
-@keyframes sheen{
-  0%  {background-position:170% 0}
-  100%{background-position:-170% 0}
-}
+/* Round and round, at an even rate. linear because a reflection
+   travelling at a constant rate is what a curved edge does under a
+   light going round it; easing would read as a thing being animated. */
+@keyframes orbit{ to{rotate:1turn} }
 
 /* ──────────────────────────  sound toggle  ────────────────────────── */
 .sound{
@@ -1402,53 +1395,59 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   */
   .jump .ticket::before{opacity:.72;transform:scale(1.06)}
 
-  /* The rim, as a ring rather than a border. A gradient wider than the
-     button is swept across the box and then masked to the border area
-     alone: two masks, one clipped to the content box and one to the
-     whole, excluded from each other, leave exactly the 2px frame. That
-     is what lets the highlight ride the curve at the ends instead of
-     stopping at the straight edges.
+  /* THE RIM, AS A RING RATHER THAN A BORDER, WITH THE LIGHT GOING
+     ROUND IT. A conic gradient sits on a square large enough to cover
+     the button at any angle, and the square TURNS; the ring that shows
+     it is a separate box that does not. Two masks — one clipped to the
+     content box, one to the whole — excluded from each other leave
+     exactly the 2px frame, which is what lets the light ride the curve
+     at the ends instead of stopping at the straight edges.
+
+     Two lobes in the gradient, 180 degrees apart: the bright pass and
+     a dimmer reflection opposite it, so there is always something on
+     the rim and the far side answers the near one.
+
+     It turns on `rotate`, which is a transform property and runs on
+     the compositor. The version before this swept a background-position
+     instead — a repaint on the main thread every frame, which is the
+     same thread a page turn is on. Nothing here needs gating on the
+     page's state, and nothing here can take a frame from a turn.
 
      inset:-2px because an absolutely positioned child resolves against
-     the PADDING box, which is inside the border — without it the ring
-     would sit just within the border rather than on it. */
-  /* Guarded, because without the mask this rule would paint the
-     gradient across the whole button rather than its rim — a worse
-     result than no shimmer at all. Where the two masks cannot be
-     excluded from each other, the button simply sits lit. */
+     the PADDING box, which is inside the border. */
   @supports ((mask-composite:exclude) or (-webkit-mask-composite:xor)){
-  .jump .ticket::after{
-    content:"";position:absolute;inset:-2px;z-index:1;
-    border-radius:inherit;pointer-events:none;padding:2px;
-    background:linear-gradient(102deg,
-      transparent 0 40%,
-      rgba(255,238,198,.55) 46%,
-      rgba(255,248,224,.95) 50%,
-      rgba(255,238,198,.55) 54%,
-      transparent 60% 100%);
-    background-size:300% 100%;
-    background-repeat:no-repeat;
-    background-position:170% 0;
-    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-    -webkit-mask-composite:xor;
-    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-    mask-composite:exclude;
-  }
-  @media (prefers-reduced-motion:no-preference){
-    .jump .ticket::after{animation:sheen 9s linear infinite}
-    /* And it stands aside while the page is turning. The sweep is a
-       background-position, which repaints the ring on the main thread
-       every frame — small, but it is the same thread the turn is on,
-       and one run in six dropped a frame to it. A page turn is the one
-       moment this page has to be smooth; a highlight crossing a button
-       is the one thing that can wait 600ms.
-
-       :has() on the body, because the rail is a SIBLING of the deck
-       and there is no previous-sibling combinator. Where :has() is not
-       supported the shimmer simply keeps running, which is where this
-       started. */
-    body:has(.deck.glide) .jump .ticket::after{animation-play-state:paused}
-  }
+    .jump .ticket .rim{
+      position:absolute;inset:-2px;z-index:1;
+      border-radius:inherit;pointer-events:none;overflow:hidden;
+      padding:2px;
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      mask-composite:exclude;
+    }
+    /* Square, and half again as wide as the button, so the disc it
+       covers as it turns always reaches the corners of the ring. */
+    .jump .ticket .rim i{
+      position:absolute;top:50%;left:50%;
+      width:150%;aspect-ratio:1;translate:-50% -50%;
+      background:conic-gradient(from 0deg,
+        rgba(255,249,228,0)    0deg,
+        rgba(255,249,228,.92) 15deg,
+        rgba(255,249,228,0)   38deg,
+        rgba(255,249,228,0)  162deg,
+        rgba(255,240,206,.30) 180deg,
+        rgba(255,249,228,0)  204deg,
+        rgba(255,249,228,0)  360deg);
+    }
+    @media (prefers-reduced-motion:no-preference){
+      .jump .ticket .rim i{animation:orbit 10s linear infinite}
+      body:has(.deck.glide) .jump .ticket .rim i{animation-play-state:paused}
+    }
+    /* Standing still it would read as a bright patch stuck to one
+       corner rather than as light, so it goes rather than freezes. */
+    @media (prefers-reduced-motion:reduce){
+      .jump .ticket .rim{display:none}
+    }
   }
 }
 
@@ -1602,6 +1601,12 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
       stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"
     ><path d="M3.6 8.4 8.4 3.6"/><path d="M4.7 3.6h3.7v3.7"/></svg>
     <span class="sr">(opens in a new tab)</span>
+    <!-- The light going round the rim. Two boxes and not one, because
+         the mask that cuts the ring must hold still while the gradient
+         inside it turns; a pseudo-element cannot nest inside another,
+         so this is the one place the button carries real markup for
+         something decorative. -->
+    <span class="rim" aria-hidden="true"><i></i></span>
   </a>
 </nav>
 
