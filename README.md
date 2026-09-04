@@ -28,6 +28,24 @@ placement is read off rather than guessed.
 
 ## What the design holds to
 
+**A wash on the two figures, and edges that stop rather than end.**
+Both stand at their own proportions with the page's black either side
+of them, which left a one-pixel step from 0 to 18 where the
+photograph began — and a line reads as a crop. The wash is a `filter`
+rather than a layer over the top, because a layer would be a rectangle
+over a letterboxed picture and would have to be masked to it anyway; a
+filter follows the picture. It is slight: mean luminance 21.9 to 19.9
+on `artists`, brightest 2% from 151 to 137.
+
+The feather is a mask fading the two *vertical* edges over 7% of the
+width — only the vertical ones, because top and bottom are the
+screen's own edges and there is nothing there to blend into. It is off
+wherever the picture runs full bleed to the panel's edges, which is
+the stacked layout, and back on in the sideways one where both are
+letterboxed again. The one-pixel step measures 19.3 to 2.1 on the hero
+and 12.8 to 3.0 on `artists`, with the fade spread over 100px and 40px
+respectively; `scratchpad/edges.js` takes that strip.
+
 **Every section is exactly one screen, and photographs are shown
 whole** — with one deliberate exception, below. Those two are usually a
 trade, and the way out is that a 2:3 photograph in a landscape viewport
@@ -601,24 +619,45 @@ border — with a dimmer reflection 180 degrees opposite, so there is
 always something on the rim and the far side answers the near one. It
 measures at .64 of the bright lobe: secondary, and readable.
 
-The rim is a RING rather than a border, and it takes two boxes rather
-than one. A conic gradient sits on a square half again as wide as the
-button — wide enough that the disc it covers as it turns always
-reaches the corners — and that square TURNS, while the ring that shows
-it holds still. The ring is two masks, one clipped to the content box
-and one to the whole, excluded from each other, which is what lets the
-light ride the curve at the ends instead of stopping at the straight
-edges. A pseudo-element cannot nest inside another, so this is the one
-place the button carries real markup for something decorative. The
-whole thing is behind `@supports` for the mask: without it the
-gradient would paint across the entire button rather than its rim,
-which is worse than no shimmer.
+**It is a dash on the button's own outline, which is what keeps it the
+same length all the way round.** A conic gradient turning at a
+constant *angular* rate does not: a fixed slice of angle covers a long
+run of perimeter near the ends and a short one in the middle of a long
+side, and it visibly shortened and stretched as it went. A dash is
+measured *along* the path, and `pathLength="100"` renormalises that
+path so the dash is written in per cent of the perimeter — 13 is
+thirteen per cent of the way round wherever it happens to be. Measured
+by walking the outline at even steps: 89 to 95px on a 624px perimeter,
+a 6% spread, against 126% before.
 
-**It turns on `rotate`, and that is the whole performance story.**
-`rotate` is a transform property and runs on the compositor, so the
-animation never touches the thread a page turn is on and needs no
-gating at all. Ten turns with the ring against ten with it removed:
-0 late frames against 1.
+The outline is a stroked `<rect>` rounded to a stadium by `ry` alone —
+give `ry`, leave `rx` auto, and SVG matches them and clamps both to
+half the box. The stroke is far wider than the border and the ring
+mask cuts it back, so nothing has to line the stroke up with the
+border to the pixel: the mask decides where the ring is and the stroke
+only has to cover it. The second lobe is the same dash half a lap
+behind, via `animation-delay:-5s`, which puts it opposite; it reads at
+.80 of the bright one.
+
+**Measuring the lobe needs a sampler that crosses the band.** The lit
+ring is a few device pixels wide, and a single offset that sits inside
+it along the straight sides sits just outside it round the ends — so
+the first measurement reported the lobe as *shorter at the caps*, which
+is not what was drawn. Sampling several offsets and taking the
+brightest at each step round the outline is what `scratchpad/arc.py`
+does.
+
+**Ten turns with the ring against ten with it removed: 0 late frames
+against 0.** The dash animation is main-thread where the rotation it
+replaced was not, so this was measured rather than assumed.
+
+**An unstyled `<svg>` is not harmless.** The rim's markup is
+unconditional but its styles belong to the screens with no hover, and
+with the styles scoped to that block the bare `<svg>` fell back to its
+intrinsic 300x150 on a desktop and inflated the button to a third of
+the page. It is `display:none` by default and switched on in the
+stacked block. `scratchpad/pillbox.js` checks the button is still
+pill-shaped and a sane size at ten screen sizes.
 
 **The version before this got that wrong twice over.** It swept a
 `background-position`, which repaints on the main thread every frame,
