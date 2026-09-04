@@ -538,6 +538,42 @@ match the scan at eight sizes. Its line count has to be distinct line
 tops — a range over content holding inline elements returns one rect per
 run, so a line carrying two spans counts as three and reads as wrapped.
 
+**One way through the page per screen, not two.** A wide screen has
+room along the foot for three named links, and names beat marks; a
+phone does not — the row was already on a vw curve to stop it wrapping,
+and what it was spending that width on was three links duplicating the
+dots at the side. Below 1240px the dots take the navigation and the
+foot carries the one thing that leaves the site, at the size it should
+have been all along. The JavaScript lights both sets regardless of
+which is shown, so neither can fall out of step with the other.
+
+**Hover is guarded on `(hover:hover)`.** A touch screen has no hover to
+give, but it does leave the last state a tap produced sitting on the
+element — an unguarded `:hover` reads as a second current section until
+something else is tapped. `:focus-visible` is not guarded: a keyboard
+reaches these on any device, so every hover rule has a focus twin
+outside the query.
+
+**The ticket button breathes where there is no hover to wait for.** It
+is the GLOW that animates and not the pill: the pill carries the
+border-radius, and animating a transform on it would promote it to its
+own layer for good and cost the antialiasing along that curve on
+WebKit — the same trap the desktop hover's 2px lift is written around.
+The glow is a radial gradient on its own layer with no edge to lose,
+and the border warms with it in colour only. 3.8s, and it stops
+entirely under `prefers-reduced-motion`.
+
+**`--rail` is written on the row's own terms.** It is what every
+section reserves at its foot, and a height guessed beside the row
+drifts from it: at a flat 3.5rem it covered a 57px rail and not the
+81px one the bigger button made, so the venue line on the landing ran
+into it and the last credit sat on it. It is now the button's own size
+plus the row's bottom padding, on both sides of the breakpoint.
+`scratchpad/rail.js` asserts that what the row occupies never exceeds
+what this reserves — which immediately turned up a latent 9px shortfall
+on a 1280x800 desktop that had never overlapped anything only because
+those sections had room to spare.
+
 **Everything in the link rail is on a vw curve, and it has to be.** At
 a fixed .66rem the row needed 373px, which is more than a 320 or 360px
 phone has, so the ticket button dropped onto a second row — measured

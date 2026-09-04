@@ -203,7 +203,14 @@
   --measure:1120px;
   --ease:cubic-bezier(.22,.61,.36,1);
   /* the room the section links keep at the foot of every screen */
-  --rail:clamp(3.2rem,7svh,4.6rem);
+  /* What every section reserves at its foot for the link row. Written
+     on the row's own terms — the button's size and the row's bottom
+     padding — rather than as a height guessed beside it. At a flat
+     clamp(3.2rem,7svh,4.6rem) it resolved to 56px on a 1280x800
+     laptop against a row that occupies 65: nothing overlapped there,
+     but only because the sections had the room to spare.
+     scratchpad/rail.js holds the two together. */
+  --rail:calc(3.5 * clamp(.47rem,2.15vw,.78rem) + clamp(1.1rem,3svh,1.8rem));
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -425,7 +432,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   padding-bottom:.18em;
   transition:color .32s var(--ease),border-color .32s var(--ease);
 }
-.where a:hover,.where a:focus-visible{color:var(--cream);border-bottom-color:rgba(246,227,189,.5)}
+@media (hover:hover){
+  .where a:hover{color:var(--cream);border-bottom-color:rgba(246,227,189,.5)}
+}
+.where a:focus-visible{color:var(--cream);border-bottom-color:rgba(246,227,189,.5)}
 .where .out{width:.72em;height:.72em;flex:none;overflow:visible}
 
 /* ══════════  the shape `about` and `artists` share  ══════════
@@ -849,7 +859,15 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   transition:color .45s var(--ease),border-color .45s var(--ease);
 }
 .jump a.to + a.to{border-left:1px solid rgba(246,227,189,.20)}
-.jump a.to:hover{color:var(--cream);border-bottom-color:var(--cream)}
+/* Guarded on (hover:hover). A touch screen has no hover to give, but
+   it does leave the LAST state a tap produced sitting on the element —
+   so an unguarded :hover reads as a second current section until
+   something else is tapped. Focus is not guarded: a keyboard reaches
+   this on any device. */
+@media (hover:hover){
+  .jump a.to:hover{color:var(--cream);border-bottom-color:var(--cream)}
+}
+.jump a.to:focus-visible{color:var(--cream);border-bottom-color:var(--cream)}
 /* the section you are in is named, not hidden — it just stops leading
    anywhere else */
 .jump a.to[aria-current="true"]{color:var(--gold);border-bottom-color:var(--gold)}
@@ -895,15 +913,22 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    only while it animates, and at 2px there is nothing here that needs
    its own layer. If the edge ever looks jagged again this lift is the
    first thing to take out — the glow alone carried the hover before. */
-.jump .ticket:hover,.jump .ticket:focus-visible{
+@media (hover:hover){
+  .jump .ticket:hover{
+    color:var(--cream);
+    border-color:var(--gold);
+    background:rgba(217,164,65,.17);
+    transform:translateY(-2px);
+  }
+  .jump .ticket:hover::before{opacity:1;transform:scale(1.34)}
+}
+.jump .ticket:focus-visible{
   color:var(--cream);
   border-color:var(--gold);
   background:rgba(217,164,65,.17);
   transform:translateY(-2px);
 }
-.jump .ticket:hover::before,.jump .ticket:focus-visible::before{
-  opacity:1;transform:scale(1.34);
-}
+.jump .ticket:focus-visible::before{opacity:1;transform:scale(1.34)}
 /* An SVG, not the character U+2197: iOS and Android render that arrow
    from a colour emoji font, which put a blue emoji in the middle of
    this button. Drawn here it inherits currentColor. */
@@ -913,10 +938,17 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 
 /* ────────────────────────  side navigation  ───────────────────────── */
+/* TWO WAYS THROUGH THE PAGE IS ONE TOO MANY, so each screen gets the
+   one that suits it. A wide screen has room along the foot for three
+   named links, and names are better than marks. A phone does not: the
+   row was already on a vw curve to stop it wrapping, and what it was
+   spending that width on was three links duplicating the dots at the
+   side. The dots take the navigation there and the foot carries the
+   one thing that leaves the site. */
 .dots{
   position:fixed;z-index:8;right:clamp(.7rem,2vw,1.7rem);top:50%;
   transform:translateY(-50%);
-  display:flex;flex-direction:column;gap:1rem;
+  display:none;flex-direction:column;gap:1rem;
 }
 .dots button{appearance:none;background:none;border:0;padding:.4rem;cursor:pointer;display:block}
 .dots i{
@@ -924,8 +956,22 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   background:rgba(246,227,189,.26);
   transition:background .5s var(--ease),transform .5s var(--ease);
 }
-.dots button:hover i{background:rgba(246,227,189,.6)}
+@media (hover:hover){
+  .dots button:hover i{background:rgba(246,227,189,.6)}
+}
+.dots button:focus-visible i{background:rgba(246,227,189,.6)}
 .dots button[aria-current="true"] i{background:var(--gold);transform:scale(1.5)}
+
+@keyframes breathe{
+  0%,100%{opacity:.40;transform:scale(.88)}
+  50%    {opacity:.95;transform:scale(1.22)}
+}
+/* The border warms with the glow. Colour only — nothing here moves the
+   pill or its curve. */
+@keyframes kindle{
+  0%,100%{border-color:rgba(217,164,65,.55);background-color:rgba(217,164,65,.07)}
+  50%    {border-color:rgba(217,164,65,.92);background-color:rgba(217,164,65,.16)}
+}
 
 /* ──────────────────────────  sound toggle  ────────────────────────── */
 .sound{
@@ -984,7 +1030,16 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* The stacked layout reaches from a 320px phone to a 1240px tablet
      now, and a flat 1.4rem inset that is right at one end is mean at
      the other. It grows with the screen and stops. */
-  :root{--gutter:clamp(1.4rem,3.2vw,2.75rem);--rail:3.5rem}
+  /* --rail is what every section reserves at its foot for the link
+     row, and the row got taller when the three links stood down and
+     the button grew into the space. A flat 3.5rem covered a 57px rail
+     and not an 81px one: the venue line on the landing ran into it and
+     the last credit sat on it. Written on the same terms the row is —
+     the button's own size and the row's bottom padding — so the two
+     cannot drift apart again. scratchpad/rail.js checks that what the
+     row occupies is never more than what this reserves. */
+  :root{--gutter:clamp(1.4rem,3.2vw,2.75rem);
+        --rail:calc(3.9 * clamp(.66rem,3vw,.92rem) + clamp(1.2rem,3.2svh,1.9rem))}
 
   /* the landing's words move off the photograph's centre and sit under
      it, over the black, where nothing has to be read through a picture */
@@ -1255,10 +1310,34 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* the links wrap out to the screen edges here, so the toggle cannot
      keep the bottom-left corner */
   .sound{bottom:auto;top:calc(env(safe-area-inset-top) + .8rem);left:.9rem}
-  .dots{gap:.8rem;right:.55rem}
-  .dots i{width:5px;height:5px}
-  .jump{padding-bottom:clamp(.9rem,2.4svh,1.4rem)}
-  .jump a{padding:.35rem clamp(.26rem,2.4vw,.9rem)}
+  /* the dots take over the navigation here, and the three named links
+     stand down — see the note on .dots above */
+  .dots{display:flex;gap:.9rem;right:.6rem}
+  .dots i{width:6px;height:6px}
+  .jump a.to{display:none}
+
+  /* With the links gone the foot holds one thing, so it can be the
+     size it should have been: the row was on a vw curve to keep four
+     items from wrapping onto two lines, and there is only one item
+     now. Centred on the screen rather than sitting to the right of a
+     row that is no longer there. */
+  .jump{padding-bottom:clamp(1rem,2.8svh,1.6rem);
+        font-size:clamp(.66rem,3vw,.92rem)}
+  .jump .ticket{margin-left:0;padding:.95em clamp(1.6em,7vw,2.6em);
+                letter-spacing:.24em}
+  /* AN IDLE ANIMATION RATHER THAN A HOVER, because there is no hover
+     here to wait for. It is the glow that breathes and not the pill:
+     the pill carries the border-radius, and animating a transform on
+     it would promote it to its own layer for good and cost the
+     antialiasing along that curve on WebKit — the same trap the 2px
+     lift on the desktop hover is written around. The glow is a radial
+     gradient on its own layer with no edge to lose.
+     Slow enough to read as breathing rather than blinking, and it
+     stops entirely for anyone who asks for less motion. */
+  @media (prefers-reduced-motion:no-preference){
+    .jump .ticket::before{animation:breathe 3.8s var(--ease) infinite}
+    .jump .ticket{animation:kindle 3.8s var(--ease) infinite}
+  }
 }
 
 /* a phone held sideways has almost no height: let the sections grow and
