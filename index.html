@@ -567,6 +567,46 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   --hand-size:clamp(1.25rem,min(2.95vw,5svh),2.8rem);
   --lede-k:.4003;               /* 14.325 / 35.786 */
   --focus:50% 0%;               /* on a phone, keep her head, crop the floor */
+
+  /* THE POEM IS CENTRED IN THE GAP BETWEEN THE SCREEN'S EDGE AND HER
+     SHIRT, rather than set at the page's standard inset. The words and
+     the figure are the whole of this section, so what the eye reads is
+     the space between them against the space outside them; left at the
+     inset those two were unequal by 83px at 1920.
+
+     Where her shirt falls is worked out, not guessed. The figure is
+     height-limited until the screen gets square (720x1080 at 2:3, so
+     .6664 of the panel's height), width-limited after that at the 42%
+     the box is given, and on a screen taller than the photograph is it
+     stops at its own 719px — max-height limits, it never enlarges,
+     which is why min() has three terms and not two. It is flush to the
+     right edge and MIRRORED here, so the nearest part of her shirt on
+     screen is the FURTHEST part of it in the file — which measures at
+     .829 of the width, scanning for pixels that are bright and nearly
+     neutral, the cotton rather than the warm streaks across it.
+
+     The block itself is 14.32em of the hand, the constant the headline
+     is also built from. Half of that off half the gap is where its
+     left edge goes. Checked against the rendered pixels at 1440x900:
+     the shirt lands at 940 and the formula says 943.
+
+     The floor is the GUTTER, not the inset. The inset is the larger of
+     the gutter and half the slack beside --measure, and on a wide
+     screen the second of those wins: 400px at 1920, against the 341
+     that centres the block. Floored at the inset the poem sat 119px
+     right of centre on exactly the screens where the gap is widest and
+     it shows most. The gutter is the real floor — it only has to stop
+     the block reaching the edge of the screen.
+
+     This is the one place a section's words leave the shared left
+     line the rest of the page keeps. That line is worth more between
+     `amor` and `artists`, which are lists and a title; here the words
+     and the figure are a pair, and how they sit against each other is
+     what the section is. */
+  --figure:min(66.64svh,42vw,719px);
+  --shirt:calc(100vw - var(--figure) * .829);
+  padding-left:max(var(--gutter),
+                   calc(var(--shirt) / 2 - 7.16 * var(--hand-size)));
 }
 
 /* ────────────────────────────  III. artists  ───────────────────────── */
@@ -987,7 +1027,12 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      the full-bleed figure comes up short of the right edge */
   #artists{padding-right:0}
   #about .verse{align-items:center}
-  #about .lede{letter-spacing:.18em;text-indent:.18em;text-align:center;
+  /* Matching the poem's width is a desktop rule too. Here the headline
+     is set on its own curve and comes out narrower than the poem and a
+     good deal smaller than it — which is what a line standing over a
+     poem should be. */
+  #about .lede{font-size:clamp(.72rem,3.1vw,.9rem);
+               letter-spacing:.18em;text-indent:.18em;text-align:center;
                margin-bottom:clamp(1rem,3.2svh,1.8rem)}
   /* Tighter than the photograph on purpose: five lines of its leading
      do not fit a phone. The ratio between the two gaps is kept. */
@@ -998,8 +1043,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      a tablet hit at once: 25.6px of hand on a 768px screen. The width
      term is raised as far as the column will take — at 320 the longest
      line comes to 268px inside 275px of column. */
+  /* padding-left is a desktop rule — the figure is beside the words
+     there, and there is a gap between them to centre in. Stacked, the
+     figure is below and the words carry their own inset. */
   #about{--hand-size:clamp(1.05rem,min(5.85vw,3.6svh),2.2rem);
-         --lede-k:.4548}        /* 14.322 / 31.491, at .18em tracking */
+         padding-left:0}
   #about .hand{--lh:1.6;--adv:2;--sign:2.6}
   /* Stacked, the block sits in the middle of the panel; a signature
      indented from its left edge would read as sitting off to one side
@@ -1235,8 +1283,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 @media (max-width:495px){
   .lede span{display:block}
   .lede span + span{letter-spacing:.364em;text-indent:.364em}
-  /* the first line alone, at .18em tracking, sets in 17.21em */
-  #about{--lede-k:.832}
 }
 
 @media (orientation:landscape) and (max-height:540px){
@@ -1276,15 +1322,15 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* side by side again, so the signature is indented again */
   #about .hand{--sign-in:2.07em}
   #about .hand .sign{text-align:left}
-  #about .lede{letter-spacing:.14em;text-indent:.14em;
+  #about .lede{font-size:clamp(.6rem,1.3vw,.75rem);
+               letter-spacing:.14em;text-indent:.14em;
                margin-bottom:clamp(.7rem,2.6svh,1.2rem)}
   /* The size comes up and the leading comes down to pay for it. At
      844x390 the larger hand left 11px between the last line and the
      link rail, which is not clearance, it is luck; at 1.85 it is
      around 28px and the type is the size that made it worth doing.
      The ratio between the two gaps is kept, as everywhere else. */
-  #about{--hand-size:clamp(1.05rem,min(3.05vw,6.2svh),1.9rem);
-         --lede-k:.4809}        /* 14.32 / 29.775, at .14em tracking */
+  #about{--hand-size:clamp(1.05rem,min(3.05vw,6.2svh),1.9rem)}
   #about .hand{--lh:1.5;--adv:1.55;--sign:2.02}
 
   #artists{
