@@ -844,8 +844,27 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      the column is what is left over after a photograph sized by the
      screen's HEIGHT, so at 1440x900 it is 311px and at 1920x1080 it is
      478px, and no function of the width alone knows that. */
-  font-size:clamp(.6rem,4.05cqw,.92rem);
-  letter-spacing:.14em;text-indent:.14em;text-transform:uppercase;
+  /* 4.33, not 4.05, and .10em of tracking rather than .14em. The
+     coefficient is 100 divided by the ems the longest credit sets in,
+     so tightening the tracking is what buys the size: measured in
+     place, KRISTOFFER BENCKERT — MUSIC, WEB DESIGN sets in 22.82em
+     here against the 24.7 it did, and the shipped size was 12.58px.
+
+     AND THE COEFFICIENT IS PER LAYOUT NOW, because the ems are: the
+     same credit sets in 22.82em on a wide screen and 24.14em stacked,
+     so one number for both has to serve the wider of the two and
+     leaves the other short. scratchpad/coeff.js measures each.
+
+     A container query resolves against the CONTENT box, which is what
+     made the first attempt at this wrap at 320px: the column measures
+     320 with getBoundingClientRect and 275.2 as a container, and 4.33
+     of the wrong one is 8% too big.
+
+     Past this the column has to grow, and the column is what is left
+     over beside the photograph. scratchpad/colwidth.js prices that —
+     every 6% off the picture's width is worth about 1.6px of type. */
+  font-size:clamp(.6rem,4.34cqw,.98rem);
+  letter-spacing:.10em;text-indent:.10em;text-transform:uppercase;
   text-wrap:balance;
   color:var(--cream);
   line-height:1.15;
@@ -859,47 +878,48 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    width the role costs — a credit is a name AND a role now, and the
    pair has to sit on one line in a column beside a photograph. */
 .roster .r{color:var(--mist);font-size:.84em;letter-spacing:.08em}
-/* MOST OF THESE NAMES HAVE A PAGE OF THEIR OWN, AND THREE DO NOT. On a
-   phone there is no hover to reveal which, so the mark is standing: a
-   hairline under the name at .42, going to .78 with the name warming
-   to gold when it is pointed at or tabbed to. A name with no rule
-   under it simply has nowhere to go.
+/* MOST OF THESE NAMES HAVE A PAGE OF THEIR OWN, AND THREE DO NOT, and
+   nothing is added to say so — the three without one step back
+   instead. Everything that was ADDED got in the way: an underline is
+   eleven full-width rules in a column of fourteen rows and the three
+   without one read as the odd ones out; a dot or a tick in the margin
+   is tidier but it is still a column of marks beside a column of
+   names, and on a phone that is two things where there was one.
 
-   IT IS A BORDER, WHICH IS WHAT THE VENUE LINK USES, AND THAT IS THE
-   WHOLE REASON. Two attempts at text-decoration rendered on Chromium
-   and on nothing else that mattered: the underline was reported
-   missing on an iPhone twice, first with skip-ink on and then with it
-   off and every absolute length taken out of it. The venue link on the
-   landing has never had the problem and it draws its rule with
-   border-bottom, so this draws its rule with border-bottom. When one
-   mechanism is observed working on the device and another is observed
-   failing on it, the argument for the second one is over, whatever it
-   says on paper.
+   Stepping back is the same information carried by the type itself.
+   It costs the three of them a little presence, which is the honest
+   objection to it and the reason it is written down here: they are
+   not less part of the company for not having a website. .62 against
+   the cream is enough to read as a different kind of row and not
+   enough to read as a lesser one, and the roles keep the same step
+   they always had.
 
-   What that costs is exactness at the right-hand end. The row is
-   tracked at .14em and tracking follows the LAST letter too, so the
-   border runs about two pixels past the final glyph, into a gap
-   before the dash that is .30em — an absolutely positioned ::after
-   was the first attempt precisely because it could stop short of
-   that. Two pixels inside a four pixel gap is a trade worth making
-   for a mark that is actually there.
+   It is a class in the markup rather than li:not(:has(a.n)). The same
+   selector would do it, and :has() is supported everywhere this page
+   cares about — but the last three attempts at this mark were lost to
+   a CSS feature behaving differently on one engine, and a class
+   cannot behave differently anywhere.
 
-   The J in ELIAS LJUNGBERG is cleared by geometry rather than by
-   skip-ink, as it was before: a border on an inline box sits at the
-   bottom of the font's content area, and scratchpad/jdepth.js
-   measures that at .318em below the baseline against the J's .192em.
-   padding-bottom stays at 0 — there is already more room under the
-   tail than the text-decoration had. */
+   What this gives up is a POSITIVE affordance: there is no mark that
+   says "this one is a link", only a difference between two kinds of
+   row. The screen-reader line above the list says it in words, and
+   every linked name answers to a pointer. */
 .roster a.n{
-  color:inherit;
-  text-decoration:none;
-  border-bottom:1px solid rgba(246,227,189,.42);
-  transition:color .32s var(--ease),border-color .32s var(--ease);
+  color:inherit;text-decoration:none;
+  transition:color .32s var(--ease);
 }
+.roster .nolink .n{color:rgba(246,227,189,.62)}
+.roster .nolink .r{color:rgba(246,227,189,.40)}
+/* Hover DESATURATES rather than warms. The gold it used to take is the
+   page's one accent, spent on the date and on the section you are in;
+   spending it again on whichever name the pointer happens to be over
+   made it the loudest thing on the section. Cooling the name out of
+   the cream instead reads as the row lifting off the page, and it
+   leaves the accent where it belongs. */
 @media (hover:hover){
-  .roster a.n:hover{color:var(--gold);border-bottom-color:rgba(246,227,189,.78)}
+  .roster a.n:hover{color:#efece7}
 }
-.roster a.n:focus-visible{color:var(--gold);border-bottom-color:rgba(246,227,189,.78)}
+.roster a.n:focus-visible{color:#efece7}
 /* An en dash rather than an em: half the width for the same mark, and
    the row needs the half. Its own margins rather than spaces on either
    side, tighter than a word space would be, and no tracking of its own
@@ -1474,7 +1494,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      size — 12.8px on a 768px screen was the whole list whispering. The
      row's air comes from svh and was capped at .46rem, which a tall
      screen hit immediately; the cap is raised to let it breathe. */
-  .roster li{font-size:clamp(.56rem,4.05cqw,clamp(.8rem,1.4vw + .35rem,1.15rem));
+  .roster li{font-size:clamp(.56rem,4.10cqw,clamp(.8rem,1.4vw + .35rem,1.15rem));
              letter-spacing:.16em;text-indent:.16em;
              padding:var(--row-pad) 0}
 
@@ -1791,8 +1811,8 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      is fourteen rows now, so the row padding is what pays for the
      fourteenth. At .1rem the column overran its box by 6px at 844x390
      and had nothing left at 667x375. */
-  .roster li{font-size:clamp(.5rem,4.05cqw,.72rem);padding:.06rem 0;
-             letter-spacing:.12em;text-indent:.12em}
+  .roster li{font-size:clamp(.5rem,4.38cqw,.72rem);padding:.04rem 0;
+             letter-spacing:.09em;text-indent:.09em}
 }
 
 /* THE ONE PLACE THE PHOTOGRAPH GIVES WAY, and it is a last resort.
@@ -1964,23 +1984,23 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
            (igsi, utm_source=qr, hl=en); the ticket link's `bref` is
            kept because it is the promoter's own referral code, and
            these are not that. -->
-      <p class="sr">Names with a rule under them link to the artist's
-        own page, and open in a new tab.</p>
+      <p class="sr">Most names link to the artist's own page and open in
+        a new tab; three have no page to link to.</p>
       <ul class="roster">
         <li data-reveal style="--d:0.22s"><a class="n" href="https://www.instagram.com/yazzmeavis/" target="_blank" rel="noopener noreferrer">Yazz Meavis</a><span class="d">&#8211;</span> <span class="r">Harp</span></li>
         <li data-reveal style="--d:0.26s"><a class="n" href="https://stagesplitter.se/cv/amina-avdic/cc8828d2-63af-4bbd-bdd9-01d6caa4b49a" target="_blank" rel="noopener noreferrer">Amina Avdi&#263;</a><span class="d">&#8211;</span> <span class="r">Dance</span></li>
         <li data-reveal style="--d:0.30s"><a class="n" href="https://www.acasting.se/backman" target="_blank" rel="noopener noreferrer">Carl Backman</a><span class="d">&#8211;</span> <span class="r">Voice</span></li>
         <li data-reveal style="--d:0.34s"><a class="n" href="https://www.instagram.com/lovaahellberg/" target="_blank" rel="noopener noreferrer">Lova Hellberg</a><span class="d">&#8211;</span> <span class="r">Dance</span></li>
         <li data-reveal style="--d:0.38s"><a class="n" href="https://www.instagram.com/eliotcharof/" target="_blank" rel="noopener noreferrer">Eliot Charoff</a><span class="d">&#8211;</span> <span class="r">Poetry</span></li>
-        <li data-reveal style="--d:0.42s"><span class="n">Simon</span><span class="d">&#8211;</span> <span class="r">Event Production</span></li>
-        <li data-reveal style="--d:0.46s"><span class="n">Joakim Benckert</span><span class="d">&#8211;</span> <span class="r">Music</span></li>
+        <li class="nolink" data-reveal style="--d:0.42s"><span class="n">Simon</span><span class="d">&#8211;</span> <span class="r">Event Production</span></li>
+        <li class="nolink" data-reveal style="--d:0.46s"><span class="n">Joakim Benckert</span><span class="d">&#8211;</span> <span class="r">Music</span></li>
         <li data-reveal style="--d:0.50s"><a class="n" href="https://martalarsson.com/" target="_blank" rel="noopener noreferrer">M&#228;rta Larsson</a><span class="d">&#8211;</span> <span class="r">Costumes</span></li>
         <li data-reveal style="--d:0.54s"><a class="n" href="https://open.spotify.com/artist/2Y8CKymAAgpJLSnNMxhUWV" target="_blank" rel="noopener noreferrer">Zean Farence Diaz</a><span class="d">&#8211;</span> <span class="r">Music</span></li>
         <li data-reveal style="--d:0.58s"><a class="n" href="https://www.instagram.com/cornelia.condeescu/" target="_blank" rel="noopener noreferrer">Cornelia Condeescu</a><span class="d">&#8211;</span> <span class="r">Dance</span></li>
         <li data-reveal style="--d:0.62s"><a class="n" href="https://www.instagram.com/ellaelvida/" target="_blank" rel="noopener noreferrer">Ella Elvida</a><span class="d">&#8211;</span> <span class="r">Shibari, Set Design</span></li>
         <li data-reveal style="--d:0.66s"><a class="n" href="https://antarchitecturemusic.com/" target="_blank" rel="noopener noreferrer">Andreas Frantz</a><span class="d">&#8211;</span> <span class="r">Sound Design</span></li>
         <li data-reveal style="--d:0.70s"><a class="n" href="https://www.eliasljungberg.com/" target="_blank" rel="noopener noreferrer">Elias Ljungberg</a><span class="d">&#8211;</span> <span class="r">Photography</span></li>
-        <li data-reveal style="--d:0.74s"><span class="n">Kristoffer Benckert</span><span class="d">&#8211;</span> <span class="r">Music, Web Design</span></li>
+        <li class="nolink" data-reveal style="--d:0.74s"><span class="n">Kristoffer Benckert</span><span class="d">&#8211;</span> <span class="r">Music, Web Design</span></li>
       </ul>
     </div>
 
