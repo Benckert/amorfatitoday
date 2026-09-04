@@ -366,6 +366,31 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
 .says{position:relative;z-index:2;min-width:0}
 
+/* A WASH, AND EDGES THAT STOP RATHER THAN END. Both figures on this
+   page stand at their own proportions with the page's black either
+   side of them, which left a one-pixel step from 0 to 18 where the
+   photograph began — a line, and a line reads as a crop.
+
+   The wash first: a little off the brightness and a little off the
+   colour, so the pictures sit back and the type sits on them rather
+   than in front of them. filter rather than a layer over the top,
+   because a layer would be a rectangle over a letterboxed picture and
+   would have to be masked to it anyway; a filter follows the picture.
+
+   Then the mask, which fades the two vertical edges out over 7% of the
+   width. Only the vertical ones: top and bottom are the screen's own
+   edges here, and there is nothing there to blend into. It is turned
+   off wherever the picture runs to the edges of the panel on its own —
+   see the stacked block, where both of these are full bleed. */
+.shot img,#artists .beside img{
+  --feather:7%;
+  filter:brightness(.9) saturate(.94);
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--feather),
+                     #000 calc(100% - var(--feather)),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,#000 var(--feather),
+             #000 calc(100% - var(--feather)),transparent 100%);
+}
+
 /* ────────────────────────  I. amor  (landing)  ─────────────────────── */
 /* The title lands across her waist — below the lit torso, where the
    photograph has already fallen into shadow, so the words sit on the
@@ -964,6 +989,14 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   transform:translateY(-2px);
 }
 .jump .ticket:focus-visible::before{opacity:1;transform:scale(1.34)}
+/* The rim carries the idle shimmer, which belongs to the screens that
+   have no hover — so it is off here, and switched on in the stacked
+   block. Explicitly, and not by leaving it unstyled: an <svg> with no
+   width has an intrinsic 300x150, so an unstyled rim does not sit
+   there harmlessly, it inflates the button to the width of the page.
+   Which is exactly what it did. */
+.jump .ticket .rim{display:none}
+
 /* An SVG, not the character U+2197: iOS and Android render that arrow
    from a colour emoji font, which put a blue emoji in the middle of
    this button. Drawn here it inherits currentColor. */
@@ -999,8 +1032,12 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
 /* Round and round, at an even rate. linear because a reflection
    travelling at a constant rate is what a curved edge does under a
-   light going round it; easing would read as a thing being animated. */
-@keyframes orbit{ to{rotate:1turn} }
+   light going round it; easing would read as a thing being animated.
+   A whole lap is 100 because pathLength says so. */
+@keyframes travel{
+  from{stroke-dashoffset:0}
+  to  {stroke-dashoffset:-100}
+}
 
 /* ──────────────────────────  sound toggle  ────────────────────────── */
 .sound{
@@ -1148,6 +1185,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      below is the one this stylesheet asks for. */
   .split .beside{position:static;justify-content:center;width:100%;
                  align-self:stretch;height:100%;min-height:0;overflow:hidden}
+
+  /* Full bleed here, both of them: the edges ARE the screen's, so a
+     feather would fade the picture off the sides of the phone. The
+     wash stays. */
+  .shot img,#artists .beside img{-webkit-mask-image:none;mask-image:none}
 
   /* THE ONE PLACE ANYTHING IS CROPPED.
      Everywhere else on this page a photograph is shown whole. Here, on
@@ -1396,27 +1438,26 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   .jump .ticket::before{opacity:.72;transform:scale(1.06)}
 
   /* THE RIM, AS A RING RATHER THAN A BORDER, WITH THE LIGHT GOING
-     ROUND IT. A conic gradient sits on a square large enough to cover
-     the button at any angle, and the square TURNS; the ring that shows
-     it is a separate box that does not. Two masks — one clipped to the
-     content box, one to the whole — excluded from each other leave
-     exactly the 2px frame, which is what lets the light ride the curve
-     at the ends instead of stopping at the straight edges.
+     ROUND IT AT AN EVEN LENGTH. The outline is a stroked rectangle,
+     rounded to a stadium by ry alone — give ry and leave rx auto and
+     SVG makes rx match it, then clamps both to half the box, which is
+     the stadium. `pathLength="100"` renormalises that outline so a
+     dasharray is written in per cent of the perimeter, and a dash is
+     measured along the path: 13 is thirteen per cent of the way round
+     wherever it sits, so the highlight keeps its length on the long
+     sides and round the ends alike.
 
-     Two lobes in the gradient, 180 degrees apart: the bright pass and
-     a dimmer reflection opposite it, so there is always something on
-     the rim and the far side answers the near one.
-
-     It turns on `rotate`, which is a transform property and runs on
-     the compositor. The version before this swept a background-position
-     instead — a repaint on the main thread every frame, which is the
-     same thread a page turn is on. Nothing here needs gating on the
-     page's state, and nothing here can take a frame from a turn.
+     The stroke is far wider than the border and the ring mask cuts it
+     back — two masks, one clipped to the content box and one to the
+     whole, excluded from each other. That way nothing has to line the
+     stroke up with the border to the pixel; the mask decides where the
+     ring is, and the stroke only has to cover it.
 
      inset:-2px because an absolutely positioned child resolves against
      the PADDING box, which is inside the border. */
   @supports ((mask-composite:exclude) or (-webkit-mask-composite:xor)){
     .jump .ticket .rim{
+      display:block;
       position:absolute;inset:-2px;z-index:1;
       border-radius:inherit;pointer-events:none;overflow:hidden;
       padding:2px;
@@ -1425,23 +1466,24 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
       mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
       mask-composite:exclude;
     }
-    /* Square, and half again as wide as the button, so the disc it
-       covers as it turns always reaches the corners of the ring. */
-    .jump .ticket .rim i{
-      position:absolute;top:50%;left:50%;
-      width:150%;aspect-ratio:1;translate:-50% -50%;
-      background:conic-gradient(from 0deg,
-        rgba(255,249,228,0)    0deg,
-        rgba(255,249,228,.92) 15deg,
-        rgba(255,249,228,0)   38deg,
-        rgba(255,249,228,0)  162deg,
-        rgba(255,240,206,.30) 180deg,
-        rgba(255,249,228,0)  204deg,
-        rgba(255,249,228,0)  360deg);
+    .jump .ticket .rim svg{
+      position:absolute;inset:0;width:100%;height:100%;overflow:visible;
+      /* softens both ends of the dash into light rather than a bar */
+      filter:blur(1.1px);
     }
+    .jump .ticket .rim rect{
+      x:0;y:0;width:100%;height:100%;ry:50%;
+      fill:none;stroke-width:7;stroke-linecap:round;
+      stroke-dasharray:13 87;
+    }
+    .jump .ticket .rim .lit{stroke:rgba(255,249,228,.95)}
+    .jump .ticket .rim .dim{stroke:rgba(255,242,212,.62)}
     @media (prefers-reduced-motion:no-preference){
-      .jump .ticket .rim i{animation:orbit 10s linear infinite}
-      body:has(.deck.glide) .jump .ticket .rim i{animation-play-state:paused}
+      .jump .ticket .rim .lit,.jump .ticket .rim .dim{
+        animation:travel 10s linear infinite;
+      }
+      /* half a lap behind, which puts it opposite */
+      .jump .ticket .rim .dim{animation-delay:-5s}
     }
     /* Standing still it would read as a bright patch stuck to one
        corner rather than as light, so it goes rather than freezes. */
@@ -1541,6 +1583,15 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   }
   /* whole, and limited by the height it has — not the narrow block's
      full-bleed crop, which has no meaning in a middle column */
+  /* Letterboxed again on a screen this shape — the figure stands at
+     its own proportions in the middle column, and the hero stands in
+     the middle of the panel — so the feather comes back with them. */
+  .shot img,#artists .beside img{
+    -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--feather),
+                       #000 calc(100% - var(--feather)),transparent 100%);
+    mask-image:linear-gradient(to right,transparent 0,#000 var(--feather),
+               #000 calc(100% - var(--feather)),transparent 100%);
+  }
   #artists .beside img{
     width:auto;height:auto;max-width:100%;max-height:100%;
     object-fit:initial;object-position:initial;
@@ -1601,12 +1652,22 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
       stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"
     ><path d="M3.6 8.4 8.4 3.6"/><path d="M4.7 3.6h3.7v3.7"/></svg>
     <span class="sr">(opens in a new tab)</span>
-    <!-- The light going round the rim. Two boxes and not one, because
-         the mask that cuts the ring must hold still while the gradient
-         inside it turns; a pseudo-element cannot nest inside another,
-         so this is the one place the button carries real markup for
-         something decorative. -->
-    <span class="rim" aria-hidden="true"><i></i></span>
+    <!-- The light going round the rim. It rides the button's own
+         outline as a dash on a stroked rectangle, because a dash is
+         measured ALONG the path: pathLength normalises that outline to
+         100, so `13` is thirteen per cent of the perimeter wherever it
+         happens to be, and the highlight is the same length on the
+         straight sides as it is round the ends. A conic gradient
+         turning at a constant ANGULAR rate cannot do that — it covers
+         a long run of perimeter near the ends and a short one in the
+         middle of a long side, which is exactly what it looked like.
+         The second rect is the same dash half a lap behind. -->
+    <span class="rim" aria-hidden="true">
+      <svg focusable="false">
+        <rect class="lit" pathLength="100"></rect>
+        <rect class="dim" pathLength="100"></rect>
+      </svg>
+    </span>
   </a>
 </nav>
 
