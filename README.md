@@ -375,10 +375,12 @@ element under the roster's own rule, not a second one built out of
 `::before`. Built separately, hers came out tight against her role
 while every other row had air on both sides of it.
 
-**A linked name is underlined, and it took three tries.** On a phone
+**A linked name is underlined, and it took four tries.** On a phone
 there is no hover to reveal which names go somewhere, so the mark
 stands: a rule at .42, warming to .78 with the name going gold when it
-is pointed at or tabbed to.
+is pointed at or tabbed to. Getting a line to appear is not supposed to
+be the hard part of a page, and the record is here because the lesson
+is about evidence rather than about underlines.
 
 It began as an absolutely positioned `::after`, which could stop
 exactly short of the row's .14em tracking rather than running past the
@@ -387,27 +389,40 @@ J in this face descends, and a box drawn under the name touched its
 tail at all six sizes measured: 0px of clearance, which reads as a
 mistake rather than as a descender.
 
-So the second try was `text-decoration-skip-ink`, which breaks an
-underline around a descender and which only a real underline has. On
-Chromium it does exactly that, and it was verified there. On an
-iPhone the line was reported missing altogether — and WebKit's skip-ink
-is the known-aggressive one, notching around glyphs that merely come
-*near* the line, which in a row of tracked capitals whose serifs sit on
-the baseline can leave nothing at all. An explicit
-`text-decoration-thickness` in px is the other thing WebKit has been
-unreliable about, so that went too and the font's own metric decides
-the weight now.
+The second try was `text-decoration` with `skip-ink`, which breaks an
+underline around a descender and which only a real underline has. It
+was verified on Chromium, where it does exactly that. On an iPhone the
+line was reported missing altogether. The third try kept
+`text-decoration` and removed the two things WebKit has a history of
+dropping — `skip-ink`, whose implementation there notches around
+glyphs that merely come *near* the line, and an explicit
+`text-decoration-thickness` in px — clearing the J by geometry
+instead. That was a reasonable diagnosis and it was also still wrong:
+the line was reported missing again.
 
-Which leaves geometry to clear the J. `scratchpad/jdepth.js` measures
-it reaching .192em below the baseline, so the line sits at .28em and
-passes about a pixel under its tail — three device pixels on a phone.
-`scratchpad/jclear.js` shoots that row at dpr 3 and confirms the rule
-is unbroken at all six sizes with the tail clear of it. Nothing is
-skipped and nothing is an absolute length, so there is nothing left for
-an engine to disagree about. The real underline is also the one placed
-off the *font's* metrics, so it sits the same distance under the
-baseline at every size without anything here having to know the
-descent — which the box never did.
+So the fourth try stops reasoning about it. The venue link on the
+landing has never had the problem, and it draws its rule with
+`border-bottom`; this now draws its rule with `border-bottom`. When one
+mechanism is observed working on the device and another is observed
+failing on it twice, the argument for the second one is over, whatever
+it says on paper — and no amount of Chromium passing says anything
+about the engine that was failing.
+
+What that costs is exactness at the right-hand end: the border runs
+about 2px past the final glyph, into a gap before the dash that is
+.30em, which is what the `::after` existed to avoid. Two pixels inside
+a four pixel gap is a trade worth making for a mark that is there. The
+J is cleared by geometry as before — a border on an inline box sits at
+the bottom of the font's content area, .36 to .40em below the baseline
+against the J's .192em, so `padding-bottom` stays at 0.
+
+`scratchpad/linkmark.js` is the check that should have existed two
+tries ago. It asserts the *mechanism* and not just the result at six
+sizes: a solid border of at least 1px, `text-decoration:none`, every
+one of the eleven links marked and none of the three plain names, the
+rule clear of the baseline and short of the dash. Putting
+`text-decoration` back makes all six fail, which is how it was
+checked.
 
 **The horizon draws between her name and her role, not under the pair.**
 It is a background image on the role — `background-size:100% 1px` at
