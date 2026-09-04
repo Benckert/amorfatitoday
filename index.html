@@ -861,56 +861,45 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .roster .r{color:var(--mist);font-size:.84em;letter-spacing:.08em}
 /* MOST OF THESE NAMES HAVE A PAGE OF THEIR OWN, AND THREE DO NOT. On a
    phone there is no hover to reveal which, so the mark is standing: a
-   hairline under the name, at the same .22 the venue link is set in,
-   going to .5 with the name warming to gold when it is pointed at or
-   tabbed to. A name with no rule under it simply has nowhere to go.
+   hairline under the name at .42, going to .78 with the name warming
+   to gold when it is pointed at or tabbed to. A name with no rule
+   under it simply has nowhere to go.
 
-   It is a real underline and not a box drawn under the name, because
-   only a real one is placed off the FONT'S metrics: it sits the same
-   distance under the baseline at every size without anything here
-   having to know the descent. It is also the third try, and the first
-   two are worth keeping written down.
+   IT IS A BORDER, WHICH IS WHAT THE VENUE LINK USES, AND THAT IS THE
+   WHOLE REASON. Two attempts at text-decoration rendered on Chromium
+   and on nothing else that mattered: the underline was reported
+   missing on an iPhone twice, first with skip-ink on and then with it
+   off and every absolute length taken out of it. The venue link on the
+   landing has never had the problem and it draws its rule with
+   border-bottom, so this draws its rule with border-bottom. When one
+   mechanism is observed working on the device and another is observed
+   failing on it, the argument for the second one is over, whatever it
+   says on paper.
 
-   An absolutely positioned ::after could stop exactly short of the
-   row's .14em tracking, which a real underline cannot — it runs about
-   2px past the final glyph, into a .30em gap before the dash. But
-   ELIAS LJUNGBERG has a descending capital J, and the box touched its
-   tail at all six sizes measured: 0px of clearance, which reads as a
-   mistake rather than as a descender.
+   What that costs is exactness at the right-hand end. The row is
+   tracked at .14em and tracking follows the LAST letter too, so the
+   border runs about two pixels past the final glyph, into a gap
+   before the dash that is .30em — an absolutely positioned ::after
+   was the first attempt precisely because it could stop short of
+   that. Two pixels inside a four pixel gap is a trade worth making
+   for a mark that is actually there.
 
-   So the second try was skip-ink, which breaks an underline around a
-   descender and which only text-decoration has. On Chromium it does
-   exactly that. On an iPhone the line was reported missing entirely —
-   and WebKit's skip-ink is the known-aggressive one, notching around
-   glyphs that merely come NEAR the line, which with a row set in
-   tracked capitals whose serifs sit on the baseline can leave nothing
-   at all. An explicit text-decoration-thickness in px is the other
-   thing WebKit has been unreliable about, so that goes too and the
-   font's own metric decides.
-
-   Which leaves geometry to clear the J: scratchpad/jdepth.js measures
-   it reaching .192em below the baseline, so the line sits at .28em and
-   passes .088em under its tail — about a pixel at the smallest size on
-   this page, three device pixels on a phone. Nothing is skipped, and
-   there is nothing left for an engine to disagree about. */
+   The J in ELIAS LJUNGBERG is cleared by geometry rather than by
+   skip-ink, as it was before: a border on an inline box sits at the
+   bottom of the font's content area, and scratchpad/jdepth.js
+   measures that at .318em below the baseline against the J's .192em.
+   padding-bottom stays at 0 — there is already more room under the
+   tail than the text-decoration had. */
 .roster a.n{
   color:inherit;
-  -webkit-text-decoration:underline;
-  text-decoration:underline;
-  -webkit-text-decoration-color:rgba(246,227,189,.42);
-  text-decoration-color:rgba(246,227,189,.42);
-  text-decoration-skip-ink:none;
-  text-underline-offset:.28em;
-  transition:color .32s var(--ease),text-decoration-color .32s var(--ease);
+  text-decoration:none;
+  border-bottom:1px solid rgba(246,227,189,.42);
+  transition:color .32s var(--ease),border-color .32s var(--ease);
 }
 @media (hover:hover){
-  .roster a.n:hover{color:var(--gold);
-    -webkit-text-decoration-color:rgba(246,227,189,.78);
-    text-decoration-color:rgba(246,227,189,.78)}
+  .roster a.n:hover{color:var(--gold);border-bottom-color:rgba(246,227,189,.78)}
 }
-.roster a.n:focus-visible{color:var(--gold);
-  -webkit-text-decoration-color:rgba(246,227,189,.78);
-  text-decoration-color:rgba(246,227,189,.78)}
+.roster a.n:focus-visible{color:var(--gold);border-bottom-color:rgba(246,227,189,.78)}
 /* An en dash rather than an em: half the width for the same mark, and
    the row needs the half. Its own margins rather than spaces on either
    side, tighter than a word space would be, and no tracking of its own
