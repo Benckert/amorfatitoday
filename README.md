@@ -592,30 +592,39 @@ WebKit — the same trap the desktop hover's 2px lift is written around.
 The glow is a radial gradient on its own layer with no edge to lose,
 and the border warms with it in colour only.
 
-**A candle, which is five clocks and no randomness.** Gold on this
-page is the candle in the photographs, so a flame is what the button
-should have been doing.
+**The glow holds still and one highlight travels the rim.** A flame
+was too much: anything that changes brightness several times a second
+sits in the corner of the eye and stays there, and this is a button at
+the foot of a page someone is reading. The light around it is a
+constant now, and the only thing that moves is a single pass of
+brighter light along the border — about two seconds to cross, then
+seven of stillness before the next.
 
-Two things make it read as flame rather than as a pulse. No two of the
-periods divide into each other — 1.9s, 2.3s, 3.7s, 8.9s, 9.7s — so
-what they add up to never comes back around inside a visit. And they
-are separate *properties* on purpose: two animations on the same
-property do not blend, the last simply wins, but `opacity`, `filter`
-and `transform` on one element multiply. That is what makes it look
-composed rather than looped — a fast uneven flicker (2.3s, on opacity,
-linear between stops at odd intervals so each step arrives with an
-edge on it) inside a slower draught (3.7s, on brightness) inside a
-slow swell that also leans (9.7s, on transform), with the rim catching
-the light on its own clock and the ground breathing far more slowly
-than the flame.
+The rim is a RING rather than a border: a gradient three times the
+width of the button is swept across it and then masked to the border
+area alone, two masks — one clipped to the content box, one to the
+whole — excluded from each other. That is what lets the highlight ride
+the curve at the ends instead of stopping at the straight edges.
+`inset:-2px` because an absolutely positioned child resolves against
+the padding box, which is inside the border. The whole rule is behind
+`@supports` for that mask: without it the gradient would paint across
+the entire button rather than its rim, which is worse than no shimmer,
+and the button simply sits lit instead.
 
-The flicker is on the glow, never on the type: the words hold still
-and only the light around them moves. Sampled every 120ms, 59 of 69
-frames move the light by more than .06 — a single slow breath would be
-near zero. `scratchpad/candle.js` prints the trace, `navcheck.js`
-fails if any two periods become harmonic or if the fast and slow
-clocks collapse into one range. All of it stops under
-`prefers-reduced-motion`.
+**It stands aside while the page is turning.** The sweep is a
+`background-position`, which repaints the ring on the main thread every
+frame — small, but it is the same thread the turn is on, and one run in
+six dropped a frame to it. A page turn is the one moment this page has
+to be smooth; a highlight crossing a button can wait 600ms. It is
+paused by `body:has(.deck.glide)`, using `:has()` because the rail is a
+*sibling* of the deck and there is no previous-sibling combinator;
+where `:has()` is unsupported the shimmer keeps running, which is where
+this started. Six runs after: 60fps, no dropped frames.
+
+`scratchpad/sheen2.js` traces the highlight along the rim frame by
+frame — it enters at column 32, crosses to 127 and 222, leaves at 253,
+and the rim sits at its resting brightness for the rest of the cycle.
+`navcheck.js` fails if the glow or the border ever animates again.
 
 **The button is frosted on a phone, and the brightness does the work.**
 On `about` the figure runs the full width under the row and the button
