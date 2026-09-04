@@ -538,6 +538,19 @@ match the scan at eight sizes. Its line count has to be distinct line
 tops — a range over content holding inline elements returns one rect per
 run, so a line carrying two spans counts as three and reads as wrapped.
 
+**The rule under a link draws itself out from the middle, and only
+where it means something.** A standing underline under all three links
+and a hairline between each pair was four rules drawn to say what the
+words already said. There is one now: gold under the section you are
+on, cream under the one the pointer is over, nothing anywhere else.
+
+`scaleX` from the centre rather than animating the inset pair that
+would look the same — at 1px high there is no edge to lose to a
+compositor layer, and a transform composites where insets would lay
+the row out again on every frame. The inset is held in `--pad` so the
+rule spans the word and not the padding around it; written twice, the
+two drift the moment either changes.
+
 **One way through the page per screen, not two.** A wide screen has
 room along the foot for three named links, and names beat marks; a
 phone does not — the row was already on a vw curve to stop it wrapping,
@@ -560,7 +573,14 @@ border-radius, and animating a transform on it would promote it to its
 own layer for good and cost the antialiasing along that curve on
 WebKit — the same trap the desktop hover's 2px lift is written around.
 The glow is a radial gradient on its own layer with no edge to lose,
-and the border warms with it in colour only. 3.8s, and it stops
+and the border warms with it in colour only.
+
+7.5s, and uneven on purpose: the swell takes about two fifths of the
+cycle, the fall takes the rest, and the low end is held either side of
+the turn. A sine in and out reads as a pulse being measured; what this
+wants to read as is breathing. Sampled every 500ms through a cycle it
+runs .30 .30 .36 .52 .72 .92 1 .99 .93 .81 .66 .51 .39 .32 .30 .30 —
+the rest at the bottom is the part that makes it a breath. It stops
 entirely under `prefers-reduced-motion`.
 
 **`--rail` is written on the row's own terms.** It is what every
