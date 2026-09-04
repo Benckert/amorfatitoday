@@ -381,10 +381,49 @@ cropped to her shoulder, with the reserved 44% standing empty beside
 it. Everything the stacked block sets on the pair is undone there now,
 not just the padding.
 
-**The headline is exactly as long as the verse's longest line, and the
-only way to hold that is to compute one size from the other.** Curving
-them separately and hoping is what left the verse 112px shorter than
-its headline on a tablet and 46-75px shorter on a sideways phone. Both
+**On a desktop the poem sits centred in the gap between the screen's
+edge and her shirt**, rather than at the page's standard inset. The
+words and the figure are the whole of this section, so what the eye
+reads is the space between them against the space outside them; left
+at the inset those two were unequal by 119px at 1920.
+
+Where her shirt falls is worked out. The figure is height-limited
+until the screen gets square (720x1080 at 2:3, so .6664 of the panel's
+height), width-limited after that at the 42% the box is given, and on
+a screen taller than the photograph it stops at its own 719px —
+`max-height` limits, it never enlarges, which is why the `min()` has
+three terms. The figure is flush right and MIRRORED here, so the
+nearest part of her shirt on screen is the *furthest* part of it in
+the file: .829 of the width, scanning for pixels that are bright and
+nearly neutral, the cotton rather than the warm streaks across it.
+The block is 14.32em of the hand, so half of that off half the gap is
+where its left edge goes.
+
+The floor is the **gutter**, not the inset. The inset is the larger of
+the gutter and half the slack beside `--measure`, and on a wide screen
+the second wins — 400px at 1920 against the 341 that centres the
+block — so floored at the inset the poem sat 119px right of centre on
+exactly the screens where the gap is widest. This is the one place a
+section's words leave the shared left line the rest of the page keeps;
+that line is worth more between `amor` and `artists`, which are a
+title and a list, than it is here, where the words and the figure are
+a pair and how they sit against each other is what the section is.
+
+`scratchpad/centre.js` and `centre.py` check it against the rendered
+pixels rather than re-deriving the formula, at ten desktop shapes from
+1280x800 to 2560x1440: within a pixel at all of them. 2560x1440 is in
+that list because it is the one that caught the missing 719px term.
+
+**The headline is exactly as long as the verse's longest line — on a
+desktop.** There the two are the whole of the section and an unequal
+pair reads as a mistake. Stacked or sideways the headline is set on
+its own curve, narrower than the verse and a good deal smaller, which
+is what a line standing over a poem should be; `about.js` checks the
+match on a desktop and narrower-and-smaller everywhere else.
+
+Holding the match needs one size computed from the other. Curving them
+separately and hoping is what left the verse 112px shorter than its
+headline on a tablet and 46-75px shorter on a sideways phone. Both
 lengths are constants of their strings: "each moment of all time gifted
 us" sets in 14.32em of the hand at its .4em word-spacing, and the
 headline in 35.79em of the micro face at .28em of tracking. So `#about`
@@ -392,12 +431,9 @@ carries one `--hand-size`, the hand takes it, and the headline takes
 `calc(var(--hand-size) * var(--lede-k))` where `--lede-k` is the ratio
 of those two em-widths.
 
-`--lede-k` changes with the tracking, so each breakpoint carries its
-own — .4003 wide, .4548 stacked at .18em, .4809 sideways at .14em, and
-.832 below 495px, where the figure is for the FIRST of the two lines
-alone. Re-measure with `scratchpad/em.js` if either string or any
-tracking changes; `scratchpad/about.js` asserts the two come out equal
-at fourteen sizes, and it is a hard failure, not a report.
+`--lede-k` is .4003, the ratio at the desktop's .28em of tracking.
+Re-measure it with `scratchpad/em.js` if either string or that
+tracking changes.
 
 **The leading pays for the size.** The hand is set larger than the
 photograph has it — read on a screen it wants to be — so the lines come
