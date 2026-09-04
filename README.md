@@ -6,6 +6,20 @@ open it in a browser, or drop the folder on any host.
 One page, three sections — **amor**, **about**, **artists** — each one
 exactly one screen tall, plus an **Attend** button that leaves the site.
 
+## Branches
+
+`main` is what is live on amorfati.today, so it is not where work
+happens. `develop` is the integration branch: a change goes on its own
+branch off `develop`, is merged back into `develop` when it is done and
+its suites pass, and only reaches `main` when it has been looked at and
+approved. `checkpoint/live-2026-09-04` marks the version that went
+live.
+
+(Annotated tags would say the same thing more neatly, but this
+environment's git gateway refuses tag pushes — `git push origin
+<tag>` comes back with "the remote end hung up unexpectedly" while
+branch pushes succeed — so the checkpoint is a branch.)
+
 ## Editing it
 
 Nothing in the page is a placeholder any more. The ticket button in
@@ -151,14 +165,44 @@ two side by side.
 **No credit wraps, at any size, and the way that is held is that the
 type is sized from its COLUMN rather than from the viewport.**
 `.who-company` is a container and `.roster li` is
-`clamp(.6rem, 4.05cqw, .92rem)` — the coefficient is 100 divided by the
-23.9em the longest credit sets in, so that credit lands just inside its
+`clamp(.6rem, 4.34cqw, .98rem)` — the coefficient is 100 divided by the
+ems the longest credit sets in, so that credit lands just inside its
 column everywhere and every other one lands short. A vw curve cannot do
 this: the column is what is left over after a photograph sized by the
 screen's *height*, so at 1440x900 it is 311px and at 1920x1080 it is
-478px, and no function of the width alone knows that. The same
-coefficient is used in all three layouts; only the floor and the
-ceiling change.
+478px, and no function of the width alone knows that.
+
+The coefficient is per layout, because the ems are: the same credit
+sets in 22.82em on a wide screen and 24.14em stacked, so one number for
+both has to serve the wider of the two and leaves the other short.
+4.34 / 4.10 / 4.38, measured by `scratchpad/coeff.js`.
+
+**And a container query resolves against the CONTENT box.** The first
+attempt at raising the coefficient wrapped the longest credit at 320px,
+because the column measures 320 with `getBoundingClientRect` and 275.2
+as a container — 4.33 of the wrong one is 8% too big.
+
+**How much bigger the roster can get, and what it costs.** Tightening
+the tracking from .14em to .10em and taking the coefficient with it
+puts 13.48px in the column at 1440x900 against 12.58px, and 15.68px at
+1920 against 14.72px — about 7%, for nothing. That is all there is for
+free: past it the column has to grow, and the column is what is left
+over beside the photograph. `scratchpad/colwidth.js` prices the rest —
+at 1440x900 the picture is 600px wide, and every 6% off that width is
+worth about 1.6px of type (564px gives 15.1px, 528px gives 16.7px).
+
+That trade was declined, and the reason is worth recording: the hero
+and the `artists` figure are the same 720x1080 file letterboxed to the
+panel's height, so they are the same width as each other at every
+desktop size — 533px at 1280, 600px at 1440, 720px at 1920 and above
+(`scratchpad/samewidth.js`). Narrowing one to buy type would have
+broken that, and two photographs standing at the same width across two
+sections is worth more than two pixels of credit.
+
+A heavier cut of the same face would answer the legibility half of it
+without touching the width at all — Cormorant's hairlines are what
+thin out at this size, not its size — but only 300 and 400 are in
+`fonts/`, and this environment cannot fetch a 500 or a 600.
 
 Three things bought the width that made it possible. The role is set at
 .84 of the name with .08em of tracking against the name's .14em — which
@@ -375,54 +419,47 @@ element under the roster's own rule, not a second one built out of
 `::before`. Built separately, hers came out tight against her role
 while every other row had air on both sides of it.
 
-**A linked name is underlined, and it took four tries.** On a phone
-there is no hover to reveal which names go somewhere, so the mark
-stands: a rule at .42, warming to .78 with the name going gold when it
-is pointed at or tabbed to. Getting a line to appear is not supposed to
-be the hard part of a page, and the record is here because the lesson
-is about evidence rather than about underlines.
+**Which names link is said by a tick in the margin, and that is the
+fifth thing tried.** An underline was three of them — a positioned box,
+a `text-decoration` with `skip-ink`, a `text-decoration` without it —
+and two of those rendered on Chromium and on nothing else that
+mattered. The border finally rendered everywhere, and was still eleven
+full-width rules in a column of fourteen rows, which on a phone is a
+lot of ink to say a small thing. A dot in the margin was quieter and
+read as a bullet list. Stepping the three unlinked rows back instead
+was quieter still, and demoted three people for not having a website.
 
-It began as an absolutely positioned `::after`, which could stop
-exactly short of the row's .14em tracking rather than running past the
-last glyph — and that was wrong, because of ELIAS LJUNGBERG. A capital
-J in this face descends, and a box drawn under the name touched its
-tail at all six sizes measured: 0px of clearance, which reads as a
-mistake rather than as a descender.
+A tick says it in one stroke. Every one lands on the same vertical line
+whatever the row is set to, so the column reads as a key down the side
+rather than as decoration following the type — which also stops it
+fighting the short-to-long ramp the roster is ordered by. And it never
+touches the letters: no descender to clear, no tracking to run past,
+nothing under the J in ELIAS LJUNGBERG, which is where three of the
+four earlier attempts spent their effort. It is a background on a
+positioned pseudo-element, the plainest thing in CSS, and there is no
+version of that an engine can drop.
 
-The second try was `text-decoration` with `skip-ink`, which breaks an
-underline around a descender and which only a real underline has. It
-was verified on Chromium, where it does exactly that. On an iPhone the
-line was reported missing altogether. The third try kept
-`text-decoration` and removed the two things WebKit has a history of
-dropping — `skip-ink`, whose implementation there notches around
-glyphs that merely come *near* the line, and an explicit
-`text-decoration-thickness` in px — clearing the J by geometry
-instead. That was a reasonable diagnosis and it was also still wrong:
-the line was reported missing again.
+1.3em tall, between the .72em and the 2em that were looked at: shorter
+reads as a stub, taller and the ticks on neighbouring rows start to
+join into a continuous rule. At .32 rather than .45 — at this length it
+carries perfectly well and the roster is not a navigation bar. Centred
+on the capitals: the inline box's bottom sits .318em under the
+baseline and the middle of a capital .3125em above it, so the tick's
+middle wants to be .63em up from that bottom.
 
-So the fourth try stops reasoning about it. The venue link on the
-landing has never had the problem, and it draws its rule with
-`border-bottom`; this now draws its rule with `border-bottom`. When one
-mechanism is observed working on the device and another is observed
-failing on it twice, the argument for the second one is over, whatever
-it says on paper — and no amount of Chromium passing says anything
-about the engine that was failing.
+`scratchpad/linkmark.js` checks at seven sizes that every link carries
+a tick and no plain name does, that the `nolink` class in the markup
+agrees with the link on every row, that the tick is centred on the
+capitals to within a pixel, and that it is inside the panel rather than
+off the edge of the screen — the thing a margin mark can get wrong that
+an underline cannot.
 
-What that costs is exactness at the right-hand end: the border runs
-about 2px past the final glyph, into a gap before the dash that is
-.30em, which is what the `::after` existed to avoid. Two pixels inside
-a four pixel gap is a trade worth making for a mark that is there. The
-J is cleared by geometry as before — a border on an inline box sits at
-the bottom of the font's content area, .36 to .40em below the baseline
-against the J's .192em, so `padding-bottom` stays at 0.
-
-`scratchpad/linkmark.js` is the check that should have existed two
-tries ago. It asserts the *mechanism* and not just the result at six
-sizes: a solid border of at least 1px, `text-decoration:none`, every
-one of the eleven links marked and none of the three plain names, the
-rule clear of the baseline and short of the dash. Putting
-`text-decoration` back makes all six fail, which is how it was
-checked.
+**Hover desaturates rather than warms.** It used to take the gold,
+which is the page's one accent — spent on the date and on the section
+you are in. Spending it again on whichever name the pointer happens to
+be over made it the loudest thing on the section. The name cools out of
+the cream instead, which reads as the row lifting off the page and
+leaves the accent where it belongs.
 
 **The horizon draws between her name and her role, not under the pair.**
 It is a background image on the role — `background-size:100% 1px` at
