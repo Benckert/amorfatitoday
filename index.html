@@ -813,6 +813,38 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    width the role costs — a credit is a name AND a role now, and the
    pair has to sit on one line in a column beside a photograph. */
 .roster .r{color:var(--mist);font-size:.84em;letter-spacing:.08em}
+/* MOST OF THESE NAMES HAVE A PAGE OF THEIR OWN, AND THREE DO NOT. On a
+   phone there is no hover to reveal which, so the mark is standing: a
+   hairline under the name, at the same .22 the venue link is set in,
+   going to .5 with the name warming to gold when it is pointed at or
+   tabbed to. A name with no rule under it simply has nowhere to go.
+
+   It is a real underline and not the ::after this started as, or the
+   border-bottom the venue link uses, because of ELIAS LJUNGBERG: a
+   capital J in this face descends, and a rule drawn as a box under the
+   name touched its tail at all six sizes measured — 0px of clearance,
+   which reads as a mistake rather than as a descender. skip-ink is
+   what breaks an underline around one, and only text-decoration has
+   it. The cost is that the row is tracked at .14em and tracking
+   follows the LAST letter too, so the line runs about 2px past the
+   final glyph, into a gap to the dash that is .30em. Measured against
+   a tail cut in half, that is the better of the two.
+   The offset is measured rather than guessed: scratchpad/rule.js
+   reads the distance from the baseline, scratchpad/jclear.js counts
+   the clearance round the J. */
+.roster a.n{
+  color:inherit;
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-decoration-color:rgba(246,227,189,.22);
+  text-underline-offset:.2em;
+  text-decoration-skip-ink:auto;
+  transition:color .32s var(--ease),text-decoration-color .32s var(--ease);
+}
+@media (hover:hover){
+  .roster a.n:hover{color:var(--gold);text-decoration-color:rgba(246,227,189,.5)}
+}
+.roster a.n:focus-visible{color:var(--gold);text-decoration-color:rgba(246,227,189,.5)}
 /* An en dash rather than an em: half the width for the same mark, and
    the row needs the half. Its own margins rather than spaces on either
    side, tighter than a word space would be, and no tracking of its own
@@ -1636,7 +1668,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   .lead-name{font-size:clamp(.9rem,2.4vw,1.2rem)}
   .lead-name > span{padding-bottom:.45rem}
   .company-label{margin-bottom:.35rem}
-  .roster li{font-size:clamp(.5rem,4.05cqw,.72rem);padding:.1rem 0;
+  /* .06rem, not .1: a phone held sideways is 390px tall and the roster
+     is fourteen rows now, so the row padding is what pays for the
+     fourteenth. At .1rem the column overran its box by 6px at 844x390
+     and had nothing left at 667x375. */
+  .roster li{font-size:clamp(.5rem,4.05cqw,.72rem);padding:.06rem 0;
              letter-spacing:.12em;text-indent:.12em}
 }
 
@@ -1799,21 +1835,33 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
            line -- but if it ever does, it reads "ELIAS LJUNGBERG -"
            and then the role, never a line that opens with a dash.
            Vallerie is not in this list; she is the lead name in the
-           column opposite, with her own role under it. -->
+           column opposite, with her own role under it.
+
+           Eleven of the fourteen names link to the artist's own page
+           and three do not, so the link is an <a> around the .n and
+           the other three keep the <span> — nothing here decides how a
+           name looks by whether it is a link. The Instagram addresses
+           are stripped of the share tracking they were copied with
+           (igsi, utm_source=qr, hl=en); the ticket link's `bref` is
+           kept because it is the promoter's own referral code, and
+           these are not that. -->
+      <p class="sr">Names with a rule under them link to the artist's
+        own page, and open in a new tab.</p>
       <ul class="roster">
-        <li data-reveal style="--d:0.22s"><span class="n">Cornelia</span><span class="d">&#8211;</span> <span class="r">Dance</span></li>
-        <li data-reveal style="--d:0.26s"><span class="n">Yazz Meavis</span><span class="d">&#8211;</span> <span class="r">Harp</span></li>
-        <li data-reveal style="--d:0.30s"><span class="n">Amina Avdić</span><span class="d">&#8211;</span> <span class="r">Dance</span></li>
-        <li data-reveal style="--d:0.34s"><span class="n">Carl Backman</span><span class="d">&#8211;</span> <span class="r">Voice</span></li>
-        <li data-reveal style="--d:0.38s"><span class="n">Lova Hellberg</span><span class="d">&#8211;</span> <span class="r">Dance</span></li>
-        <li data-reveal style="--d:0.42s"><span class="n">Eliot Charoff</span><span class="d">&#8211;</span> <span class="r">Poetry</span></li>
-        <li data-reveal style="--d:0.46s"><span class="n">Andreas</span><span class="d">&#8211;</span> <span class="r">Sound Design</span></li>
-        <li data-reveal style="--d:0.50s"><span class="n">Joakim Benckert</span><span class="d">&#8211;</span> <span class="r">Music</span></li>
-        <li data-reveal style="--d:0.54s"><span class="n">Zean Farence Diaz</span><span class="d">&#8211;</span> <span class="r">Music</span></li>
-        <li data-reveal style="--d:0.58s"><span class="n">Simon</span><span class="d">&#8211;</span> <span class="r">Event Production</span></li>
-        <li data-reveal style="--d:0.62s"><span class="n">Elias Ljungberg</span><span class="d">&#8211;</span> <span class="r">Photography</span></li>
-        <li data-reveal style="--d:0.66s"><span class="n">Ella Elvida</span><span class="d">&#8211;</span> <span class="r">Shibari, Set Design</span></li>
-        <li data-reveal style="--d:0.70s"><span class="n">Kristoffer Benckert</span><span class="d">&#8211;</span> <span class="r">Music, Web Design</span></li>
+        <li data-reveal style="--d:0.22s"><a class="n" href="https://www.instagram.com/yazzmeavis/" target="_blank" rel="noopener noreferrer">Yazz Meavis</a><span class="d">&#8211;</span> <span class="r">Harp</span></li>
+        <li data-reveal style="--d:0.26s"><a class="n" href="https://stagesplitter.se/cv/amina-avdic/cc8828d2-63af-4bbd-bdd9-01d6caa4b49a" target="_blank" rel="noopener noreferrer">Amina Avdi&#263;</a><span class="d">&#8211;</span> <span class="r">Dance</span></li>
+        <li data-reveal style="--d:0.30s"><a class="n" href="https://www.acasting.se/backman" target="_blank" rel="noopener noreferrer">Carl Backman</a><span class="d">&#8211;</span> <span class="r">Voice</span></li>
+        <li data-reveal style="--d:0.34s"><a class="n" href="https://www.instagram.com/lovaahellberg/" target="_blank" rel="noopener noreferrer">Lova Hellberg</a><span class="d">&#8211;</span> <span class="r">Dance</span></li>
+        <li data-reveal style="--d:0.38s"><a class="n" href="https://www.instagram.com/eliotcharof/" target="_blank" rel="noopener noreferrer">Eliot Charoff</a><span class="d">&#8211;</span> <span class="r">Poetry</span></li>
+        <li data-reveal style="--d:0.42s"><span class="n">Simon</span><span class="d">&#8211;</span> <span class="r">Event Production</span></li>
+        <li data-reveal style="--d:0.46s"><span class="n">Joakim Benckert</span><span class="d">&#8211;</span> <span class="r">Music</span></li>
+        <li data-reveal style="--d:0.50s"><a class="n" href="https://martalarsson.com/" target="_blank" rel="noopener noreferrer">M&#228;rta Larsson</a><span class="d">&#8211;</span> <span class="r">Costumes</span></li>
+        <li data-reveal style="--d:0.54s"><a class="n" href="https://open.spotify.com/artist/2Y8CKymAAgpJLSnNMxhUWV" target="_blank" rel="noopener noreferrer">Zean Farence Diaz</a><span class="d">&#8211;</span> <span class="r">Music</span></li>
+        <li data-reveal style="--d:0.58s"><a class="n" href="https://www.instagram.com/cornelia.condeescu/" target="_blank" rel="noopener noreferrer">Cornelia Condeescu</a><span class="d">&#8211;</span> <span class="r">Dance</span></li>
+        <li data-reveal style="--d:0.62s"><a class="n" href="https://www.instagram.com/ellaelvida/" target="_blank" rel="noopener noreferrer">Ella Elvida</a><span class="d">&#8211;</span> <span class="r">Shibari, Set Design</span></li>
+        <li data-reveal style="--d:0.66s"><a class="n" href="https://antarchitecturemusic.com/" target="_blank" rel="noopener noreferrer">Andreas Frantz</a><span class="d">&#8211;</span> <span class="r">Sound Design</span></li>
+        <li data-reveal style="--d:0.70s"><a class="n" href="https://www.eliasljungberg.com/" target="_blank" rel="noopener noreferrer">Elias Ljungberg</a><span class="d">&#8211;</span> <span class="r">Photography</span></li>
+        <li data-reveal style="--d:0.74s"><span class="n">Kristoffer Benckert</span><span class="d">&#8211;</span> <span class="r">Music, Web Design</span></li>
       </ul>
     </div>
 
