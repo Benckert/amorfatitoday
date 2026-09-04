@@ -305,7 +305,9 @@ same size, tracking and capitals, upright rather than italic. At nearly twice th
 it was a second thing happening in a column with room for one. Her role
 follows the same rule: its own line under the name on a wide screen,
 where the column has the room; back on the line behind a dash on a
-phone, set like every other credit — and it is the roster's own dash
+phone, set like every other credit — including the step down to .84
+that the roster's roles take. Left to inherit the name's own size it
+read as a second name rather than as a role — and it is the roster's own dash
 element under the roster's own rule, not a second one built out of
 `::before`. Built separately, hers came out tight against her role
 while every other row had air on both sides of it.
@@ -379,6 +381,39 @@ cropped to her shoulder, with the reserved 44% standing empty beside
 it. Everything the stacked block sets on the pair is undone there now,
 not just the padding.
 
+**The verse is at least as long as the headline over it, everywhere.**
+That is a real constraint, not a preference: a line of small tracked
+capitals running wider than the hand beneath it makes the hand look
+like a caption. The verse was 112px short of it on a tablet, where a
+1.6rem ceiling had the hand at 25.6px on a 768px screen, and 46-75px
+short on a sideways phone. The ceiling goes to 2.2rem stacked and
+2.6rem wide, the width term goes as far as the column will take (at
+320 the longest line comes to 268px inside 275px), and on a sideways
+phone the headline comes down to meet it. `scratchpad/about.js`
+measures the pair at fourteen sizes.
+
+**The leading pays for the size.** `--adv` is 2 on a phone and 1.55
+sideways, against the photograph's 2.53 — the lines are closer together
+than the scan has them so the hand itself can be bigger, which is the
+right way round for something meant to be read. The signature is held
+wider than the lines are, 1.3 of an advance rather than the
+photograph's 1.175, so the pause before the name survives the lines
+closing up.
+
+**Where the headline takes two lines, they are the same length.** The
+break is the only even one the phrase allows — "live immersion in
+sound," is 24 characters, "movement, presence" is 18 — and balancing
+cannot change that ratio, because tracking lands on both lines alike.
+What evens them is tracking the shorter line out to meet the longer:
+.184em over the first, an em figure, so it holds at every size the
+headline is set at. `text-indent` puts the same amount back, since
+tracking hangs off the last letter and would otherwise throw the
+centring. It needs the two halves to be addressable, so they are
+spans, set as blocks below 495px — measured, not chosen: at 496 the
+line comes to 448px inside 451px of column and fits, and under that it
+does not. The two come out within a pixel of each other from 320 to
+430.
+
 **The verse holds a readable size on the small screens.** It is sized
 against both axes, and on the short ones the `svh` term is what binds:
 at 320x568 that put the hand at 17.6px, which is not enough of a script
@@ -386,13 +421,13 @@ this light to read comfortably. The height coefficient goes from 3.1 to
 3.6 on a phone and from 5.4 to 5.8 on a sideways one, with the floors
 raised to match, and the headline over it comes up too.
 
-On a sideways phone the leading pays for the size: `--adv` goes to
-1.75, against the photograph's 2.53 and the phone's 2.25. At the larger
-size and the old leading the last line came within 11px of the link
-rail at 844x390, which is not clearance, it is luck. It is 24-52px
-across every sideways phone in the suite now — 812x375, 736x414,
-896x414 and 926x428 were added to `fits.js` for exactly this, because
-390 tall was the only one of that shape it had been checking.
+Height is what bounds it on a sideways phone, so the leading there is
+tighter still. At the larger size and the photograph's leading the last
+line came within 11px of the link rail at 844x390, which is not
+clearance, it is luck. It is 22-46px across every sideways phone in the
+suite now — 812x375, 736x414, 896x414 and 926x428 were added to
+`fits.js` for exactly this, because 390 tall was the only one of that
+shape it had been checking.
 
 **The signature is centred wherever the verse and the figure stack.**
 Beside the figure it sits 2.07em in, which is where the photograph puts
