@@ -4,7 +4,7 @@ A single self-contained `index.html`. No build step, no dependencies —
 open it in a browser, or drop the folder on any host.
 
 One page, three sections — **amor**, **about**, **artists** — each one
-exactly one screen tall, plus a **Tickets** button that leaves the site.
+exactly one screen tall, plus an **Attend** button that leaves the site.
 
 ## Editing it
 
@@ -59,6 +59,35 @@ the stacked layout, and back on in the sideways one where both are
 letterboxed again. The one-pixel step measures 19.3 to 2.1 on the hero
 and 12.8 to 3.0 on `artists`, with the fade spread over 100px and 40px
 respectively; `scratchpad/edges.js` takes that strip.
+
+**And a dark round the outside of her, which is less where she is.**
+The page is black and both photographs are dark, so the frame and the
+picture run into each other at the corners. A little more dark out
+there settles the picture into the page — but it has to be *less*
+where she is, or it is the wash again with extra steps.
+
+It is a mask rather than a layer, for the same reason the wash is a
+filter, and a mask darkens here in the most literal way available: the
+page behind is `#000`, so taking alpha off the photograph composites
+it against black. `.72` at the far edge is a 28% dark overlay and
+`#000` over her is none at all. Measured on the rendered pixels: the
+corners come down 16 to 32%, the whole frame only 3 to 5%, and the
+region over her by 0.0% at every layout — it is genuinely untouched,
+not just less touched.
+
+The centre is measured, not guessed, and it is not where she is in the
+file: on a phone the `artists` figure is `object-fit:cover` and
+`object-position` slides the crop under it. `scratchpad/her.js` shoots
+each image's own box at six layouts and reads the centre of the lit
+region out of it, which is why there is one value for the cropped case
+and another for the whole one.
+
+Two masks now on the letterboxed layouts, and they are multiplied
+rather than added — added is a union, and a union of two attenuations
+is not an attenuation. `mask-composite:intersect` does it, guarded by
+`@supports` so anything without it keeps the feather alone. The ring
+round the button already relies on the same property one keyword away,
+which is the evidence that it works on the phone this is for.
 
 **Every section is exactly one screen, and photographs are shown
 whole** — with one deliberate exception, below. Those two are usually a
@@ -346,21 +375,39 @@ element under the roster's own rule, not a second one built out of
 `::before`. Built separately, hers came out tight against her role
 while every other row had air on both sides of it.
 
-**A linked name is underlined, and the underline is a real one.** On a
-phone there is no hover to reveal which names go somewhere, so the mark
-stands: a hairline at the same .22 the venue link is set in, warming to
-.5 with the name going gold when it is pointed at or tabbed to. It
-began as an absolutely positioned `::after`, which let it stop exactly
-short of the row's .14em tracking rather than running past the last
-glyph — and that was wrong, because of ELIAS LJUNGBERG. A capital J in
-this face descends, and a rule drawn as a box under the name touched
-its tail at all six sizes measured: 0px of clearance, which reads as a
-mistake rather than as a descender. `text-decoration-skip-ink` is what
-breaks an underline around one and only a real underline has it, so the
-line runs about 2px into the .30em gap before the dash instead.
-Measured against a tail cut in half, that is the better of the two.
-`scratchpad/jclear.js` shoots that row at dpr 3 and counts the break;
-`scratchpad/rule.js` reads the offset from the baseline.
+**A linked name is underlined, and it took three tries.** On a phone
+there is no hover to reveal which names go somewhere, so the mark
+stands: a rule at .42, warming to .78 with the name going gold when it
+is pointed at or tabbed to.
+
+It began as an absolutely positioned `::after`, which could stop
+exactly short of the row's .14em tracking rather than running past the
+last glyph — and that was wrong, because of ELIAS LJUNGBERG. A capital
+J in this face descends, and a box drawn under the name touched its
+tail at all six sizes measured: 0px of clearance, which reads as a
+mistake rather than as a descender.
+
+So the second try was `text-decoration-skip-ink`, which breaks an
+underline around a descender and which only a real underline has. On
+Chromium it does exactly that, and it was verified there. On an
+iPhone the line was reported missing altogether — and WebKit's skip-ink
+is the known-aggressive one, notching around glyphs that merely come
+*near* the line, which in a row of tracked capitals whose serifs sit on
+the baseline can leave nothing at all. An explicit
+`text-decoration-thickness` in px is the other thing WebKit has been
+unreliable about, so that went too and the font's own metric decides
+the weight now.
+
+Which leaves geometry to clear the J. `scratchpad/jdepth.js` measures
+it reaching .192em below the baseline, so the line sits at .28em and
+passes about a pixel under its tail — three device pixels on a phone.
+`scratchpad/jclear.js` shoots that row at dpr 3 and confirms the rule
+is unbroken at all six sizes with the tail clear of it. Nothing is
+skipped and nothing is an absolute length, so there is nothing left for
+an engine to disagree about. The real underline is also the one placed
+off the *font's* metrics, so it sits the same distance under the
+baseline at every size without anything here having to know the
+descent — which the box never did.
 
 **The horizon draws between her name and her role, not under the pair.**
 It is a background image on the role — `background-size:100% 1px` at
@@ -718,10 +765,14 @@ function's name could see.
 points do not describe a curve that turns twice; `linear()` takes as
 many points as it needs, and `scratchpad/ramp.py` generates them — 96,
 which puts the biggest step in speed between neighbours at 7.8%. The
-straight's share of the perimeter runs 29.4% on a desktop pill to
-27.7% on the smallest phone one, so one profile written for 29% is
-right to within 1.5% of the lap everywhere: about five pixels, well
-inside the soft edge of a lobe that is sixty long. Anything that
+straight's share of the perimeter runs 29.3% on a tablet pill down to
+27.2% on the smallest phone one, so one profile written for 29% is
+right to within 1.8% of the lap everywhere: about six pixels, well
+inside the soft edge of a lobe that is sixty long. Those numbers moved
+a little when the button's word changed from Tickets to Attend — a
+shorter word is a shorter pill, and a shorter pill is proportionally
+more end and less side; re-measured on it, the ramp is unchanged at
+17.3 against 5.8. Anything that
 cannot parse `linear()` gets `animation-timing-function:linear` and a
 constant rate, which is the version that shipped for months.
 

@@ -385,10 +385,56 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .shot img,#artists .beside img{
   --feather:7%;
   filter:brightness(.9) saturate(.94);
-  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--feather),
-                     #000 calc(100% - var(--feather)),transparent 100%);
-  mask-image:linear-gradient(to right,transparent 0,#000 var(--feather),
-             #000 calc(100% - var(--feather)),transparent 100%);
+  --feath:linear-gradient(to right,transparent 0,#000 var(--feather),
+          #000 calc(100% - var(--feather)),transparent 100%);
+  -webkit-mask-image:var(--feath);
+  mask-image:var(--feath);
+}
+
+/* AND A THIRD THING, WHICH IS THE DARK ROUND THE OUTSIDE OF HER.
+   The page is black and the photographs are dark, so the frame and
+   the picture run into each other at the corners; a little more dark
+   out there settles the picture into the page and leaves the eye
+   nothing to do but find her. It has to be LESS where she is, or it
+   is just the wash again with extra steps.
+
+   It is a mask and not a layer over the top, for the same reason the
+   wash is a filter: a layer would be a rectangle over a letterboxed
+   picture and would have to be masked to the picture anyway. And a
+   mask darkens here in the most literal way available — the page
+   behind is #000, so taking alpha off the photograph composites it
+   against black. .72 at the far edge is a 28% dark overlay, and #000
+   over her is none at all.
+
+   --her is where the lit figure actually lands inside the IMG'S OWN
+   BOX, which is not where she is in the file: on a phone the artists
+   figure is object-fit:cover and object-position slides the crop
+   under it. scratchpad/her.js shoots each image's box at six layouts
+   and reads the centre of the lit region out of it, which is why
+   there is a value for the cropped case and another for the whole
+   one. --spot is the ellipse the falloff runs over, and a radial
+   gradient holds its last stop past its own edge, so the corners sit
+   at --shade rather than running darker still. */
+.shot img,#artists .beside img{
+  --shade:.72;
+  --spot:76% 68%;
+  --vig:radial-gradient(var(--spot) at var(--her),
+        #000 0%,#000 32%,rgba(0,0,0,.88) 62%,rgba(0,0,0,var(--shade)) 100%);
+}
+#amor .shot img{--her:52% 44%}
+#artists .beside img{--her:54% 38%}
+/* Two masks multiplied, not added: added is a union, and a union of
+   two attenuations is not an attenuation. The ring round the ticket
+   button uses the same property the same way, one line up from
+   `exclude`. Without it, the feather alone — which is where this was
+   before the dark went in. */
+@supports ((mask-composite:intersect) or (-webkit-mask-composite:source-in)){
+  .shot img,#artists .beside img{
+    -webkit-mask-image:var(--vig),var(--feath);
+    -webkit-mask-composite:source-in;
+    mask-image:var(--vig),var(--feath);
+    mask-composite:intersect;
+  }
 }
 
 /* ────────────────────────  I. amor  (landing)  ─────────────────────── */
@@ -819,32 +865,52 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    going to .5 with the name warming to gold when it is pointed at or
    tabbed to. A name with no rule under it simply has nowhere to go.
 
-   It is a real underline and not the ::after this started as, or the
-   border-bottom the venue link uses, because of ELIAS LJUNGBERG: a
-   capital J in this face descends, and a rule drawn as a box under the
-   name touched its tail at all six sizes measured — 0px of clearance,
-   which reads as a mistake rather than as a descender. skip-ink is
-   what breaks an underline around one, and only text-decoration has
-   it. The cost is that the row is tracked at .14em and tracking
-   follows the LAST letter too, so the line runs about 2px past the
-   final glyph, into a gap to the dash that is .30em. Measured against
-   a tail cut in half, that is the better of the two.
-   The offset is measured rather than guessed: scratchpad/rule.js
-   reads the distance from the baseline, scratchpad/jclear.js counts
-   the clearance round the J. */
+   It is a real underline and not a box drawn under the name, because
+   only a real one is placed off the FONT'S metrics: it sits the same
+   distance under the baseline at every size without anything here
+   having to know the descent. It is also the third try, and the first
+   two are worth keeping written down.
+
+   An absolutely positioned ::after could stop exactly short of the
+   row's .14em tracking, which a real underline cannot — it runs about
+   2px past the final glyph, into a .30em gap before the dash. But
+   ELIAS LJUNGBERG has a descending capital J, and the box touched its
+   tail at all six sizes measured: 0px of clearance, which reads as a
+   mistake rather than as a descender.
+
+   So the second try was skip-ink, which breaks an underline around a
+   descender and which only text-decoration has. On Chromium it does
+   exactly that. On an iPhone the line was reported missing entirely —
+   and WebKit's skip-ink is the known-aggressive one, notching around
+   glyphs that merely come NEAR the line, which with a row set in
+   tracked capitals whose serifs sit on the baseline can leave nothing
+   at all. An explicit text-decoration-thickness in px is the other
+   thing WebKit has been unreliable about, so that goes too and the
+   font's own metric decides.
+
+   Which leaves geometry to clear the J: scratchpad/jdepth.js measures
+   it reaching .192em below the baseline, so the line sits at .28em and
+   passes .088em under its tail — about a pixel at the smallest size on
+   this page, three device pixels on a phone. Nothing is skipped, and
+   there is nothing left for an engine to disagree about. */
 .roster a.n{
   color:inherit;
+  -webkit-text-decoration:underline;
   text-decoration:underline;
-  text-decoration-thickness:1px;
-  text-decoration-color:rgba(246,227,189,.22);
-  text-underline-offset:.2em;
-  text-decoration-skip-ink:auto;
+  -webkit-text-decoration-color:rgba(246,227,189,.42);
+  text-decoration-color:rgba(246,227,189,.42);
+  text-decoration-skip-ink:none;
+  text-underline-offset:.28em;
   transition:color .32s var(--ease),text-decoration-color .32s var(--ease);
 }
 @media (hover:hover){
-  .roster a.n:hover{color:var(--gold);text-decoration-color:rgba(246,227,189,.5)}
+  .roster a.n:hover{color:var(--gold);
+    -webkit-text-decoration-color:rgba(246,227,189,.78);
+    text-decoration-color:rgba(246,227,189,.78)}
 }
-.roster a.n:focus-visible{color:var(--gold);text-decoration-color:rgba(246,227,189,.5)}
+.roster a.n:focus-visible{color:var(--gold);
+  -webkit-text-decoration-color:rgba(246,227,189,.78);
+  text-decoration-color:rgba(246,227,189,.78)}
 /* An en dash rather than an em: half the width for the same mark, and
    the row needs the half. Its own margins rather than spaces on either
    side, tighter than a word space would be, and no tracking of its own
@@ -1359,8 +1425,14 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
   /* Full bleed here, both of them: the edges ARE the screen's, so a
      feather would fade the picture off the sides of the phone. The
-     wash stays. */
-  .shot img,#artists .beside img{-webkit-mask-image:none;mask-image:none}
+     wash stays, and so does the dark round her — one mask now rather
+     than two, which also means no compositing to do. */
+  .shot img,#artists .beside img{
+    -webkit-mask-image:var(--vig);
+    mask-image:var(--vig);
+  }
+  /* she is cropped here, so she is somewhere else in the box */
+  #artists .beside img{--her:48% 44%}
 
   /* THE ONE PLACE ANYTHING IS CROPPED.
      Everywhere else on this page a photograph is shown whole. Here, on
@@ -1704,10 +1776,18 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      its own proportions in the middle column, and the hero stands in
      the middle of the panel — so the feather comes back with them. */
   .shot img,#artists .beside img{
-    -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--feather),
-                       #000 calc(100% - var(--feather)),transparent 100%);
-    mask-image:linear-gradient(to right,transparent 0,#000 var(--feather),
-               #000 calc(100% - var(--feather)),transparent 100%);
+    -webkit-mask-image:var(--feath);
+    mask-image:var(--feath);
+  }
+  /* whole again, so she is back where the wide screen has her */
+  #artists .beside img{--her:54% 42%}
+  @supports ((mask-composite:intersect) or (-webkit-mask-composite:source-in)){
+    .shot img,#artists .beside img{
+      -webkit-mask-image:var(--vig),var(--feath);
+      -webkit-mask-composite:source-in;
+      mask-image:var(--vig),var(--feath);
+      mask-composite:intersect;
+    }
   }
   #artists .beside img{
     width:auto;height:auto;max-width:100%;max-height:100%;
@@ -1769,7 +1849,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   <!-- Billetto. The bref query parameter is their own referral tag and
        is part of the link as supplied; it is not tracking added here. -->
   <a class="ticket" href="https://billetto.se/e/amor-fati-biljetter-1988017?bref=eyJzIjoiYmlsbGV0dG8iLCJtIjoiYmlsbGV0dG8iLCJjIjoiZmluZCIsImNvIjoiM1NFIiwidCI6MTc4ODM3MTM5Mn0%3D" target="_blank" rel="noopener noreferrer">
-    Tickets<svg class="out" viewBox="0 0 12 12" aria-hidden="true" fill="none"
+    Attend<svg class="out" viewBox="0 0 12 12" aria-hidden="true" fill="none"
       stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"
     ><path d="M3.6 8.4 8.4 3.6"/><path d="M4.7 3.6h3.7v3.7"/></svg>
     <span class="sr">(opens in a new tab)</span>
