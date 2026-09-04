@@ -879,37 +879,48 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    pair has to sit on one line in a column beside a photograph. */
 .roster .r{color:var(--mist);font-size:.84em;letter-spacing:.08em}
 /* MOST OF THESE NAMES HAVE A PAGE OF THEIR OWN, AND THREE DO NOT, and
-   nothing is added to say so — the three without one step back
-   instead. Everything that was ADDED got in the way: an underline is
-   eleven full-width rules in a column of fourteen rows and the three
-   without one read as the odd ones out; a dot or a tick in the margin
-   is tidier but it is still a column of marks beside a column of
-   names, and on a phone that is two things where there was one.
+   the mark for it is a tick in the margin. It is the fifth thing tried
+   and the reasons the other four went are worth keeping.
 
-   Stepping back is the same information carried by the type itself.
-   It costs the three of them a little presence, which is the honest
-   objection to it and the reason it is written down here: they are
-   not less part of the company for not having a website. .62 against
-   the cream is enough to read as a different kind of row and not
-   enough to read as a lesser one, and the roles keep the same step
-   they always had.
+   An underline was three of them — a positioned box, a
+   text-decoration with skip-ink, a text-decoration without it — and
+   two of those rendered on Chromium and on nothing else that mattered.
+   The border finally rendered everywhere and was still eleven
+   full-width rules in a column of fourteen rows, which on a phone is a
+   lot of ink to say a small thing. A dot in the margin was quieter and
+   read as a bullet list. Stepping the three unlinked rows back instead
+   was quieter still, but it demoted three people for not having a
+   website and gave up any positive mark at all.
 
-   It is a class in the markup rather than li:not(:has(a.n)). The same
-   selector would do it, and :has() is supported everywhere this page
-   cares about — but the last three attempts at this mark were lost to
-   a CSS feature behaving differently on one engine, and a class
-   cannot behave differently anywhere.
+   A tick says the same thing in one stroke. Every one lands on the
+   same vertical line whatever the row is set to, so the column reads
+   as a key down the side rather than as decoration following the type,
+   and it does not touch the letters: no descender to clear, no
+   tracking to run past, nothing under the J in ELIAS LJUNGBERG. It is
+   a background on a positioned pseudo-element, which is the plainest
+   thing in CSS — there is no version of this an engine can drop.
 
-   What this gives up is a POSITIVE affordance: there is no mark that
-   says "this one is a link", only a difference between two kinds of
-   row. The screen-reader line above the list says it in words, and
-   every linked name answers to a pointer. */
+   1.3em tall, between the .72em and the 2em that were looked at:
+   shorter reads as a stub, taller and the ticks on neighbouring rows
+   start to join into a continuous rule. .32 rather than .45, because
+   at this length it carries perfectly well and the roster is not a
+   navigation bar.
+
+   Centred on the CAPITALS rather than on the line box. The inline
+   box's bottom sits .318em under the baseline (scratchpad/jdepth.js)
+   and the middle of a capital is .3125em above it, so the middle of
+   the tick wants to be .63em up from that bottom. */
 .roster a.n{
-  color:inherit;text-decoration:none;
+  color:inherit;text-decoration:none;position:relative;
   transition:color .32s var(--ease);
 }
-.roster .nolink .n{color:rgba(246,227,189,.62)}
-.roster .nolink .r{color:rgba(246,227,189,.40)}
+.roster a.n::before{
+  content:"";position:absolute;
+  left:-.78em;bottom:calc(.63em - .65em);
+  width:1px;height:1.3em;
+  background:rgba(246,227,189,.32);
+  transition:background-color .32s var(--ease);
+}
 /* Hover DESATURATES rather than warms. The gold it used to take is the
    page's one accent, spent on the date and on the section you are in;
    spending it again on whichever name the pointer happens to be over
@@ -918,8 +929,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    leaves the accent where it belongs. */
 @media (hover:hover){
   .roster a.n:hover{color:#efece7}
+  .roster a.n:hover::before{background:rgba(239,236,231,.7)}
 }
 .roster a.n:focus-visible{color:#efece7}
+.roster a.n:focus-visible::before{background:rgba(239,236,231,.7)}
 /* An en dash rather than an em: half the width for the same mark, and
    the row needs the half. Its own margins rather than spaces on either
    side, tighter than a word space would be, and no tracking of its own
@@ -1984,8 +1997,8 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
            (igsi, utm_source=qr, hl=en); the ticket link's `bref` is
            kept because it is the promoter's own referral code, and
            these are not that. -->
-      <p class="sr">Most names link to the artist's own page and open in
-        a new tab; three have no page to link to.</p>
+      <p class="sr">Names with a mark beside them link to the artist's
+        own page and open in a new tab; three have no page to link to.</p>
       <ul class="roster">
         <li data-reveal style="--d:0.22s"><a class="n" href="https://www.instagram.com/yazzmeavis/" target="_blank" rel="noopener noreferrer">Yazz Meavis</a><span class="d">&#8211;</span> <span class="r">Harp</span></li>
         <li data-reveal style="--d:0.26s"><a class="n" href="https://stagesplitter.se/cv/amina-avdic/cc8828d2-63af-4bbd-bdd9-01d6caa4b49a" target="_blank" rel="noopener noreferrer">Amina Avdi&#263;</a><span class="d">&#8211;</span> <span class="r">Dance</span></li>

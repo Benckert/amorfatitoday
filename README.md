@@ -191,6 +191,14 @@ over beside the photograph. `scratchpad/colwidth.js` prices the rest —
 at 1440x900 the picture is 600px wide, and every 6% off that width is
 worth about 1.6px of type (564px gives 15.1px, 528px gives 16.7px).
 
+That trade was declined, and the reason is worth recording: the hero
+and the `artists` figure are the same 720x1080 file letterboxed to the
+panel's height, so they are the same width as each other at every
+desktop size — 533px at 1280, 600px at 1440, 720px at 1920 and above
+(`scratchpad/samewidth.js`). Narrowing one to buy type would have
+broken that, and two photographs standing at the same width across two
+sections is worth more than two pixels of credit.
+
 A heavier cut of the same face would answer the legibility half of it
 without touching the width at all — Cormorant's hairlines are what
 thin out at this size, not its size — but only 300 and 400 are in
@@ -411,37 +419,40 @@ element under the roster's own rule, not a second one built out of
 `::before`. Built separately, hers came out tight against her role
 while every other row had air on both sides of it.
 
-**Which names link is said by the type, not by a mark — and that is
-the fifth attempt at it.** The first four all ADDED something to the
-eleven names that have a page: an underline drawn as a positioned box,
-then as a `text-decoration` with `skip-ink`, then as a
-`text-decoration` without it, then a border. The border finally
-rendered everywhere. It was also, looked at on a phone, eleven
-full-width rules in a column of fourteen rows — and the three without
-one read as the odd ones out rather than as the ones with nowhere to
-go. A dot in the margin and a tick in the margin were tidier and still
-a second column of marks beside a column of names.
+**Which names link is said by a tick in the margin, and that is the
+fifth thing tried.** An underline was three of them — a positioned box,
+a `text-decoration` with `skip-ink`, a `text-decoration` without it —
+and two of those rendered on Chromium and on nothing else that
+mattered. The border finally rendered everywhere, and was still eleven
+full-width rules in a column of fourteen rows, which on a phone is a
+lot of ink to say a small thing. A dot in the margin was quieter and
+read as a bullet list. Stepping the three unlinked rows back instead
+was quieter still, and demoted three people for not having a website.
 
-So nothing is added now. The three rows with no page carry a class and
-step back to .62 of the cream, their roles keeping the step they always
-had. Measured, that is 0.345 of the cream's luminance and 6.4:1
-against the page — a different kind of row, not a lesser one.
+A tick says it in one stroke. Every one lands on the same vertical line
+whatever the row is set to, so the column reads as a key down the side
+rather than as decoration following the type — which also stops it
+fighting the short-to-long ramp the roster is ordered by. And it never
+touches the letters: no descender to clear, no tracking to run past,
+nothing under the J in ELIAS LJUNGBERG, which is where three of the
+four earlier attempts spent their effort. It is a background on a
+positioned pseudo-element, the plainest thing in CSS, and there is no
+version of that an engine can drop.
 
-Two things are worth being honest about. It costs those three a little
-presence, and they are not less part of the company for not having a
-website. And it gives up a POSITIVE affordance: there is no mark that
-says *this one is a link*, only a difference between two kinds of row.
-The screen-reader line above the list says it in words, and every
-linked name answers to a pointer.
+1.3em tall, between the .72em and the 2em that were looked at: shorter
+reads as a stub, taller and the ticks on neighbouring rows start to
+join into a continuous rule. At .32 rather than .45 — at this length it
+carries perfectly well and the roster is not a navigation bar. Centred
+on the capitals: the inline box's bottom sits .318em under the
+baseline and the middle of a capital .3125em above it, so the tick's
+middle wants to be .63em up from that bottom.
 
-The class is in the markup rather than `li:not(:has(a.n))`. The
-selector would do it and `:has()` is supported everywhere this page
-cares about — but three of the four earlier attempts were lost to a CSS
-feature behaving differently on one engine, and a class cannot behave
-differently anywhere. `scratchpad/linkmark.js` checks at seven sizes
-that the class and the link agree on every row, that nothing carries an
-added mark any more, and that the step is deep enough to read and
-shallow enough to stay legible.
+`scratchpad/linkmark.js` checks at seven sizes that every link carries
+a tick and no plain name does, that the `nolink` class in the markup
+agrees with the link on every row, that the tick is centred on the
+capitals to within a pixel, and that it is inside the panel rather than
+off the edge of the screen — the thing a margin mark can get wrong that
+an underline cannot.
 
 **Hover desaturates rather than warms.** It used to take the gold,
 which is the page's one accent — spent on the date and on the section
