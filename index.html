@@ -992,23 +992,33 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .dots button:focus-visible i{background:rgba(246,227,189,.6)}
 .dots button[aria-current="true"] i{background:var(--gold);transform:scale(1.5)}
 
-/* Slow, and uneven on purpose. The swell takes about two fifths of the
-   cycle and the fall takes the rest, with the low end HELD either side
-   of the turn — a sine wave in and out reads as a pulse being
-   measured, and what this wants to read as is breathing. 7.5s: fast
-   enough to notice out of the corner of an eye, slow enough that
-   watching it is not a task. */
-@keyframes breathe{
-  0%,7%   {opacity:.30;transform:scale(.84)}
-  42%     {opacity:1;transform:scale(1.30)}
-  93%,100%{opacity:.30;transform:scale(.84)}
+/* Each of these is slow and uneven on its own: the rise takes about
+   two fifths of the cycle, the fall takes the rest, and the low end is
+   HELD either side of the turn. A sine in and out reads as a pulse
+   being measured; a rest at the bottom reads as breathing. The four
+   run on periods that do not divide into each other, so what they add
+   up to drifts. */
+@keyframes glow{
+  0%,6%   {opacity:.26}
+  44%     {opacity:1}
+  92%,100%{opacity:.26}
 }
-/* The border warms with the glow. Colour only — nothing here moves the
-   pill or its curve. */
+@keyframes swell{
+  0%,9%   {transform:scale(.82)}
+  47%     {transform:scale(1.32)}
+  90%,100%{transform:scale(.82)}
+}
+/* Colour only. Nothing here moves the pill or its curve — a transform
+   on it would promote it and cost the antialiasing along that curve. */
 @keyframes kindle{
-  0%,7%   {border-color:rgba(217,164,65,.50);background-color:rgba(217,164,65,.06)}
-  42%     {border-color:rgba(217,164,65,.95);background-color:rgba(217,164,65,.17)}
-  93%,100%{border-color:rgba(217,164,65,.50);background-color:rgba(217,164,65,.06)}
+  0%,8%   {border-color:rgba(217,164,65,.46)}
+  41%     {border-color:rgba(217,164,65,.98)}
+  94%,100%{border-color:rgba(217,164,65,.46)}
+}
+@keyframes warm{
+  0%,5%   {background-color:rgba(22,15,6,.46)}
+  45%     {background-color:rgba(64,43,12,.5)}
+  88%,100%{background-color:rgba(22,15,6,.46)}
 }
 
 /* ──────────────────────────  sound toggle  ────────────────────────── */
@@ -1372,9 +1382,44 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      gradient on its own layer with no edge to lose.
      Slow enough to read as breathing rather than blinking, and it
      stops entirely for anyone who asks for less motion. */
+  /* FROSTED, because on this section the figure runs the full width
+     under the row and the button sat on the lit half of it: the shirt
+     and her leg read straight through a background that is 8% gold on
+     nothing. Blur alone does not fix that — a blurred bright backdrop
+     is still bright — so the filter carries brightness as well, and it
+     is the brightness that does the work. Its own background is
+     darkened to match, and the pair are measured rather than guessed:
+     see scratchpad/cta.js.
+
+     A backdrop-filter is the thing this stylesheet warns about
+     elsewhere, and the warning is about a full-width layer under a
+     moving page. This is 200x45px, and it is measured under a page
+     turn, not assumed. */
+  .jump .ticket{
+    background:rgba(22,15,6,.46);
+    -webkit-backdrop-filter:blur(13px) saturate(.75) brightness(.5);
+    backdrop-filter:blur(13px) saturate(.75) brightness(.5);
+  }
+  @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    .jump .ticket{background:rgba(16,11,4,.82)}
+  }
+
+  /* FOUR CLOCKS, NOT ONE. A single loop is exactly periodic, and a
+     pulse you can predict stops being noticed. Each property runs on
+     its own period — 7.3s, 9.7s, 11.9s, 8.9s — none of them a multiple
+     of another, so the glow is at its brightest before it is at its
+     widest on one breath and after it on the next, and the pattern
+     does not come back around inside any visit. Nothing here is
+     random; it is four regular things that never line up. */
   @media (prefers-reduced-motion:no-preference){
-    .jump .ticket::before{animation:breathe 7.5s ease-in-out infinite}
-    .jump .ticket{animation:kindle 7.5s ease-in-out infinite}
+    .jump .ticket::before{
+      animation:glow 7.3s ease-in-out infinite,
+                swell 9.7s ease-in-out infinite;
+    }
+    .jump .ticket{
+      animation:kindle 11.9s ease-in-out infinite,
+                warm 8.9s ease-in-out infinite;
+    }
   }
 }
 

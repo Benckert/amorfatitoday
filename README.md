@@ -584,13 +584,38 @@ WebKit — the same trap the desktop hover's 2px lift is written around.
 The glow is a radial gradient on its own layer with no edge to lose,
 and the border warms with it in colour only.
 
-7.5s, and uneven on purpose: the swell takes about two fifths of the
-cycle, the fall takes the rest, and the low end is held either side of
-the turn. A sine in and out reads as a pulse being measured; what this
-wants to read as is breathing. Sampled every 500ms through a cycle it
-runs .30 .30 .36 .52 .72 .92 1 .99 .93 .81 .66 .51 .39 .32 .30 .30 —
-the rest at the bottom is the part that makes it a breath. It stops
-entirely under `prefers-reduced-motion`.
+Each of the four is slow and uneven on its own: the rise takes about
+two fifths of the cycle, the fall takes the rest, and the low end is
+held either side of the turn. A sine in and out reads as a pulse being
+measured; a rest at the bottom reads as breathing.
+
+**Four clocks, not one.** A single loop is exactly periodic, and a
+pulse you can predict stops being noticed — so the glow's opacity, its
+scale, the border's colour and the ground's each run on their own
+period: 7.3s, 9.7s, 11.9s and 8.9s, none of them a multiple of
+another. The glow is brightest before it is widest on one breath and
+after it on the next. Nothing here is random; it is four regular
+things that never line up. Sampled at 250ms for half a minute, the
+offset between the opacity peak and the scale peak runs 1.25s, 3.76s,
+6.26s — `scratchpad/pulse.js` fails if the two ever lock together. All
+of it stops under `prefers-reduced-motion`.
+
+**The button is frosted on a phone, and the brightness does the work.**
+On `about` the figure runs the full width under the row and the button
+sat on the lit half of it — the shirt and her leg read straight
+through a background that is 8% gold over nothing. A blur alone does
+not fix that, because a blurred bright backdrop is still bright; the
+filter carries `brightness(.5)` as well, and its own ground is
+darkened to match. Measured inside the pill, the type-to-ground
+contrast is 10.2:1 on the landing, 11.1:1 on `about` and 14.7:1 on
+`artists`.
+
+A backdrop-filter is the thing this file warns about under the foot
+of `about` — a blurred full-width layer under a moving page measured
+16fps in an earlier build. The warning stands for that; this is a
+200x45px pill, and it was measured rather than argued: 60 frames in
+the second a page turn takes, median gap 16.7ms, identical with the
+filter removed. `scratchpad/ctaperf.js` is that measurement.
 
 **`--rail` is written on the row's own terms.** It is what every
 section reserves at its foot, and a height guessed beside the row
