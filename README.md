@@ -381,24 +381,33 @@ cropped to her shoulder, with the reserved 44% standing empty beside
 it. Everything the stacked block sets on the pair is undone there now,
 not just the padding.
 
-**The verse is at least as long as the headline over it, everywhere.**
-That is a real constraint, not a preference: a line of small tracked
-capitals running wider than the hand beneath it makes the hand look
-like a caption. The verse was 112px short of it on a tablet, where a
-1.6rem ceiling had the hand at 25.6px on a 768px screen, and 46-75px
-short on a sideways phone. The ceiling goes to 2.2rem stacked and
-2.6rem wide, the width term goes as far as the column will take (at
-320 the longest line comes to 268px inside 275px), and on a sideways
-phone the headline comes down to meet it. `scratchpad/about.js`
-measures the pair at fourteen sizes.
+**The headline is exactly as long as the verse's longest line, and the
+only way to hold that is to compute one size from the other.** Curving
+them separately and hoping is what left the verse 112px shorter than
+its headline on a tablet and 46-75px shorter on a sideways phone. Both
+lengths are constants of their strings: "each moment of all time gifted
+us" sets in 14.32em of the hand at its .4em word-spacing, and the
+headline in 35.79em of the micro face at .28em of tracking. So `#about`
+carries one `--hand-size`, the hand takes it, and the headline takes
+`calc(var(--hand-size) * var(--lede-k))` where `--lede-k` is the ratio
+of those two em-widths.
 
-**The leading pays for the size.** `--adv` is 2 on a phone and 1.55
-sideways, against the photograph's 2.53 — the lines are closer together
-than the scan has them so the hand itself can be bigger, which is the
-right way round for something meant to be read. The signature is held
-wider than the lines are, 1.3 of an advance rather than the
+`--lede-k` changes with the tracking, so each breakpoint carries its
+own — .4003 wide, .4548 stacked at .18em, .4809 sideways at .14em, and
+.832 below 495px, where the figure is for the FIRST of the two lines
+alone. Re-measure with `scratchpad/em.js` if either string or any
+tracking changes; `scratchpad/about.js` asserts the two come out equal
+at fourteen sizes, and it is a hard failure, not a report.
+
+**The leading pays for the size.** The hand is set larger than the
+photograph has it — read on a screen it wants to be — so the lines come
+closer together to make room: `--adv` is 2.25 on a wide screen, 2 on a
+phone and 1.55 sideways, against the photograph's 2.53. The signature
+is held wider than the lines are, 1.3 of an advance rather than the
 photograph's 1.175, so the pause before the name survives the lines
-closing up.
+closing up. `verse.js` therefore checks the rendered advance against
+what the CSS asks for rather than against the scan's own figure — the
+scan's is still printed beside it, so the departure stays visible.
 
 **Where the headline takes two lines, they are the same length.** The
 break is the only even one the phrase allows — "live immersion in

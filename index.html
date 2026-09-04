@@ -484,7 +484,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      step smaller: capitals at the same nominal size stand about a
      third taller and read that much louder, and this line stands over
      the verse, which is the voice on this section. */
-  font-size:clamp(.62rem,1.35vw,.82rem);
+  font-size:calc(var(--hand-size) * var(--lede-k));
   letter-spacing:.28em;text-indent:.28em;text-transform:uppercase;
   /* On a phone it takes two lines. Balanced, so it breaks into two
      even ones rather than a full line and a single word under it. */
@@ -507,11 +507,17 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    to the next, and the margins are the difference. */
 .hand{
   --lh:1.75;
-  --adv:2.53;    /* 8.4 x-heights, the photograph's own leading */
-  --sign:2.97;   /* 1.175 of an advance, the pause before the name */
+  /* The photograph's own leading is 2.53, and the hand was set at the
+     size that left room for it. Read on a screen the hand wants to be
+     larger than that, so the lines come closer together to pay for it
+     -- 2.25 here, 2 on a phone, 1.55 sideways -- and the signature is
+     held at 1.3 of an advance rather than the photograph's 1.175, so
+     the pause before the name survives the lines closing up. */
+  --adv:2.25;
+  --sign:2.925;
   margin:0;
   font-family:var(--hand);font-weight:400;
-  font-size:clamp(1.25rem,min(2.7vw,4.6svh),2.6rem);
+  font-size:var(--hand-size);
   line-height:var(--lh);
   /* 2.15 x-heights between words, less the .219em the font already
      puts there and the .03em of tracking that lands on the space */
@@ -541,7 +547,27 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .hand{--sign-in:2.07em}
 .hand .sign{margin:calc((var(--sign) - var(--lh)) * 1em) 0 0 var(--sign-in)}
 #about .beside img{--flip:scaleX(-1)}
-#about{--focus:50% 0%}          /* on a phone, keep her head, crop the floor */
+/* ONE SIZE, and the headline is derived from it. The headline is set
+   to the same length as the verse's longest line -- not merely no
+   longer than it -- and the only way to hold that at every width is to
+   compute one from the other rather than to curve them separately and
+   hope.
+
+   Both are constants of the strings, measured in place with
+   scratchpad/em.js: "each moment of all time gifted us" sets in
+   14.32em of the hand at its .4em word-spacing, and the headline sets
+   in 35.79em of the micro face at .28em of tracking. The ratio between
+   those is the ratio between the two sizes. It changes when the
+   tracking does, so each breakpoint carries its own --lede-k, and the
+   two-line setting carries the figure for its FIRST line alone.
+
+   Re-measure both if either string or any tracking changes.
+   scratchpad/about.js asserts the two come out equal. */
+#about{
+  --hand-size:clamp(1.25rem,min(2.95vw,5svh),2.8rem);
+  --lede-k:.4003;               /* 14.325 / 35.786 */
+  --focus:50% 0%;               /* on a phone, keep her head, crop the floor */
+}
 
 /* ────────────────────────────  III. artists  ───────────────────────── */
 #artists{--focus:50% 38%}   /* the candle and the turning figure, not the ceiling */
@@ -738,20 +764,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 /* On a wide screen her role has a line and a horizon of its own, and a
    dash between things on separate lines divides nothing. */
 .lead-name .d{display:none}
-
-/* The width below which the headline over the verse cannot hold one
-   line, and so is set as two even ones. 495px is measured, not chosen:
-   at 496 the line comes to 448px inside 451px of column and fits, and
-   every width under that it does not. The second line carries .184em
-   of tracking over the first, which is what it takes to bring 18
-   characters level with 24 — an em figure, so it holds at every size
-   the headline is set at. text-indent puts back the same amount, since
-   tracking hangs off the last letter and would otherwise throw the
-   centring. scratchpad/about.js measures both lines. */
-@media (max-width:495px){
-  .lede span{display:block}
-  .lede span + span{letter-spacing:.364em;text-indent:.364em}
-}
 
 /* ────────────────────────  IV. attend  (tickets)  ──────────────────── */
 
@@ -975,8 +987,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      the full-bleed figure comes up short of the right edge */
   #artists{padding-right:0}
   #about .verse{align-items:center}
-  #about .lede{font-size:clamp(.72rem,3.1vw,.9rem);letter-spacing:.18em;
-               text-indent:.18em;text-align:center;
+  #about .lede{letter-spacing:.18em;text-indent:.18em;text-align:center;
                margin-bottom:clamp(1rem,3.2svh,1.8rem)}
   /* Tighter than the photograph on purpose: five lines of its leading
      do not fit a phone. The ratio between the two gaps is kept. */
@@ -984,16 +995,12 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      svh term was what bound, and 17.6px of a hand this light is not
      enough to read comfortably. */
   /* Bigger, and the leading pays for it. The ceiling was 1.6rem, which
-     a tablet hit at once: 25.6px of hand on a 768px screen set the
-     verse 112px SHORTER than the headline over it. The width term is
-     what binds on a phone, and it is raised as far as the column will
-     take — at 320 the longest line comes to 268px inside 275px of
-     column. The gap before the signature is held wider than the gaps
-     between the lines, 1.3 of an advance rather than the photograph's
-     1.175, because the lines are closer together now and it has to
-     stay the pause it is. */
-  #about .hand{font-size:clamp(1.05rem,min(5.85vw,3.6svh),2.2rem);
-               --lh:1.6;--adv:2;--sign:2.6}
+     a tablet hit at once: 25.6px of hand on a 768px screen. The width
+     term is raised as far as the column will take — at 320 the longest
+     line comes to 268px inside 275px of column. */
+  #about{--hand-size:clamp(1.05rem,min(5.85vw,3.6svh),2.2rem);
+         --lede-k:.4548}        /* 14.322 / 31.491, at .18em tracking */
+  #about .hand{--lh:1.6;--adv:2;--sign:2.6}
   /* Stacked, the block sits in the middle of the panel; a signature
      indented from its left edge would read as sitting off to one side
      of it. Centred on the widest line instead. */
@@ -1216,6 +1223,22 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    out at its natural 716x1074. Sections stay one screen here like
    everywhere else; the shape is wide, so three columns suit it, and
    everything is simply smaller. */
+/* The width below which the headline over the verse cannot hold one
+   line, and so is set as two even ones. 495px is measured, not chosen:
+   at 496 the line comes to 448px inside 451px of column and fits, and
+   every width under that it does not. The second line carries .184em
+   of tracking over the first, which is what it takes to bring 18
+   characters level with 24 — an em figure, so it holds at every size
+   the headline is set at. text-indent puts back the same amount, since
+   tracking hangs off the last letter and would otherwise throw the
+   centring. scratchpad/about.js measures both lines. */
+@media (max-width:495px){
+  .lede span{display:block}
+  .lede span + span{letter-spacing:.364em;text-indent:.364em}
+  /* the first line alone, at .18em tracking, sets in 17.21em */
+  #about{--lede-k:.832}
+}
+
 @media (orientation:landscape) and (max-height:540px){
   .panel{padding-block:clamp(.5rem,3svh,1rem)}
 
@@ -1253,18 +1276,16 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* side by side again, so the signature is indented again */
   #about .hand{--sign-in:2.07em}
   #about .hand .sign{text-align:left}
-  /* Down a little, and tracked a little tighter, so the verse under it
-     is the longer of the two — at 667x375, the smallest screen of this
-     shape, the two are within a few pixels of each other. */
-  #about .lede{font-size:clamp(.6rem,1.3vw,.75rem);letter-spacing:.14em;
-               text-indent:.14em;margin-bottom:clamp(.7rem,2.6svh,1.2rem)}
+  #about .lede{letter-spacing:.14em;text-indent:.14em;
+               margin-bottom:clamp(.7rem,2.6svh,1.2rem)}
   /* The size comes up and the leading comes down to pay for it. At
      844x390 the larger hand left 11px between the last line and the
      link rail, which is not clearance, it is luck; at 1.85 it is
      around 28px and the type is the size that made it worth doing.
      The ratio between the two gaps is kept, as everywhere else. */
-  #about .hand{font-size:clamp(1.05rem,min(3.05vw,6.2svh),1.9rem);
-               --lh:1.5;--adv:1.55;--sign:2.02}
+  #about{--hand-size:clamp(1.05rem,min(3.05vw,6.2svh),1.9rem);
+         --lede-k:.4809}        /* 14.32 / 29.775, at .14em tracking */
+  #about .hand{--lh:1.5;--adv:1.55;--sign:2.02}
 
   #artists{
     grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
