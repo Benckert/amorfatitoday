@@ -12,7 +12,7 @@ Nothing in the page is a placeholder any more. The ticket button in
 `<nav class="jump">` points at the Billetto listing (the `bref` query
 parameter is Billetto's own referral tag, supplied with the link — it
 is not tracking added here). The title, the subtitle, the date, the
-venue, the headline, the verse and all fourteen artists are set.
+venue, the headline, the verse and all fifteen artists are set.
 
 The venue sits under the date on the landing, as a link to the map
 Google itself shares (its `g_st` parameter is Google's, part of that
@@ -24,7 +24,21 @@ Each credit is a name and a role — `<span class="n">` and
 `<span class="r">` with an em dash between them. To add one, write the
 row, run `scratchpad/widths2.js`, and put it where that says: the order
 is by rendered width, and the script prints the list sorted so the
-placement is read off rather than guessed.
+placement is read off rather than guessed. Then run
+`scratchpad/credits.js`, which checks at 21 sizes that every credit
+still sits on one line and that the column still fits its box — the
+fourteenth row is what took the landscape phone over, and the row
+padding there came down from .1rem to .06rem to pay for it.
+
+A name that has a page of its own is an `<a class="n">` instead of the
+span, and one that does not keeps the span; nothing else changes, so
+the two kinds sit in the same list without one looking like a broken
+version of the other. Eleven of the fourteen link out. Instagram
+addresses are stripped of the share tracking they arrive with —
+`igsi`, `utm_source=qr`, `hl=en` — which is not the same call as the
+ticket link's `bref` or the map's `g_st`: those are the promoter's and
+Google's own, part of the link as shared, where these are an artefact
+of someone scanning a QR code.
 
 ## What the design holds to
 
@@ -97,11 +111,13 @@ vertical line at any width. Measured at 1440px: 160px on all three.
 
 **The roster is ordered by how wide each credit is set, not by how many
 letters it has.** The whole row counts, name and role together, and it
-is measured in a browser at the real tracking: "Amina Avdić" is the
-same eleven characters as "Yazz Meavis" but sets wider, and "Eliot
-Charoff" sets narrower than "Lova Hellberg" though both are thirteen.
-Counted rather than measured, several sit in the wrong place and the
-ramp has kinks in it.
+is measured in a browser at the real tracking. The names alone make
+the case: "Ella Elvida", "Yazz Meavis" and "Amina Avdić" are the same
+eleven characters and set 94.2, 96.8 and 101.4px, and "Elias
+Ljungberg" is a letter LONGER than "Andreas Frantz" while setting
+2.6px narrower. Counted rather than measured, several sit in the wrong
+place and the ramp has kinks in it. `scratchpad/names.js` prints the
+two side by side.
 
 **No credit wraps, at any size, and the way that is held is that the
 type is sized from its COLUMN rather than from the viewport.**
@@ -329,6 +345,22 @@ read as a second name rather than as a role — and it is the roster's own dash
 element under the roster's own rule, not a second one built out of
 `::before`. Built separately, hers came out tight against her role
 while every other row had air on both sides of it.
+
+**A linked name is underlined, and the underline is a real one.** On a
+phone there is no hover to reveal which names go somewhere, so the mark
+stands: a hairline at the same .22 the venue link is set in, warming to
+.5 with the name going gold when it is pointed at or tabbed to. It
+began as an absolutely positioned `::after`, which let it stop exactly
+short of the row's .14em tracking rather than running past the last
+glyph — and that was wrong, because of ELIAS LJUNGBERG. A capital J in
+this face descends, and a rule drawn as a box under the name touched
+its tail at all six sizes measured: 0px of clearance, which reads as a
+mistake rather than as a descender. `text-decoration-skip-ink` is what
+breaks an underline around one and only a real underline has it, so the
+line runs about 2px into the .30em gap before the dash instead.
+Measured against a tail cut in half, that is the better of the two.
+`scratchpad/jclear.js` shoots that row at dpr 3 and counts the break;
+`scratchpad/rule.js` reads the offset from the baseline.
 
 **The horizon draws between her name and her role, not under the pair.**
 It is a background image on the role — `background-size:100% 1px` at
