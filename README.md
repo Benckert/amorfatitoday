@@ -539,10 +539,19 @@ tops — a range over content holding inline elements returns one rect per
 run, so a line carrying two spans counts as three and reads as wrapped.
 
 **The rule under a link draws itself out from the middle, and only
-where it means something.** A standing underline under all three links
-and a hairline between each pair was four rules drawn to say what the
-words already said. There is one now: gold under the section you are
-on, cream under the one the pointer is over, nothing anywhere else.
+where it means something.** A standing underline under all three said
+what the words already said. There is one now: gold under the section
+you are on, cream under the one the pointer is over, nothing anywhere
+else.
+
+The dividers between the links stayed, because they are doing a
+different job from that underline: the underline marked, and three of
+them marked nothing, while these separate — three words in one face at
+one size, set a couple of ems apart, otherwise read as a phrase. They
+are a `border-left` on the second and third link rather than a drawn
+stroke, so the row does not open with one, and because a border sits
+outside the padding box the rule below still measures its inset from
+the word rather than from the word plus a divider.
 
 `scaleX` from the centre rather than animating the inset pair that
 would look the same — at 1px high there is no edge to lose to a

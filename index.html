@@ -851,11 +851,14 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   pointer-events:none;
   background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%);
 }
-/* Nothing under the links and nothing between them until it means
-   something. A standing underline under all three and a hairline
-   between each pair was four rules drawn to say what the words were
-   already saying; the row now carries one, and it belongs to the
-   section you are on.
+/* Nothing UNDER the links until it means something. The standing
+   underline under all three said what the words were already saying;
+   the rule the row carries now belongs to the section you are on.
+
+   The dividers stay, because they are doing a different job from that
+   underline: the underline marked, and three of them marked nothing,
+   while these separate — three words in one face at one size, set a
+   couple of ems apart, otherwise read as a phrase.
 
    The rule draws itself out from the middle. scaleX rather than the
    left/right pair that would do the same thing: at 1px high there is
@@ -872,6 +875,11 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   color:rgba(246,227,189,.62);
   transition:color .45s var(--ease);
 }
+/* On the second and third only, so the row does not open with one. A
+   border rather than a drawn stroke because a border sits OUTSIDE the
+   padding box — which is what `left:var(--pad)` on the rule below
+   measures from, so the divider cannot shift the rule off its word. */
+.jump a.to + a.to{border-left:1px solid rgba(246,227,189,.20)}
 .jump a.to::after{
   content:"";position:absolute;left:var(--pad);right:var(--pad);bottom:0;height:1px;
   background:currentColor;
