@@ -617,7 +617,8 @@ foot of a page someone is reading. The light around it is a constant
 now, and the only thing that moves is a highlight travelling the
 border — with a dimmer reflection 180 degrees opposite, so there is
 always something on the rim and the far side answers the near one. It
-measures at .64 of the bright lobe: secondary, and readable.
+measures at .69 to .72 of the bright lobe right round the lap:
+secondary, and readable.
 
 **It is a dash on the button's own outline, which is what keeps it the
 same length all the way round.** A conic gradient turning at a
@@ -625,10 +626,13 @@ constant *angular* rate does not: a fixed slice of angle covers a long
 run of perimeter near the ends and a short one in the middle of a long
 side, and it visibly shortened and stretched as it went. A dash is
 measured *along* the path, and `pathLength="100"` renormalises that
-path so the dash is written in per cent of the perimeter — 13 is
-thirteen per cent of the way round wherever it happens to be. Measured
-by walking the outline at even steps: 89 to 95px on a 624px perimeter,
-a 6% spread, against 126% before.
+path so the dash is written in per cent of the perimeter — 4 is four
+per cent of the way round wherever it happens to be. Measured by
+walking the outline at even steps and taking the lobe's width at half
+its peak: 30.8 to 35.3px on a 326px perimeter, a 14% spread, against
+126% for the gradient. The residue is the blur meeting the curvature —
+a Gaussian spreads a little further round the outside of a tight bend
+than along a straight side.
 
 The outline is a stroked `<rect>` rounded to a stadium by `ry` alone —
 give `ry`, leave `rx` auto, and SVG matches them and clamps both to
@@ -636,8 +640,66 @@ half the box. The stroke is far wider than the border and the ring
 mask cuts it back, so nothing has to line the stroke up with the
 border to the pixel: the mask decides where the ring is and the stroke
 only has to cover it. The second lobe is the same dash half a lap
-behind, via `animation-delay:-5s`, which puts it opposite; it reads at
-.80 of the bright one.
+behind.
+
+**The falloff is the blur, not a stack.** A short dash has two ends,
+and at this size they read as a bar cut off at each end: measured
+along the outline, 90% of the peak to 20% of it in 5.7px, either side
+of a flat 92px top. The first attempt at softening that stacked three
+dashes of different lengths and alphas on the same centre — and only
+turned one cut into three smaller ones, visible as brightness shelves
+at 100 / 52 / 20% of the peak. A wide Gaussian does what neither can:
+one short dash, `blur(7px)`, and a profile that runs 100 → 90 → 74 →
+51 → 29 → 12 → 4 → 0 with no edge anywhere in it, 90% to 20% over
+15px each side and symmetric to within a pixel.
+
+The blur works in both directions, so the stroke has to be wide enough
+that what is left *across* the ring is still solid after being spread:
+a 7px stroke under a 7px blur keeps under half its brightness, and it
+is 22px now. The extra width costs nothing, because the ring mask
+throws away everything that is not the 2px band.
+
+**The speed is a bell, and it never reaches zero.** A constant rate
+reads as a machine; the lap now runs on
+`cubic-bezier(.5,.2,.5,.8)` — slowest as the light comes round,
+fastest across the middle, slowing again at the end. Sampled at 120
+phases and differentiated, that is 4.1% of the lap per second at its
+slowest and 16.2% at its fastest, a ratio of 3.9, symmetric about the
+half way point. The curve keeps a little speed at both ends
+deliberately: a bezier starting at zero would stop dead once a lap, at
+the same place every time, which reads as a stutter rather than as a
+sweep.
+
+**The two lobes are held apart by their offsets, not by a delay.**
+Under a constant rate `animation-delay:-5s` puts the second lobe
+exactly opposite. Under a bell it does not: the two would be at
+different points on the speed curve and drift together and apart over
+the lap. Each lobe carries its own resting `stroke-dashoffset` and its
+own keyframes instead, so the 50 between them is fixed by geometry.
+`navcheck.js` steps a whole lap and fails if that gap moves at all.
+
+**A `var()` inside a keyframe makes `stroke-dashoffset` animate
+DISCRETELY.** This one cost the most: the declaration parses, the
+computed value is right at both ends, `dashcheck.js` confirmed all six
+`calc()`s resolved, and `getAnimations()` reported the animation
+running — and the light sat still and teleported half way through the
+lap. Nothing static catches it. Sampling the offset across the lap
+does: 2 distinct values out of 21 rather than 21. A `var()` in the
+rect's *own* static offset is fine and still interpolates, so `--L`
+and `--m` stay where they read well and only the far end of the
+keyframe is literal. `navcheck.js` now steps the lap and checks the
+offset takes many distinct values, moves one whole 100, and only ever
+decreases; re-introducing the `var()` makes it fail, which is how that
+check was checked.
+
+**Stepping an animation needs the Web Animations API, not
+`animation-delay`.** Setting a negative delay on a *paused* animation
+does not move it — Chromium keeps the hold time it already had, and
+100 frames captured that way came out byte-identical, which looked
+exactly like the bug being measured. `anim.currentTime = t` does move
+it. `scratchpad/bell.js` captures 120 phases that way and
+`scratchpad/bell.py` reads both the falloff along the rim and the
+speed profile off them.
 
 **Measuring the lobe needs a sampler that crosses the band.** The lit
 ring is a few device pixels wide, and a single offset that sits inside
@@ -645,7 +707,7 @@ it along the straight sides sits just outside it round the ends — so
 the first measurement reported the lobe as *shorter at the caps*, which
 is not what was drawn. Sampling several offsets and taking the
 brightest at each step round the outline is what `scratchpad/arc.py`
-does.
+and `scratchpad/bell.py` do.
 
 **Ten turns with the ring against ten with it removed: 0 late frames
 against 0.** The dash animation is main-thread where the rotation it

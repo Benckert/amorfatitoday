@@ -1030,14 +1030,21 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .dots button:focus-visible i{background:rgba(246,227,189,.6)}
 .dots button[aria-current="true"] i{background:var(--gold);transform:scale(1.5)}
 
-/* Round and round, at an even rate. linear because a reflection
-   travelling at a constant rate is what a curved edge does under a
-   light going round it; easing would read as a thing being animated.
-   A whole lap is 100 because pathLength says so. */
-@keyframes travel{
-  from{stroke-dashoffset:0}
-  to  {stroke-dashoffset:-100}
-}
+/* Round and round. A whole lap is 100 because pathLength says so, and
+   the rate is a bell rather than even — see the timing function where
+   these are bound.
+
+   ONE LAP EACH, WITH THE DESTINATION WRITTEN OUT. A var() inside a
+   keyframe makes stroke-dashoffset animate DISCRETELY — the light sat
+   still and teleported half way round. A var() in the rect's own
+   static offset is fine and still interpolates, so --L and --m stay
+   where they read well and only the far end is literal: the resting
+   offset (L/2 - m) less one whole lap of 100.
+   Two names rather than one with a delay on the second, because a
+   delay would let the lobes drift together and apart as the speed
+   changes over the lap, instead of staying opposite. */
+@keyframes lap-near{to{stroke-dashoffset:-98px}}
+@keyframes lap-far {to{stroke-dashoffset:-148px}}
 
 /* ──────────────────────────  sound toggle  ────────────────────────── */
 .sound{
@@ -1466,24 +1473,52 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
       mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
       mask-composite:exclude;
     }
+    /* THE FALLOFF IS THE BLUR, NOT A STACK. A short dash has two ends
+       and at this size they read as a bar cut off at each end — 90% of
+       the peak to 20% of it in under six pixels. Stacking three dashes
+       of different lengths only turned that one cut into three
+       smaller ones, visible as brightness shelves. A wide Gaussian
+       does what neither can: the dash is short and the blur spreads it
+       into light with no edge anywhere in it.
+
+       The blur works in both directions, so the stroke has to be wide
+       enough that what is left ACROSS the ring is still solid after
+       being spread — a 7px stroke under a 7px blur keeps under half
+       its brightness, a 22px one keeps nearly all of it. The extra
+       width costs nothing: the ring mask throws away everything that
+       is not the 2px band. */
     .jump .ticket .rim svg{
       position:absolute;inset:0;width:100%;height:100%;overflow:visible;
-      /* softens both ends of the dash into light rather than a bar */
-      filter:blur(1.1px);
+      filter:blur(7px);
     }
+    /* --L is the dash length in per cent of the perimeter and --m is
+       where the lobe sits, so the offset that centres it on m is
+       L/2 - m. */
     .jump .ticket .rim rect{
       x:0;y:0;width:100%;height:100%;ry:50%;
-      fill:none;stroke-width:7;stroke-linecap:round;
-      stroke-dasharray:13 87;
+      fill:none;stroke-width:22;stroke-linecap:round;
+      stroke-dasharray:var(--L) calc(100 - var(--L));
+      stroke-dashoffset:calc(var(--L) / 2 - var(--m));
     }
-    .jump .ticket .rim .lit{stroke:rgba(255,249,228,.95)}
-    .jump .ticket .rim .dim{stroke:rgba(255,242,212,.62)}
+    /* the near light, and the far one answering it */
+    .jump .ticket .rim .lit{--L:4;--m:0;stroke:rgba(255,250,232,1)}
+    .jump .ticket .rim .dim{--L:4;--m:50;stroke:rgba(255,246,220,.72)}
     @media (prefers-reduced-motion:no-preference){
-      .jump .ticket .rim .lit,.jump .ticket .rim .dim{
-        animation:travel 10s linear infinite;
+      /* A BELL, not a constant rate: slowest as it comes round, fastest
+         across the middle of the lap, slowing again at the end. The
+         curve keeps a little speed at both ends — a bezier that starts
+         at zero would stop dead once a lap, at the same place every
+         time, which reads as a stutter rather than as a sweep.
+         Both lobes take the same curve and are held apart by --m
+         rather than by a delay, so they stay exactly opposite instead
+         of breathing together and apart as the speed changes. */
+      .jump .ticket .rim rect{
+        animation-duration:10s;
+        animation-timing-function:cubic-bezier(.5,.2,.5,.8);
+        animation-iteration-count:infinite;
       }
-      /* half a lap behind, which puts it opposite */
-      .jump .ticket .rim .dim{animation-delay:-5s}
+      .jump .ticket .rim .lit{animation-name:lap-near}
+      .jump .ticket .rim .dim{animation-name:lap-far}
     }
     /* Standing still it would read as a bright patch stuck to one
        corner rather than as light, so it goes rather than freezes. */
@@ -1655,7 +1690,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     <!-- The light going round the rim. It rides the button's own
          outline as a dash on a stroked rectangle, because a dash is
          measured ALONG the path: pathLength normalises that outline to
-         100, so `13` is thirteen per cent of the perimeter wherever it
+         100, so `4` is four per cent of the perimeter wherever it
          happens to be, and the highlight is the same length on the
          straight sides as it is round the ends. A conic gradient
          turning at a constant ANGULAR rate cannot do that — it covers
