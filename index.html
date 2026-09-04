@@ -997,49 +997,16 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .dots button:focus-visible i{background:rgba(246,227,189,.6)}
 .dots button[aria-current="true"] i{background:var(--gold);transform:scale(1.5)}
 
-/* The flame itself: quick, uneven, never twice the same. Stops at odd
-   intervals rather than a sine, and linear between them, so each step
-   arrives with an edge on it the way a flame does. */
-@keyframes flicker{
-  0%,100%{opacity:.86}
-  6%{opacity:.60}  12%{opacity:.96} 19%{opacity:.54} 26%{opacity:.88}
-  33%{opacity:1}   39%{opacity:.68} 46%{opacity:.93} 53%{opacity:.58}
-  60%{opacity:.9}  67%{opacity:1}   74%{opacity:.71} 81%{opacity:.97}
-  88%{opacity:.63} 94%{opacity:.91}
-}
-/* A draught crossing it. Slower and wider than the flicker, and on
-   filter rather than opacity so the two multiply instead of one
-   overwriting the other. */
-@keyframes gust{
-  0%,100%{filter:brightness(1)}
-  18%    {filter:brightness(1.26)}
-  31%    {filter:brightness(.80)}
-  47%    {filter:brightness(1.16)}
-  62%    {filter:brightness(.74)}
-  79%    {filter:brightness(1.22)}
-}
-/* The flame standing tall and settling back, and leaning as it goes.
-   The slowest of the five, and the one that carries the shape. */
-@keyframes swell{
-  0%,9%   {transform:translateX(-2px) scale(.82)}
-  47%     {transform:translateX(2px) scale(1.32)}
-  90%,100%{transform:translateX(-2px) scale(.82)}
-}
-/* The rim, catching the light. Colour only — nothing here moves the
-   pill or its curve, because a transform on it would promote it and
-   cost the antialiasing along that curve. */
-@keyframes kindle{
-  0%,100%{border-color:rgba(217,164,65,.72)}
-  9%{border-color:rgba(217,164,65,.50)}  16%{border-color:rgba(233,183,84,.96)}
-  27%{border-color:rgba(217,164,65,.58)} 38%{border-color:rgba(238,192,98,1)}
-  51%{border-color:rgba(217,164,65,.52)} 63%{border-color:rgba(234,186,88,.93)}
-  77%{border-color:rgba(217,164,65,.60)} 88%{border-color:rgba(240,196,104,.98)}
-}
-/* The ground under it, breathing far more slowly than the flame does */
-@keyframes warm{
-  0%,5%   {background-color:rgba(22,15,6,.46)}
-  45%     {background-color:rgba(58,39,11,.50)}
-  88%,100%{background-color:rgba(22,15,6,.46)}
+/* One pass of the highlight along the rim and then a long way round
+   before the next. 300% of the box wide with the light in the middle
+   fifth of it, so most of the cycle is the dark part of the gradient
+   crossing and the button simply sits there lit. linear, because a
+   reflection travelling at an even rate is what a curved edge does
+   under a moving light; easing it would read as a thing being
+   animated. */
+@keyframes sheen{
+  0%  {background-position:170% 0}
+  100%{background-position:-170% 0}
 }
 
 /* ──────────────────────────  sound toggle  ────────────────────────── */
@@ -1425,31 +1392,63 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     .jump .ticket{background:rgba(16,11,4,.82)}
   }
 
-  /* A CANDLE, WHICH IS FIVE CLOCKS AND NO RANDOMNESS. Gold on this
-     page is the candle in the photographs, so this is the thing the
-     button should have been doing all along.
+  /* THE GLOW HOLDS STILL AND ONE HIGHLIGHT TRAVELS THE RIM. A flame
+     was too much: anything that changes brightness several times a
+     second sits in the corner of the eye and stays there, and this is
+     a button at the foot of a page someone is reading. So the light
+     around it is now a constant, and the only thing that moves is a
+     single pass of brighter light along the border, slowly, with a
+     long dark interval between passes.
+  */
+  .jump .ticket::before{opacity:.72;transform:scale(1.06)}
 
-     Two rules make it read as flame rather than as a pulse. The first
-     is that no two of the periods divide into each other — 1.9s, 2.3s,
-     3.7s, 8.9s, 9.7s — so what they add up to never comes back around
-     inside a visit. The second is that they are separate PROPERTIES on
-     purpose: two animations on the same property do not blend, the
-     last simply wins, but opacity, filter and transform on one element
-     multiply. That is what makes it look composed rather than looped —
-     a fast uneven flicker inside a slower draught inside a slow swell.
+  /* The rim, as a ring rather than a border. A gradient wider than the
+     button is swept across the box and then masked to the border area
+     alone: two masks, one clipped to the content box and one to the
+     whole, excluded from each other, leave exactly the 2px frame. That
+     is what lets the highlight ride the curve at the ends instead of
+     stopping at the straight edges.
 
-     The flicker is on the glow, never on the type: the words hold
-     still and only the light around them moves. */
+     inset:-2px because an absolutely positioned child resolves against
+     the PADDING box, which is inside the border — without it the ring
+     would sit just within the border rather than on it. */
+  /* Guarded, because without the mask this rule would paint the
+     gradient across the whole button rather than its rim — a worse
+     result than no shimmer at all. Where the two masks cannot be
+     excluded from each other, the button simply sits lit. */
+  @supports ((mask-composite:exclude) or (-webkit-mask-composite:xor)){
+  .jump .ticket::after{
+    content:"";position:absolute;inset:-2px;z-index:1;
+    border-radius:inherit;pointer-events:none;padding:2px;
+    background:linear-gradient(102deg,
+      transparent 0 40%,
+      rgba(255,238,198,.55) 46%,
+      rgba(255,248,224,.95) 50%,
+      rgba(255,238,198,.55) 54%,
+      transparent 60% 100%);
+    background-size:300% 100%;
+    background-repeat:no-repeat;
+    background-position:170% 0;
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    mask-composite:exclude;
+  }
   @media (prefers-reduced-motion:no-preference){
-    .jump .ticket::before{
-      animation:flicker 2.3s linear infinite,
-                gust 3.7s ease-in-out infinite,
-                swell 9.7s ease-in-out infinite;
-    }
-    .jump .ticket{
-      animation:kindle 1.9s linear infinite,
-                warm 8.9s ease-in-out infinite;
-    }
+    .jump .ticket::after{animation:sheen 9s linear infinite}
+    /* And it stands aside while the page is turning. The sweep is a
+       background-position, which repaints the ring on the main thread
+       every frame — small, but it is the same thread the turn is on,
+       and one run in six dropped a frame to it. A page turn is the one
+       moment this page has to be smooth; a highlight crossing a button
+       is the one thing that can wait 600ms.
+
+       :has() on the body, because the rail is a SIBLING of the deck
+       and there is no previous-sibling combinator. Where :has() is not
+       supported the shimmer simply keeps running, which is where this
+       started. */
+    body:has(.deck.glide) .jump .ticket::after{animation-play-state:paused}
+  }
   }
 }
 
