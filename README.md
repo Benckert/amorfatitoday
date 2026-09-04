@@ -646,8 +646,8 @@ and the border warms with it in colour only.
 too much: anything that changes brightness several times a second sits
 in the corner of the eye and stays there, and this is a button at the
 foot of a page someone is reading. The light around it is a constant
-now, and the only thing that moves is a highlight travelling the
-border — with a dimmer reflection 180 degrees opposite, so there is
+now — raised on the touch screens, which have no hover to raise it —
+and the only thing that moves is a highlight travelling the border — with a dimmer reflection 180 degrees opposite, so there is
 always something on the rim and the far side answers the near one. It
 measures at .69 to .72 of the bright lobe right round the lap:
 secondary, and readable.
@@ -691,24 +691,50 @@ a 7px stroke under a 7px blur keeps under half its brightness, and it
 is 22px now. The extra width costs nothing, because the ring mask
 throws away everything that is not the 2px band.
 
-**The speed is a bell, and it never reaches zero.** A constant rate
-reads as a machine; the lap now runs on
-`cubic-bezier(.5,.2,.5,.8)` — slowest as the light comes round,
-fastest across the middle, slowing again at the end. Sampled at 120
-phases and differentiated, that is 4.1% of the lap per second at its
-slowest and 16.2% at its fastest, a ratio of 3.9, symmetric about the
-half way point. The curve keeps a little speed at both ends
-deliberately: a bezier starting at zero would stop dead once a lap, at
-the same place every time, which reads as a stutter rather than as a
-sweep.
+**The speed follows the shape, not the clock.** A constant rate reads
+as a machine, and the first attempt at fixing that was a bell over the
+lap — fastest half way round, whatever part of the outline that landed
+on. It is the wrong variable. The light should run down the long
+sides and dwell round the ends, which is what light on a curved edge
+actually does, so the rate is a function of POSITION: `1 + .5cos`,
+fastest at the middle of a straight, slowest at the middle of an arc,
+three to one between them.
+
+A stadium is straight, arc, straight, arc with the two of each equal,
+so that profile repeats every half lap exactly — which is also what
+keeps the two lobes opposite, since they are half a lap apart.
+Measured at 120 phases and differentiated against position rather
+than time: on a phone the peak is 17.4% of the lap per second at
+position 14.5 where the straight's midpoint is 14.3, and the trough is
+5.8% at position 39.5 where the arc's midpoint is 39.3. Straights
+average 14.4 against the arcs' 7.0. On a desktop pill, a different
+shape entirely, the same numbers come out 17.3 and 5.8.
+`scratchpad/shape.py` is that measurement, and `navcheck.js` fails
+unless the fastest sample falls on a straight and the slowest on an
+arc — a property of where the light is, which no check on the timing
+function's name could see.
+
+**A cubic-bezier cannot say this and `linear()` can.** Two control
+points do not describe a curve that turns twice; `linear()` takes as
+many points as it needs, and `scratchpad/ramp.py` generates them — 96,
+which puts the biggest step in speed between neighbours at 7.8%. The
+straight's share of the perimeter runs 29.4% on a desktop pill to
+27.7% on the smallest phone one, so one profile written for 29% is
+right to within 1.5% of the lap everywhere: about five pixels, well
+inside the soft edge of a lobe that is sixty long. Anything that
+cannot parse `linear()` gets `animation-timing-function:linear` and a
+constant rate, which is the version that shipped for months.
 
 **The two lobes are held apart by their offsets, not by a delay.**
 Under a constant rate `animation-delay:-5s` puts the second lobe
-exactly opposite. Under a bell it does not: the two would be at
-different points on the speed curve and drift together and apart over
-the lap. Each lobe carries its own resting `stroke-dashoffset` and its
-own keyframes instead, so the 50 between them is fixed by geometry.
-`navcheck.js` steps a whole lap and fails if that gap moves at all.
+exactly opposite. Under a varying one it does not — unless the profile
+repeats every half lap, which this one does, and the earlier bell did
+not: the two lobes would have sat at different points on the curve and
+drifted together and apart over the lap. Rather than depend on that
+symmetry holding, each lobe carries its own resting
+`stroke-dashoffset` and its own keyframes, so the 50 between them is
+fixed by geometry whatever the easing does. `navcheck.js` steps a
+whole lap and fails if that gap moves at all.
 
 **A `var()` inside a keyframe makes `stroke-dashoffset` animate
 DISCRETELY.** This one cost the most: the declaration parses, the
@@ -742,16 +768,27 @@ brightest at each step round the outline is what `scratchpad/arc.py`
 and `scratchpad/bell.py` do.
 
 **Ten turns with the ring against ten with it removed: 0 late frames
-against 0.** The dash animation is main-thread where the rotation it
-replaced was not, so this was measured rather than assumed.
+against 0 on a phone, and the same on a desktop.** The dash animation
+is main-thread where the rotation it replaced was not, so this was
+measured rather than assumed — and measured again at both shapes once
+the ring stopped being a phone-only thing.
+
+**The rim is on every screen.** It began as something for the screens
+with no hover to give, on the reasoning that a button nobody can point
+at needs to say it is a button by itself. That was a reason to add it
+there first, not a reason to withhold it elsewhere: it belongs to the
+button rather than to the input, and the desktop pill wears it as
+well. The hover still does what it did — the glow grows, the border
+warms, the pill lifts 2px — and the light goes round underneath it.
 
 **An unstyled `<svg>` is not harmless.** The rim's markup is
-unconditional but its styles belong to the screens with no hover, and
-with the styles scoped to that block the bare `<svg>` fell back to its
-intrinsic 300x150 on a desktop and inflated the button to a third of
-the page. It is `display:none` by default and switched on in the
-stacked block. `scratchpad/pillbox.js` checks the button is still
-pill-shaped and a sane size at ten screen sizes.
+unconditional, and while its styles lived inside the stacked block the
+bare `<svg>` fell back to its intrinsic 300x150 on a desktop and
+inflated the button to a third of the page. It is still `display:none`
+by default and switched on inside the `@supports` that the ring mask
+needs, so a browser without `mask-composite` gets no rim rather than a
+broken one. `scratchpad/pillbox.js` checks the button is still
+pill-shaped, a sane size, and carrying the rim, at ten screen sizes.
 
 **The version before this got that wrong twice over.** It swept a
 `background-position`, which repaints on the main thread every frame,

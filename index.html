@@ -1021,13 +1021,145 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   transform:translateY(-2px);
 }
 .jump .ticket:focus-visible::before{opacity:1;transform:scale(1.34)}
-/* The rim carries the idle shimmer, which belongs to the screens that
-   have no hover — so it is off here, and switched on in the stacked
-   block. Explicitly, and not by leaving it unstyled: an <svg> with no
-   width has an intrinsic 300x150, so an unstyled rim does not sit
-   there harmlessly, it inflates the button to the width of the page.
-   Which is exactly what it did. */
+/* The rim carries the idle shimmer, on every screen — it began as a
+   thing for the screens with no hover to give, but it belongs to the
+   button rather than to the input. Off by default and switched on
+   under @supports below, explicitly and not by leaving it unstyled:
+   an <svg> with no width has an intrinsic 300x150, so an unstyled rim
+   does not sit there harmlessly, it inflates the button to the width
+   of the page. Which is exactly what it did. */
 .jump .ticket .rim{display:none}
+
+/* THE RIM, AS A RING RATHER THAN A BORDER, WITH THE LIGHT GOING
+   ROUND IT AT AN EVEN LENGTH. The outline is a stroked rectangle,
+   rounded to a stadium by ry alone — give ry and leave rx auto and
+   SVG makes rx match it, then clamps both to half the box, which is
+   the stadium. `pathLength="100"` renormalises that outline so a
+   dasharray is written in per cent of the perimeter, and a dash is
+   measured along the path: 4 is four per cent of the way round
+   wherever it sits, so the highlight keeps its length on the long
+   sides and round the ends alike.
+
+   The stroke is far wider than the border and the ring mask cuts it
+   back — two masks, one clipped to the content box and one to the
+   whole, excluded from each other. That way nothing has to line the
+   stroke up with the border to the pixel; the mask decides where the
+   ring is, and the stroke only has to cover it.
+
+   inset:-2px because an absolutely positioned child resolves against
+   the PADDING box, which is inside the border. */
+@supports ((mask-composite:exclude) or (-webkit-mask-composite:xor)){
+  .jump .ticket .rim{
+    display:block;
+    position:absolute;inset:-2px;z-index:1;
+    border-radius:inherit;pointer-events:none;overflow:hidden;
+    padding:2px;
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    mask-composite:exclude;
+  }
+  /* THE FALLOFF IS THE BLUR, NOT A STACK. A short dash has two ends
+     and at this size they read as a bar cut off at each end — 90% of
+     the peak to 20% of it in under six pixels. Stacking three dashes
+     of different lengths only turned that one cut into three
+     smaller ones, visible as brightness shelves. A wide Gaussian
+     does what neither can: the dash is short and the blur spreads it
+     into light with no edge anywhere in it.
+
+     The blur works in both directions, so the stroke has to be wide
+     enough that what is left ACROSS the ring is still solid after
+     being spread — a 7px stroke under a 7px blur keeps under half
+     its brightness, a 22px one keeps nearly all of it. The extra
+     width costs nothing: the ring mask throws away everything that
+     is not the 2px band. */
+  .jump .ticket .rim svg{
+    position:absolute;inset:0;width:100%;height:100%;overflow:visible;
+    filter:blur(7px);
+  }
+  /* --L is the dash length in per cent of the perimeter and --m is
+     where the lobe sits, so the offset that centres it on m is
+     L/2 - m. */
+  .jump .ticket .rim rect{
+    x:0;y:0;width:100%;height:100%;ry:50%;
+    fill:none;stroke-width:22;stroke-linecap:round;
+    stroke-dasharray:var(--L) calc(100 - var(--L));
+    stroke-dashoffset:calc(var(--L) / 2 - var(--m));
+  }
+  /* the near light, and the far one answering it */
+  .jump .ticket .rim .lit{--L:4;--m:0;stroke:rgba(255,250,232,1)}
+  .jump .ticket .rim .dim{--L:4;--m:50;stroke:rgba(255,246,220,.72)}
+  @media (prefers-reduced-motion:no-preference){
+    /* THE SPEED FOLLOWS THE SHAPE, NOT THE CLOCK. It runs down the
+       long sides and dwells round the ends, which is what light on a
+       curved edge does — and it is a different thing from the bell
+       this had first, which was fastest in the middle of the LAP
+       wherever on the outline that happened to fall.
+
+       So the rate is a function of position: 1 + .5cos, fastest at
+       the middle of a straight, slowest at the middle of an arc,
+       three to one between them. A stadium is straight, arc,
+       straight, arc with the two of each equal, so that profile
+       repeats every half lap EXACTLY — which is also what keeps the
+       two lobes opposite, since they are half a lap apart.
+
+       The straight's share of the perimeter is 29.4% on a desktop
+       pill and 27.7% on the smallest phone one, so one profile
+       written for 29% is right to within 1.5% of the lap on every
+       screen — about five pixels, well inside the soft edge of a lobe
+       that is sixty long.
+
+       A cubic-bezier cannot say this: it has two control points and
+       this needs a whole curve. linear() can, and scratchpad/ramp.py
+       generates it — 96 points, which puts the biggest step in speed
+       between neighbours at 7.8%. */
+    .jump .ticket .rim rect{
+      animation-duration:10s;
+      animation-iteration-count:infinite;
+      /* the constant rate this ran at before linear(), for anything
+         that cannot parse the line below — which is the version that
+         shipped for months, and no loss */
+      animation-timing-function:linear;
+    }
+    @supports (animation-timing-function:linear(0,1)){
+      .jump .ticket .rim rect{
+        animation-timing-function:
+          linear(0, 0.0109 1.042%, 0.0227 2.083%, 0.0354 3.125%,
+            0.0491 4.167%, 0.0638 5.208%, 0.0794 6.25%, 0.0960 7.292%,
+            0.1132 8.333%, 0.1310 9.375%, 0.1490 10.42%, 0.1670 11.46%,
+            0.1846 12.5%, 0.2015 13.54%, 0.2177 14.58%, 0.2329 15.62%,
+            0.2471 16.67%, 0.2604 17.71%, 0.2727 18.75%, 0.2841 19.79%,
+            0.2946 20.83%, 0.3045 21.88%, 0.3137 22.92%, 0.3223 23.96%,
+            0.3304 25%, 0.3381 26.04%, 0.3454 27.08%, 0.3524 28.12%,
+            0.3591 29.17%, 0.3656 30.21%, 0.3720 31.25%, 0.3782 32.29%,
+            0.3843 33.33%, 0.3903 34.38%, 0.3963 35.42%, 0.4024 36.46%,
+            0.4084 37.5%, 0.4146 38.54%, 0.4208 39.58%, 0.4273 40.62%,
+            0.4339 41.67%, 0.4407 42.71%, 0.4478 43.75%, 0.4553 44.79%,
+            0.4632 45.83%, 0.4715 46.88%, 0.4804 47.92%, 0.4898 48.96%,
+            0.5000 50%, 0.5109 51.04%, 0.5227 52.08%, 0.5354 53.12%,
+            0.5491 54.17%, 0.5638 55.21%, 0.5794 56.25%, 0.5960 57.29%,
+            0.6132 58.33%, 0.6310 59.38%, 0.6490 60.42%, 0.6670 61.46%,
+            0.6846 62.5%, 0.7015 63.54%, 0.7177 64.58%, 0.7329 65.62%,
+            0.7471 66.67%, 0.7604 67.71%, 0.7727 68.75%, 0.7841 69.79%,
+            0.7946 70.83%, 0.8045 71.88%, 0.8137 72.92%, 0.8223 73.96%,
+            0.8304 75%, 0.8381 76.04%, 0.8454 77.08%, 0.8524 78.12%,
+            0.8591 79.17%, 0.8656 80.21%, 0.8720 81.25%, 0.8782 82.29%,
+            0.8843 83.33%, 0.8903 84.38%, 0.8963 85.42%, 0.9024 86.46%,
+            0.9084 87.5%, 0.9146 88.54%, 0.9208 89.58%, 0.9273 90.62%,
+            0.9339 91.67%, 0.9407 92.71%, 0.9478 93.75%, 0.9553 94.79%,
+            0.9632 95.83%, 0.9715 96.88%, 0.9804 97.92%, 0.9898 98.96%,
+            1);
+      }
+    }
+    .jump .ticket .rim .lit{animation-name:lap-near}
+    .jump .ticket .rim .dim{animation-name:lap-far}
+  }
+  /* Standing still it would read as a bright patch stuck to one
+     corner rather than as light, so it goes rather than freezes. */
+  @media (prefers-reduced-motion:reduce){
+    .jump .ticket .rim{display:none}
+  }
+}
 
 /* An SVG, not the character U+2197: iOS and Android render that arrow
    from a colour emoji font, which put a blue emoji in the middle of
@@ -1476,88 +1608,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   */
   .jump .ticket::before{opacity:.72;transform:scale(1.06)}
 
-  /* THE RIM, AS A RING RATHER THAN A BORDER, WITH THE LIGHT GOING
-     ROUND IT AT AN EVEN LENGTH. The outline is a stroked rectangle,
-     rounded to a stadium by ry alone — give ry and leave rx auto and
-     SVG makes rx match it, then clamps both to half the box, which is
-     the stadium. `pathLength="100"` renormalises that outline so a
-     dasharray is written in per cent of the perimeter, and a dash is
-     measured along the path: 13 is thirteen per cent of the way round
-     wherever it sits, so the highlight keeps its length on the long
-     sides and round the ends alike.
-
-     The stroke is far wider than the border and the ring mask cuts it
-     back — two masks, one clipped to the content box and one to the
-     whole, excluded from each other. That way nothing has to line the
-     stroke up with the border to the pixel; the mask decides where the
-     ring is, and the stroke only has to cover it.
-
-     inset:-2px because an absolutely positioned child resolves against
-     the PADDING box, which is inside the border. */
-  @supports ((mask-composite:exclude) or (-webkit-mask-composite:xor)){
-    .jump .ticket .rim{
-      display:block;
-      position:absolute;inset:-2px;z-index:1;
-      border-radius:inherit;pointer-events:none;overflow:hidden;
-      padding:2px;
-      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-      -webkit-mask-composite:xor;
-      mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-      mask-composite:exclude;
-    }
-    /* THE FALLOFF IS THE BLUR, NOT A STACK. A short dash has two ends
-       and at this size they read as a bar cut off at each end — 90% of
-       the peak to 20% of it in under six pixels. Stacking three dashes
-       of different lengths only turned that one cut into three
-       smaller ones, visible as brightness shelves. A wide Gaussian
-       does what neither can: the dash is short and the blur spreads it
-       into light with no edge anywhere in it.
-
-       The blur works in both directions, so the stroke has to be wide
-       enough that what is left ACROSS the ring is still solid after
-       being spread — a 7px stroke under a 7px blur keeps under half
-       its brightness, a 22px one keeps nearly all of it. The extra
-       width costs nothing: the ring mask throws away everything that
-       is not the 2px band. */
-    .jump .ticket .rim svg{
-      position:absolute;inset:0;width:100%;height:100%;overflow:visible;
-      filter:blur(7px);
-    }
-    /* --L is the dash length in per cent of the perimeter and --m is
-       where the lobe sits, so the offset that centres it on m is
-       L/2 - m. */
-    .jump .ticket .rim rect{
-      x:0;y:0;width:100%;height:100%;ry:50%;
-      fill:none;stroke-width:22;stroke-linecap:round;
-      stroke-dasharray:var(--L) calc(100 - var(--L));
-      stroke-dashoffset:calc(var(--L) / 2 - var(--m));
-    }
-    /* the near light, and the far one answering it */
-    .jump .ticket .rim .lit{--L:4;--m:0;stroke:rgba(255,250,232,1)}
-    .jump .ticket .rim .dim{--L:4;--m:50;stroke:rgba(255,246,220,.72)}
-    @media (prefers-reduced-motion:no-preference){
-      /* A BELL, not a constant rate: slowest as it comes round, fastest
-         across the middle of the lap, slowing again at the end. The
-         curve keeps a little speed at both ends — a bezier that starts
-         at zero would stop dead once a lap, at the same place every
-         time, which reads as a stutter rather than as a sweep.
-         Both lobes take the same curve and are held apart by --m
-         rather than by a delay, so they stay exactly opposite instead
-         of breathing together and apart as the speed changes. */
-      .jump .ticket .rim rect{
-        animation-duration:10s;
-        animation-timing-function:cubic-bezier(.5,.2,.5,.8);
-        animation-iteration-count:infinite;
-      }
-      .jump .ticket .rim .lit{animation-name:lap-near}
-      .jump .ticket .rim .dim{animation-name:lap-far}
-    }
-    /* Standing still it would read as a bright patch stuck to one
-       corner rather than as light, so it goes rather than freezes. */
-    @media (prefers-reduced-motion:reduce){
-      .jump .ticket .rim{display:none}
-    }
-  }
 }
 
 /* a phone held sideways has almost no height: let the sections grow and
