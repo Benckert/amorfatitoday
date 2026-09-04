@@ -511,7 +511,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   --sign:2.97;   /* 1.175 of an advance, the pause before the name */
   margin:0;
   font-family:var(--hand);font-weight:400;
-  font-size:clamp(1.25rem,min(2.7vw,4.6svh),2.4rem);
+  font-size:clamp(1.25rem,min(2.7vw,4.6svh),2.6rem);
   line-height:var(--lh);
   /* 2.15 x-heights between words, less the .219em the font already
      puts there and the .03em of tracking that lands on the space */
@@ -739,6 +739,20 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    dash between things on separate lines divides nothing. */
 .lead-name .d{display:none}
 
+/* The width below which the headline over the verse cannot hold one
+   line, and so is set as two even ones. 495px is measured, not chosen:
+   at 496 the line comes to 448px inside 451px of column and fits, and
+   every width under that it does not. The second line carries .184em
+   of tracking over the first, which is what it takes to bring 18
+   characters level with 24 — an em figure, so it holds at every size
+   the headline is set at. text-indent puts back the same amount, since
+   tracking hangs off the last letter and would otherwise throw the
+   centring. scratchpad/about.js measures both lines. */
+@media (max-width:495px){
+  .lede span{display:block}
+  .lede span + span{letter-spacing:.364em;text-indent:.364em}
+}
+
 /* ────────────────────────  IV. attend  (tickets)  ──────────────────── */
 
 
@@ -961,7 +975,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      the full-bleed figure comes up short of the right edge */
   #artists{padding-right:0}
   #about .verse{align-items:center}
-  #about .lede{font-size:clamp(.72rem,3.1vw,.95rem);letter-spacing:.18em;
+  #about .lede{font-size:clamp(.72rem,3.1vw,.9rem);letter-spacing:.18em;
                text-indent:.18em;text-align:center;
                margin-bottom:clamp(1rem,3.2svh,1.8rem)}
   /* Tighter than the photograph on purpose: five lines of its leading
@@ -969,8 +983,17 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* Both axes still, but a little more of the height: at 320x568 the
      svh term was what bound, and 17.6px of a hand this light is not
      enough to read comfortably. */
-  #about .hand{font-size:clamp(1.05rem,min(5.6vw,3.6svh),1.6rem);
-               --lh:1.6;--adv:2.25;--sign:2.64}
+  /* Bigger, and the leading pays for it. The ceiling was 1.6rem, which
+     a tablet hit at once: 25.6px of hand on a 768px screen set the
+     verse 112px SHORTER than the headline over it. The width term is
+     what binds on a phone, and it is raised as far as the column will
+     take — at 320 the longest line comes to 268px inside 275px of
+     column. The gap before the signature is held wider than the gaps
+     between the lines, 1.3 of an advance rather than the photograph's
+     1.175, because the lines are closer together now and it has to
+     stay the pause it is. */
+  #about .hand{font-size:clamp(1.05rem,min(5.85vw,3.6svh),2.2rem);
+               --lh:1.6;--adv:2;--sign:2.6}
   /* Stacked, the block sits in the middle of the panel; a signature
      indented from its left edge would read as sitting off to one side
      of it. Centred on the widest line instead. */
@@ -1102,7 +1125,10 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      set like them. The horizon goes with it: a rule between a name and
      a word that are now on the same line has nothing to divide. */
   #artists .lead-name .role{
-    display:inline;font-size:inherit;letter-spacing:inherit;
+    display:inline;
+    /* the same step down the roster's roles take, not the name's own
+       size — inherited, hers read as a second name rather than a role */
+    font-size:.84em;letter-spacing:.08em;
     text-indent:0;margin-top:0;padding-top:0;background-image:none;
   }
   /* The dash comes back, and it is the roster's own element under the
@@ -1227,15 +1253,18 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   /* side by side again, so the signature is indented again */
   #about .hand{--sign-in:2.07em}
   #about .hand .sign{text-align:left}
-  #about .lede{font-size:clamp(.66rem,1.4vw,.8rem);letter-spacing:.16em;
-               text-indent:.16em;margin-bottom:clamp(.7rem,2.6svh,1.2rem)}
+  /* Down a little, and tracked a little tighter, so the verse under it
+     is the longer of the two — at 667x375, the smallest screen of this
+     shape, the two are within a few pixels of each other. */
+  #about .lede{font-size:clamp(.6rem,1.3vw,.75rem);letter-spacing:.14em;
+               text-indent:.14em;margin-bottom:clamp(.7rem,2.6svh,1.2rem)}
   /* The size comes up and the leading comes down to pay for it. At
      844x390 the larger hand left 11px between the last line and the
      link rail, which is not clearance, it is luck; at 1.85 it is
      around 28px and the type is the size that made it worth doing.
      The ratio between the two gaps is kept, as everywhere else. */
-  #about .hand{font-size:clamp(1.05rem,min(2.6vw,5.8svh),1.7rem);
-               --lh:1.5;--adv:1.75;--sign:2.06}
+  #about .hand{font-size:clamp(1.05rem,min(3.05vw,6.2svh),1.9rem);
+               --lh:1.5;--adv:1.55;--sign:2.02}
 
   #artists{
     grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
@@ -1354,7 +1383,13 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
          page. Allura was picked by holding nine scripts against that
          scan; see "the faces" at the top of the stylesheet. -->
     <div class="says verse" data-reveal>
-      <h2 class="lede">live immersion in sound, movement, presence</h2>
+      <!-- Two spans so that where this takes two lines they can be
+           made the same length. The break is the only even one the
+           phrase allows -- 24 characters against 18 -- and no amount of
+           balancing changes that ratio, because tracking lands on both
+           lines alike. What evens them is tracking the SHORTER line out
+           to meet the longer, which needs the two to be addressable. -->
+      <h2 class="lede"><span>live immersion in sound,</span> <span>movement, presence</span></h2>
       <!-- The hand in the photograph sets its commas and its
            exclamation marks off from the word before, about half a word
            gap. It is done here with a margin rather than with a space
