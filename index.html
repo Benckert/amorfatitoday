@@ -860,10 +860,15 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    while these separate — three words in one face at one size, set a
    couple of ems apart, otherwise read as a phrase.
 
-   The rule draws itself out from the middle. scaleX rather than the
-   left/right pair that would do the same thing: at 1px high there is
-   no edge to lose and the transform composites, where animating the
-   insets would lay the row out again on every frame.
+   The rule draws itself out from the middle by being UNCOVERED, not
+   by being scaled. Two reasons, and the first is measured: on
+   currentColor the rule rode the text's own colour transition, so it
+   brightened from 194 to 228 as it grew and arrived at full width and
+   full brightness at the same moment — which is the pop. It carries
+   its own colour now and only its width changes. The second is that a
+   scaled line is rasterised at one width and drawn at another; a clip
+   leaves it painted once, at full size, with nothing to re-raster
+   when the animation ends.
 
    The inset is held in --pad so the rule spans the WORD and not the
    padding around it — written twice, they drift the moment either
@@ -882,9 +887,9 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .jump a.to + a.to{border-left:1px solid rgba(246,227,189,.20)}
 .jump a.to::after{
   content:"";position:absolute;left:var(--pad);right:var(--pad);bottom:0;height:1px;
-  background:currentColor;
-  transform:scaleX(0);transform-origin:50% 50%;
-  transition:transform .5s var(--ease);
+  background:rgba(246,227,189,.85);
+  clip-path:inset(0 50% 0 50%);
+  transition:clip-path .5s var(--ease);
 }
 /* Guarded on (hover:hover). A touch screen has no hover to give, but
    it does leave the LAST state a tap produced sitting on the element —
@@ -893,14 +898,14 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    this on any device. */
 @media (hover:hover){
   .jump a.to:hover{color:var(--cream)}
-  .jump a.to:hover::after{transform:scaleX(1)}
+  .jump a.to:hover::after{clip-path:inset(0)}
 }
 .jump a.to:focus-visible{color:var(--cream)}
-.jump a.to:focus-visible::after{transform:scaleX(1)}
+.jump a.to:focus-visible::after{clip-path:inset(0)}
 /* the section you are in is named, not hidden — it just stops leading
    anywhere else */
 .jump a.to[aria-current="true"]{color:var(--gold)}
-.jump a.to[aria-current="true"]::after{transform:scaleX(1)}
+.jump a.to[aria-current="true"]::after{background:var(--gold);clip-path:inset(0)}
 
 /* The one thing on the page that is not navigation: it leaves the site.
    So it is the one thing shaped like a button, the one thing carrying
@@ -992,32 +997,48 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .dots button:focus-visible i{background:rgba(246,227,189,.6)}
 .dots button[aria-current="true"] i{background:var(--gold);transform:scale(1.5)}
 
-/* Each of these is slow and uneven on its own: the rise takes about
-   two fifths of the cycle, the fall takes the rest, and the low end is
-   HELD either side of the turn. A sine in and out reads as a pulse
-   being measured; a rest at the bottom reads as breathing. The four
-   run on periods that do not divide into each other, so what they add
-   up to drifts. */
-@keyframes glow{
-  0%,6%   {opacity:.26}
-  44%     {opacity:1}
-  92%,100%{opacity:.26}
+/* The flame itself: quick, uneven, never twice the same. Stops at odd
+   intervals rather than a sine, and linear between them, so each step
+   arrives with an edge on it the way a flame does. */
+@keyframes flicker{
+  0%,100%{opacity:.86}
+  6%{opacity:.60}  12%{opacity:.96} 19%{opacity:.54} 26%{opacity:.88}
+  33%{opacity:1}   39%{opacity:.68} 46%{opacity:.93} 53%{opacity:.58}
+  60%{opacity:.9}  67%{opacity:1}   74%{opacity:.71} 81%{opacity:.97}
+  88%{opacity:.63} 94%{opacity:.91}
 }
+/* A draught crossing it. Slower and wider than the flicker, and on
+   filter rather than opacity so the two multiply instead of one
+   overwriting the other. */
+@keyframes gust{
+  0%,100%{filter:brightness(1)}
+  18%    {filter:brightness(1.26)}
+  31%    {filter:brightness(.80)}
+  47%    {filter:brightness(1.16)}
+  62%    {filter:brightness(.74)}
+  79%    {filter:brightness(1.22)}
+}
+/* The flame standing tall and settling back, and leaning as it goes.
+   The slowest of the five, and the one that carries the shape. */
 @keyframes swell{
-  0%,9%   {transform:scale(.82)}
-  47%     {transform:scale(1.32)}
-  90%,100%{transform:scale(.82)}
+  0%,9%   {transform:translateX(-2px) scale(.82)}
+  47%     {transform:translateX(2px) scale(1.32)}
+  90%,100%{transform:translateX(-2px) scale(.82)}
 }
-/* Colour only. Nothing here moves the pill or its curve — a transform
-   on it would promote it and cost the antialiasing along that curve. */
+/* The rim, catching the light. Colour only — nothing here moves the
+   pill or its curve, because a transform on it would promote it and
+   cost the antialiasing along that curve. */
 @keyframes kindle{
-  0%,8%   {border-color:rgba(217,164,65,.46)}
-  41%     {border-color:rgba(217,164,65,.98)}
-  94%,100%{border-color:rgba(217,164,65,.46)}
+  0%,100%{border-color:rgba(217,164,65,.72)}
+  9%{border-color:rgba(217,164,65,.50)}  16%{border-color:rgba(233,183,84,.96)}
+  27%{border-color:rgba(217,164,65,.58)} 38%{border-color:rgba(238,192,98,1)}
+  51%{border-color:rgba(217,164,65,.52)} 63%{border-color:rgba(234,186,88,.93)}
+  77%{border-color:rgba(217,164,65,.60)} 88%{border-color:rgba(240,196,104,.98)}
 }
+/* The ground under it, breathing far more slowly than the flame does */
 @keyframes warm{
   0%,5%   {background-color:rgba(22,15,6,.46)}
-  45%     {background-color:rgba(64,43,12,.5)}
+  45%     {background-color:rgba(58,39,11,.50)}
   88%,100%{background-color:rgba(22,15,6,.46)}
 }
 
@@ -1404,20 +1425,29 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     .jump .ticket{background:rgba(16,11,4,.82)}
   }
 
-  /* FOUR CLOCKS, NOT ONE. A single loop is exactly periodic, and a
-     pulse you can predict stops being noticed. Each property runs on
-     its own period — 7.3s, 9.7s, 11.9s, 8.9s — none of them a multiple
-     of another, so the glow is at its brightest before it is at its
-     widest on one breath and after it on the next, and the pattern
-     does not come back around inside any visit. Nothing here is
-     random; it is four regular things that never line up. */
+  /* A CANDLE, WHICH IS FIVE CLOCKS AND NO RANDOMNESS. Gold on this
+     page is the candle in the photographs, so this is the thing the
+     button should have been doing all along.
+
+     Two rules make it read as flame rather than as a pulse. The first
+     is that no two of the periods divide into each other — 1.9s, 2.3s,
+     3.7s, 8.9s, 9.7s — so what they add up to never comes back around
+     inside a visit. The second is that they are separate PROPERTIES on
+     purpose: two animations on the same property do not blend, the
+     last simply wins, but opacity, filter and transform on one element
+     multiply. That is what makes it look composed rather than looped —
+     a fast uneven flicker inside a slower draught inside a slow swell.
+
+     The flicker is on the glow, never on the type: the words hold
+     still and only the light around them moves. */
   @media (prefers-reduced-motion:no-preference){
     .jump .ticket::before{
-      animation:glow 7.3s ease-in-out infinite,
+      animation:flicker 2.3s linear infinite,
+                gust 3.7s ease-in-out infinite,
                 swell 9.7s ease-in-out infinite;
     }
     .jump .ticket{
-      animation:kindle 11.9s ease-in-out infinite,
+      animation:kindle 1.9s linear infinite,
                 warm 8.9s ease-in-out infinite;
     }
   }
