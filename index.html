@@ -851,26 +851,48 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   pointer-events:none;
   background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%);
 }
+/* Nothing under the links and nothing between them until it means
+   something. A standing underline under all three and a hairline
+   between each pair was four rules drawn to say what the words were
+   already saying; the row now carries one, and it belongs to the
+   section you are on.
+
+   The rule draws itself out from the middle. scaleX rather than the
+   left/right pair that would do the same thing: at 1px high there is
+   no edge to lose and the transform composites, where animating the
+   insets would lay the row out again on every frame.
+
+   The inset is held in --pad so the rule spans the WORD and not the
+   padding around it — written twice, they drift the moment either
+   changes. */
 .jump a.to{
+  --pad:clamp(.7rem,2vw,1.15rem);
   position:relative;
-  padding:.4rem clamp(.7rem,2vw,1.15rem);
-  color:rgba(246,227,189,.72);
-  border-bottom:1px solid rgba(246,227,189,.34);
-  transition:color .45s var(--ease),border-color .45s var(--ease);
+  padding:.4rem var(--pad);
+  color:rgba(246,227,189,.62);
+  transition:color .45s var(--ease);
 }
-.jump a.to + a.to{border-left:1px solid rgba(246,227,189,.20)}
+.jump a.to::after{
+  content:"";position:absolute;left:var(--pad);right:var(--pad);bottom:0;height:1px;
+  background:currentColor;
+  transform:scaleX(0);transform-origin:50% 50%;
+  transition:transform .5s var(--ease);
+}
 /* Guarded on (hover:hover). A touch screen has no hover to give, but
    it does leave the LAST state a tap produced sitting on the element —
    so an unguarded :hover reads as a second current section until
    something else is tapped. Focus is not guarded: a keyboard reaches
    this on any device. */
 @media (hover:hover){
-  .jump a.to:hover{color:var(--cream);border-bottom-color:var(--cream)}
+  .jump a.to:hover{color:var(--cream)}
+  .jump a.to:hover::after{transform:scaleX(1)}
 }
-.jump a.to:focus-visible{color:var(--cream);border-bottom-color:var(--cream)}
+.jump a.to:focus-visible{color:var(--cream)}
+.jump a.to:focus-visible::after{transform:scaleX(1)}
 /* the section you are in is named, not hidden — it just stops leading
    anywhere else */
-.jump a.to[aria-current="true"]{color:var(--gold);border-bottom-color:var(--gold)}
+.jump a.to[aria-current="true"]{color:var(--gold)}
+.jump a.to[aria-current="true"]::after{transform:scaleX(1)}
 
 /* The one thing on the page that is not navigation: it leaves the site.
    So it is the one thing shaped like a button, the one thing carrying
@@ -962,15 +984,23 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 .dots button:focus-visible i{background:rgba(246,227,189,.6)}
 .dots button[aria-current="true"] i{background:var(--gold);transform:scale(1.5)}
 
+/* Slow, and uneven on purpose. The swell takes about two fifths of the
+   cycle and the fall takes the rest, with the low end HELD either side
+   of the turn — a sine wave in and out reads as a pulse being
+   measured, and what this wants to read as is breathing. 7.5s: fast
+   enough to notice out of the corner of an eye, slow enough that
+   watching it is not a task. */
 @keyframes breathe{
-  0%,100%{opacity:.40;transform:scale(.88)}
-  50%    {opacity:.95;transform:scale(1.22)}
+  0%,7%   {opacity:.30;transform:scale(.84)}
+  42%     {opacity:1;transform:scale(1.30)}
+  93%,100%{opacity:.30;transform:scale(.84)}
 }
 /* The border warms with the glow. Colour only — nothing here moves the
    pill or its curve. */
 @keyframes kindle{
-  0%,100%{border-color:rgba(217,164,65,.55);background-color:rgba(217,164,65,.07)}
-  50%    {border-color:rgba(217,164,65,.92);background-color:rgba(217,164,65,.16)}
+  0%,7%   {border-color:rgba(217,164,65,.50);background-color:rgba(217,164,65,.06)}
+  42%     {border-color:rgba(217,164,65,.95);background-color:rgba(217,164,65,.17)}
+  93%,100%{border-color:rgba(217,164,65,.50);background-color:rgba(217,164,65,.06)}
 }
 
 /* ──────────────────────────  sound toggle  ────────────────────────── */
@@ -1335,8 +1365,8 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      Slow enough to read as breathing rather than blinking, and it
      stops entirely for anyone who asks for less motion. */
   @media (prefers-reduced-motion:no-preference){
-    .jump .ticket::before{animation:breathe 3.8s var(--ease) infinite}
-    .jump .ticket{animation:kindle 3.8s var(--ease) infinite}
+    .jump .ticket::before{animation:breathe 7.5s ease-in-out infinite}
+    .jump .ticket{animation:kindle 7.5s ease-in-out infinite}
   }
 }
 
