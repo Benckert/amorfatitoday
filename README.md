@@ -553,12 +553,20 @@ stroke, so the row does not open with one, and because a border sits
 outside the padding box the rule below still measures its inset from
 the word rather than from the word plus a divider.
 
-`scaleX` from the centre rather than animating the inset pair that
-would look the same — at 1px high there is no edge to lose to a
-compositor layer, and a transform composites where insets would lay
-the row out again on every frame. The inset is held in `--pad` so the
-rule spans the word and not the padding around it; written twice, the
-two drift the moment either changes.
+It is UNCOVERED rather than scaled, and it carries its own colour.
+Both of those are the fix for a pop at full width. The colour is the
+measured half: on `currentColor` the rule rode the text's own colour
+transition, so it brightened from 194 to 228 as it grew and arrived at
+full width and full brightness in the same moment. It holds at 194
+throughout now — `scratchpad/pop.js` samples the line eight times
+across the growth and fails if the spread is more than a few levels.
+The clip is the other half: a scaled line is rasterised at one width
+and drawn at another, where `clip-path:inset()` leaves it painted once
+at full size with nothing to re-raster when the animation ends.
+
+The inset is held in `--pad` so the rule spans the word and not the
+padding around it; written twice, the two drift the moment either
+changes.
 
 **One way through the page per screen, not two.** A wide screen has
 room along the foot for three named links, and names beat marks; a
@@ -584,21 +592,30 @@ WebKit — the same trap the desktop hover's 2px lift is written around.
 The glow is a radial gradient on its own layer with no edge to lose,
 and the border warms with it in colour only.
 
-Each of the four is slow and uneven on its own: the rise takes about
-two fifths of the cycle, the fall takes the rest, and the low end is
-held either side of the turn. A sine in and out reads as a pulse being
-measured; a rest at the bottom reads as breathing.
+**A candle, which is five clocks and no randomness.** Gold on this
+page is the candle in the photographs, so a flame is what the button
+should have been doing.
 
-**Four clocks, not one.** A single loop is exactly periodic, and a
-pulse you can predict stops being noticed — so the glow's opacity, its
-scale, the border's colour and the ground's each run on their own
-period: 7.3s, 9.7s, 11.9s and 8.9s, none of them a multiple of
-another. The glow is brightest before it is widest on one breath and
-after it on the next. Nothing here is random; it is four regular
-things that never line up. Sampled at 250ms for half a minute, the
-offset between the opacity peak and the scale peak runs 1.25s, 3.76s,
-6.26s — `scratchpad/pulse.js` fails if the two ever lock together. All
-of it stops under `prefers-reduced-motion`.
+Two things make it read as flame rather than as a pulse. No two of the
+periods divide into each other — 1.9s, 2.3s, 3.7s, 8.9s, 9.7s — so
+what they add up to never comes back around inside a visit. And they
+are separate *properties* on purpose: two animations on the same
+property do not blend, the last simply wins, but `opacity`, `filter`
+and `transform` on one element multiply. That is what makes it look
+composed rather than looped — a fast uneven flicker (2.3s, on opacity,
+linear between stops at odd intervals so each step arrives with an
+edge on it) inside a slower draught (3.7s, on brightness) inside a
+slow swell that also leans (9.7s, on transform), with the rim catching
+the light on its own clock and the ground breathing far more slowly
+than the flame.
+
+The flicker is on the glow, never on the type: the words hold still
+and only the light around them moves. Sampled every 120ms, 59 of 69
+frames move the light by more than .06 — a single slow breath would be
+near zero. `scratchpad/candle.js` prints the trace, `navcheck.js`
+fails if any two periods become harmonic or if the fast and slow
+clocks collapse into one range. All of it stops under
+`prefers-reduced-motion`.
 
 **The button is frosted on a phone, and the brightness does the work.**
 On `about` the figure runs the full width under the row and the button
