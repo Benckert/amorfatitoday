@@ -97,10 +97,10 @@ them is going anyway.
 
 Each credit is a name and a role — `<span class="n">` and
 `<span class="r">` with an em dash between them. To add one, write the
-row, run `scratchpad/widths2.js`, and put it where that says: the order
+row, run `test/tools/widths2.js`, and put it where that says: the order
 is by rendered width, and the script prints the list sorted so the
 placement is read off rather than guessed. Then run
-`scratchpad/credits.js`, which checks at 21 sizes that every credit
+`test/credits.js`, which checks at 21 sizes that every credit
 still sits on one line and that the column still fits its box — the
 fourteenth row is what took the landscape phone over, and the row
 padding there came down from .1rem to .06rem to pay for it.
@@ -133,7 +133,7 @@ wherever the picture runs full bleed to the panel's edges, which is
 the stacked layout, and back on in the sideways one where both are
 letterboxed again. The one-pixel step measures 19.3 to 2.1 on the hero
 and 12.8 to 3.0 on `artists`, with the fade spread over 100px and 40px
-respectively; `scratchpad/edges.js` takes that strip.
+respectively; `test/tools/edges.js` takes that strip.
 
 **And a dark round the outside of her, which is less where she is.**
 The page is black and both photographs are dark, so the frame and the
@@ -152,7 +152,7 @@ not just less touched.
 
 The centre is measured, not guessed, and it is not where she is in the
 file: on a phone the `artists` figure is `object-fit:cover` and
-`object-position` slides the crop under it. `scratchpad/her.js` shoots
+`object-position` slides the crop under it. `test/tools/her.js` shoots
 each image's own box at six layouts and reads the centre of the lit
 region out of it, which is why there is one value for the cropped case
 and another for the whole one.
@@ -220,7 +220,7 @@ the case: "Ella Elvida", "Yazz Meavis" and "Amina Avdić" are the same
 eleven characters and set 94.2, 96.8 and 101.4px, and "Elias
 Ljungberg" is a letter LONGER than "Andreas Frantz" while setting
 2.6px narrower. Counted rather than measured, several sit in the wrong
-place and the ramp has kinks in it. `scratchpad/names.js` prints the
+place and the ramp has kinks in it. `test/tools/names.js` prints the
 two side by side.
 
 **No credit wraps, at any size, and the way that is held is that the
@@ -236,7 +236,7 @@ screen's *height*, so at 1440x900 it is 311px and at 1920x1080 it is
 The coefficient is per layout, because the ems are: the same credit
 sets in 22.82em on a wide screen and 24.14em stacked, so one number for
 both has to serve the wider of the two and leaves the other short.
-4.34 / 4.10 / 4.38, measured by `scratchpad/coeff.js`.
+4.34 / 4.10 / 4.38, measured by `test/tools/coeff.js`.
 
 **And a container query resolves against the CONTENT box.** The first
 attempt at raising the coefficient wrapped the longest credit at 320px,
@@ -248,7 +248,7 @@ the tracking from .14em to .10em and taking the coefficient with it
 puts 13.48px in the column at 1440x900 against 12.58px, and 15.68px at
 1920 against 14.72px — about 7%, for nothing. That is all there is for
 free: past it the column has to grow, and the column is what is left
-over beside the photograph. `scratchpad/colwidth.js` prices the rest —
+over beside the photograph. `test/tools/colwidth.js` prices the rest —
 at 1440x900 the picture is 600px wide, and every 6% off that width is
 worth about 1.6px of type (564px gives 15.1px, 528px gives 16.7px).
 
@@ -256,7 +256,7 @@ That trade was declined, and the reason is worth recording: the hero
 and the `artists` figure are the same 720x1080 file letterboxed to the
 panel's height, so they are the same width as each other at every
 desktop size — 533px at 1280, 600px at 1440, 720px at 1920 and above
-(`scratchpad/samewidth.js`). Narrowing one to buy type would have
+(`test/tools/samewidth.js`). Narrowing one to buy type would have
 broken that, and two photographs standing at the same width across two
 sections is worth more than two pixels of credit.
 
@@ -280,9 +280,9 @@ A dash is drawn to cut lowercase, so in a row set in capitals it sits
 low: the ink of a capital runs 0 to .625em above the baseline, mid
 .3125em, while the en dash runs .17 to .21em, mid .19em. The role is
 set at .84, so the middle of its capitals is .2625em. `top:-.098em`
-levels the dash with the mean of the two. `scratchpad/dash.js` measures
+levels the dash with the mean of the two. `test/tools/dash.js` measures
 it off the painted glyphs — a canvas, not the line boxes, which say
-nothing about where a glyph actually is — and `scratchpad/gaps.js`
+nothing about where a glyph actually is — and `test/tools/gaps.js`
 checks the two gaps either side.
 
 Vallerie is outside
@@ -519,7 +519,7 @@ on the capitals: the inline box's bottom sits .318em under the
 baseline and the middle of a capital .3125em above it, so the tick's
 middle wants to be .63em up from that bottom.
 
-`scratchpad/linkmark.js` checks at seven sizes that every link carries
+`test/linkmark.js` checks at seven sizes that every link carries
 a tick and no plain name does, that the `nolink` class in the markup
 agrees with the link on every row, that the tick is centred on the
 capitals to within a pixel, and that it is inside the panel rather than
@@ -547,7 +547,7 @@ off from it. The two CSS numbers are nothing like the two gaps: the
 italic line above ends at its baseline and carries about 16px of its
 own descender space below that, so 4px of margin makes the 20px gap
 while 27px of padding makes the 31px one. That is why they are measured
-off the pixels rather than set by eye — `scratchpad/lead.js` hides the
+off the pixels rather than set by eye — `test/tools/lead.js` hides the
 photograph, flattens the reveal, and scans the ink bands.
 
 **On a phone, the air either side of "with company" is equal**, and
@@ -566,7 +566,7 @@ role is a span inside the span the horizon is drawn on, so a bare
 `.lead-name span` matched it too and gave it its own rule — the name
 came out with two hairlines under it, one under the block and one under
 the word. Nothing that measures position or size can see that, which is
-why `scratchpad/credits.js` counts the elements under `.lead-name` with
+why `test/credits.js` counts the elements under `.lead-name` with
 a painted `::after` and requires at most one.
 
 **A tablet is not a large phone.** The stacked layout now reaches from
@@ -630,7 +630,7 @@ that line is worth more between `amor` and `artists`, which are a
 title and a list, than it is here, where the words and the figure are
 a pair and how they sit against each other is what the section is.
 
-`scratchpad/centre.js` and `centre.py` check it against the rendered
+`test/tools/centre.js` and `centre.py` check it against the rendered
 pixels rather than re-deriving the formula, at ten desktop shapes from
 1280x800 to 2560x1440: within a pixel at all of them. 2560x1440 is in
 that list because it is the one that caught the missing 719px term.
@@ -653,7 +653,7 @@ carries one `--hand-size`, the hand takes it, and the headline takes
 of those two em-widths.
 
 `--lede-k` is .4003, the ratio at the desktop's .28em of tracking.
-Re-measure it with `scratchpad/em.js` if either string or that
+Re-measure it with `test/tools/em.js` if either string or that
 tracking changes.
 
 **The leading pays for the size.** The hand is set larger than the
@@ -752,7 +752,7 @@ before, about half a word gap. That is `.hand span{margin-left:.28em}`
 on a bare span around the mark, rather than a space in the text, so
 what is copied or read aloud is ordinary punctuation.
 
-`scratchpad/verse.js` holds the proportions rather than the pixels: it
+`test/verse.js` holds the proportions rather than the pixels: it
 checks that the four lines are flush to within .6px, that none of them
 wraps, that the block stays inside the panel, and that the three ratios
 match the scan at eight sizes. Its line count has to be distinct line
@@ -779,7 +779,7 @@ Both of those are the fix for a pop at full width. The colour is the
 measured half: on `currentColor` the rule rode the text's own colour
 transition, so it brightened from 194 to 228 as it grew and arrived at
 full width and full brightness in the same moment. It holds at 194
-throughout now — `scratchpad/pop.js` samples the line eight times
+throughout now — `test/tools/pop.js` samples the line eight times
 across the growth and fails if the spread is more than a few levels.
 The clip is the other half: a scaled line is rasterised at one width
 and drawn at another, where `clip-path:inset()` leaves it painted once
@@ -880,14 +880,14 @@ position 14.5 where the straight's midpoint is 14.3, and the trough is
 5.8% at position 39.5 where the arc's midpoint is 39.3. Straights
 average 14.4 against the arcs' 7.0. On a desktop pill, a different
 shape entirely, the same numbers come out 17.3 and 5.8.
-`scratchpad/shape.py` is that measurement, and `navcheck.js` fails
+`test/tools/shape.py` is that measurement, and `navcheck.js` fails
 unless the fastest sample falls on a straight and the slowest on an
 arc — a property of where the light is, which no check on the timing
 function's name could see.
 
 **A cubic-bezier cannot say this and `linear()` can.** Two control
 points do not describe a curve that turns twice; `linear()` takes as
-many points as it needs, and `scratchpad/ramp.py` generates them — 96,
+many points as it needs, and `test/tools/ramp.py` generates them — 96,
 which puts the biggest step in speed between neighbours at 7.8%. The
 straight's share of the perimeter runs 29.3% on a tablet pill down to
 27.2% on the smallest phone one, so one profile written for 29% is
@@ -930,8 +930,8 @@ check was checked.
 does not move it — Chromium keeps the hold time it already had, and
 100 frames captured that way came out byte-identical, which looked
 exactly like the bug being measured. `anim.currentTime = t` does move
-it. `scratchpad/bell.js` captures 120 phases that way and
-`scratchpad/bell.py` reads both the falloff along the rim and the
+it. `test/tools/bell.js` captures 120 phases that way and
+`test/tools/bell.py` reads both the falloff along the rim and the
 speed profile off them.
 
 **Measuring the lobe needs a sampler that crosses the band.** The lit
@@ -939,8 +939,8 @@ ring is a few device pixels wide, and a single offset that sits inside
 it along the straight sides sits just outside it round the ends — so
 the first measurement reported the lobe as *shorter at the caps*, which
 is not what was drawn. Sampling several offsets and taking the
-brightest at each step round the outline is what `scratchpad/arc.py`
-and `scratchpad/bell.py` do.
+brightest at each step round the outline is what `test/tools/arc.py`
+and `test/tools/bell.py` do.
 
 **Ten turns with the ring against ten with it removed: 0 late frames
 against 0 on a phone, and the same on a desktop.** The dash animation
@@ -962,7 +962,7 @@ bare `<svg>` fell back to its intrinsic 300x150 on a desktop and
 inflated the button to a third of the page. It is still `display:none`
 by default and switched on inside the `@supports` that the ring mask
 needs, so a browser without `mask-composite` gets no rim rather than a
-broken one. `scratchpad/pillbox.js` checks the button is still
+broken one. `test/pillbox.js` checks the button is still
 pill-shaped, a sane size, and carrying the rim, at ten screen sizes.
 
 **The version before this got that wrong twice over.** It swept a
@@ -990,7 +990,7 @@ of `about` — a blurred full-width layer under a moving page measured
 16fps in an earlier build. The warning stands for that; this is a
 200x45px pill, and it was measured rather than argued: 60 frames in
 the second a page turn takes, median gap 16.7ms, identical with the
-filter removed. `scratchpad/ctaperf.js` is that measurement.
+filter removed. `test/ctaperf.js` is that measurement.
 
 **`--rail` is written on the row's own terms.** It is what every
 section reserves at its foot, and a height guessed beside the row
@@ -998,7 +998,7 @@ drifts from it: at a flat 3.5rem it covered a 57px rail and not the
 81px one the bigger button made, so the venue line on the landing ran
 into it and the last credit sat on it. It is now the button's own size
 plus the row's bottom padding, on both sides of the breakpoint.
-`scratchpad/rail.js` asserts that what the row occupies never exceeds
+`test/rail.js` asserts that what the row occupies never exceeds
 what this reserves — which immediately turned up a latent 9px shortfall
 on a 1280x800 desktop that had never overlapped anything only because
 those sections had room to spare.
@@ -1009,7 +1009,7 @@ phone has, so the ticket button dropped onto a second row — measured
 wrapping at 320, 340 and 360, with two pixels to spare at 375. Sizes,
 tracking, link padding and the button's own padding all shrink with the
 screen now: 302px of 320 at the narrowest, one row from 320 to 1440.
-`scratchpad/rail.js` measures it. Note that counting rows by comparing
+`test/rail.js` measures it. Note that counting rows by comparing
 each child's `top` does not work here — the button is taller than the
 links, so their tops differ on one row; compare the row's height to its
 tallest child instead.
@@ -1177,7 +1177,7 @@ lightness and fluidity, and that is what separates the two.
 
   `--screen` is still measured, for the drag threshold and for telling
   whether the reader has pinch-zoomed. Nothing is sized from it, and
-  `scratchpad/ios.js` asserts that: it shortens the visual viewport at
+  `test/ios.js` asserts that: it shortens the visual viewport at
   six phone sizes and checks that the section still covers the screen,
   that the next one cannot show through, that the deck's height did not
   move, and that stepping still lands.
@@ -1204,7 +1204,7 @@ lightness and fluidity, and that is what separates the two.
   is cleared without the snap. `land()` still serves the wheel and the
   keyboard, where there is nothing under a finger to hold still.
 
-  `scratchpad/grab.js` holds both: it tracks the deck against the
+  `test/grab.js` holds both: it tracks the deck against the
   finger on every touchmove the browser delivers, at four sizes and two
   sections, and it presses mid-glide and requires the deck to be still
   at +16ms, +120ms and +300ms without having reached the destination.
@@ -1307,7 +1307,7 @@ lightness and fluidity, and that is what separates the two.
   "it is still big" fire partway down a hard throw and turn one flick
   into two. Resetting when the animation ends — the obvious model —
   is worse than either: **measured at 2, 3, 4 and 5 turns for a single
-  flick** (`scratchpad/proposal.js`), because a 620ms animation ends
+  flick** (`test/tools/proposal.js`), because a 620ms animation ends
   while a 2000ms tail is still delivering 30-100 per event and it
   re-crosses the threshold immediately.
 
@@ -1334,13 +1334,13 @@ lightness and fluidity, and that is what separates the two.
   **Read the envelope, never the raw deltas.** Real trackpad deltas
   jitter, so on raw samples any value is a low and the next can be
   twice it: measured, a single flick turned two pages *every time* at
-  +/-50% jitter (`scratchpad/noisy.js`). Both rules read an exponential
+  +/-50% jitter (`test/noisy.js`). Both rules read an exponential
   average about four events wide, which cannot turn upward on noise,
   and the peak comes from the same average so one spike cannot inflate
   it. Clean at +/-65% jitter now.
 
   **2.2x is tuned, and the tuning is a straight trade-off** measured
-  both ways in `scratchpad/sens.js`. Below 2.0, a half-strength nudge
+  both ways in `test/sens.js`. Below 2.0, a half-strength nudge
   on a decaying tail turns the page — the page feeling trigger-happy.
   Above 2.2, a deliberate second flick has to be further behind the
   first to count. At 2.2 a second flick registers from about 500ms
@@ -1358,7 +1358,7 @@ lightness and fluidity, and that is what separates the two.
   CDP round trips leave 100ms-plus gaps between synthesized events,
   which a trackpad never has — a gap past the quiet window re-arms
   mid-gesture and the test double-steps for reasons the browser never
-  would. `scratchpad/trackpad.js` dispatches WheelEvents on the page's
+  would. `test/trackpad.js` dispatches WheelEvents on the page's
   own clock: a six-event push then a 0.955-per-16ms decay, which is
   close enough to macOS to reproduce the real double-step and to prove
   it gone. Cases: one flick at peak 40, 140 and 400 all turn exactly

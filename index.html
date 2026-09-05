@@ -133,47 +133,17 @@
 
 <style>
 /* ───────────────────────────  the faces  ────────────────────────────
-   Cormorant Garamond, self-hosted, in three cuts and two subsets.
+   Cormorant Garamond in two cuts, Jost 300 for the title alone, Allura
+   for the verse. Self-hosted, so the page depends on no third party
+   being up and the face is there on the first paint.
 
-   Self-hosted rather than fetched from Google: the page depends on no
-   third party being up, no visitor's request for it reaches one, and
-   the face is present on the first paint instead of arriving a beat
-   later.
+   latin-ext is NOT optional: the Ć in Amina Avdić's name is U+0106 and
+   lives only in that subset. Serve latin alone and one letter of her
+   name falls back to a system face. Each file was checked for it
+   before being committed.
 
-   A high-contrast old-style face, and the choice is about the work
-   rather than about taste: the strokes swell and thin the way a pen
-   does, so every letter has a direction and a speed in it. A geometric
-   sans is drawn with a compass and stands still. This one moves. The
-   italic is used for exactly one thing, her name.
-
-   Two other faces come with it, each for one job.
-
-   Jost 300 sets the title, and only the title: a geometric sans, drawn
-   with a compass rather than with a pen, which is the opposite of
-   everything else here — and that is the point of it. One word set
-   against the grain reads as a mark rather than as more text.
-
-   Allura sets the verse on `about`, which used to be a photograph of
-   handwriting. It is a monoline formal roundhand, chosen by holding
-   nine scripts up against that photograph: Allura's letterforms are
-   the ones that match it — round, barely slanted, evenly stroked —
-   where Herr Von Muellerhoff leans much further and Cedarville Cursive
-   is a school hand rather than a formal one.
-
-   Latin and latin-ext only, and latin-ext is not optional: the Ć in
-   Amina Avdić's name is U+0106, which lives only in that subset, and
-   each file was checked for it before being committed. Serve latin
-   alone and one letter of her name silently falls back to a system
-   face.
-
-   PREVIOUS PAIRING, if this ever wants reverting: Alegreya Sans SC 500
-   for --display and Alegreya Sans 300 for --micro, both self-hosted
-   the same way. Alegreya Sans SC is a small-caps FAMILY rather than a
-   font with a smcp feature — its lowercase glyphs ARE the small
-   capitals — so the title was written "Amor Fati" and given no
-   text-transform. Every type size on the page was ~12% smaller than it
-   is now; Cormorant's x-height is small for its em, which is where its
-   air comes from, and the sizes were raised to match. */
+   The italic is used for exactly one thing, her name. Why these three
+   and what they replaced is in README.md. */
 @font-face {
   font-family: 'Cormorant Garamond';
   font-style: italic;
@@ -280,7 +250,7 @@
      clamp(3.2rem,7svh,4.6rem) it resolved to 56px on a 1280x800
      laptop against a row that occupies 65: nothing overlapped there,
      but only because the sections had the room to spare.
-     scratchpad/rail.js holds the two together. */
+     test/rail.js holds the two together. */
   --rail:calc(3.5 * clamp(.47rem,2.15vw,.78rem) + clamp(1.1rem,3svh,1.8rem));
 }
 
@@ -302,55 +272,48 @@ body{
 }
 
 /* ══════════════════════════  the deck  ══════════════════════════════
-   THE PAGE DOES NOT SCROLL. That is the whole design, and it is what
-   every earlier attempt was fighting.
+   THE PAGE DOES NOT SCROLL. That is the whole design, and every
+   earlier attempt was fighting it.
 
    A phone's browser retracts its toolbar WHILE the document scrolls,
    so a scrolling page's viewport changes height mid-gesture: sections
-   sized to it resize under the reader, every snap point below moves,
-   and letting go lands on a target that is no longer where it was.
-   That is not a bug in this stylesheet to be tuned out — it is what a
-   scrolling document on a phone does, and no combination of svh, lvh,
-   dvh or measured pixels can hold still against it. It is also why the
-   libraries built for exactly this arrangement (fullPage.js among
-   them) still carry the same bug open.
+   sized to it resize under the reader and every snap point below
+   moves. No combination of svh, lvh, dvh or measured pixels holds
+   still against that — it is what a scrolling document on a phone
+   does.
 
-   So the document is nailed down: body is fixed at the four edges and
-   clips, and there is no scrollable overflow anywhere on the page. The
-   toolbar has no scroll to react to, so it stays out, and the viewport
-   is one number for the whole visit. The sections live in a column
-   that is moved by transform — one screen per step, on the compositor,
-   never touching layout. Nothing can drift, because nothing measures
-   anything after the first frame.
+   So the document is nailed down: body fixed at the four edges and
+   clipping, no scrollable overflow anywhere. The toolbar has no scroll
+   to react to, so the viewport is one number for the whole visit, and
+   the sections live in a column moved by transform — one screen per
+   step, on the compositor, never touching layout.
 
-   Without script this all collapses to an ordinary long page that
-   scrolls normally: the rules below are gated on html.js. */
+   Without script it collapses to an ordinary long page: every rule
+   below is gated on html.js. */
 html.js,html.js body{height:100%;overflow:hidden;overscroll-behavior:none}
-/* ONE HEIGHT, and everything uses it: the body, the deck, the sections.
-   The body is fixed to the four edges, so that height is the layout
-   viewport — the whole screen, including the strip behind a phone
-   browser's toolbars. A section covers all of it.
+/* ONE HEIGHT — body, deck, sections. The body is fixed to the four
+   edges, so that height is the LAYOUT viewport: the whole screen,
+   including the strip behind a phone's toolbars.
 
-   This is the bug that put two sections on screen at once. The deck
-   used to be sized from --screen, the VISUAL viewport, which on iOS is
-   shorter than the layout viewport by the height of those toolbars —
-   while the box that clips, the body, was still the taller one. The
-   sections below the first sat in the gap between the two and were in
-   plain view. Reproduced at 393x852 with --screen forced to 580: body
-   852, deck 580, section two at y=580.
+   Three things here are load-bearing, and each was a bug:
 
-   Sizing the body down to --screen instead would also close the gap,
-   and is wrong: a section would then stop at the toolbar rather than
-   run behind it, which is the opposite of every section covering the
-   whole screen.
+   Not --screen. The deck used to be sized from the VISUAL viewport,
+   which on iOS is shorter by the height of those toolbars, while the
+   box that clips — the body — was still the taller one. Sections below
+   the first sat in the gap and were in plain view. Reproduced at
+   393x852 with --screen forced to 580: body 852, deck 580, section two
+   at y=580.
 
-   The clip cannot go on the deck either. The deck carries the
-   transform, and overflow clips a transformed element in its OWN
-   space — the window would travel with the content and show nothing at
-   all. It belongs on an ancestor that never moves.
+   Not the body sized down to --screen either: that closes the gap, and
+   makes a section stop at the toolbar instead of running behind it.
 
-   --screen is still measured, for the drag threshold and for telling
-   whether the reader has pinch-zoomed. Nothing is SIZED from it. */
+   And the clip cannot go on the deck. The deck carries the transform,
+   and overflow clips a transformed element in its OWN space — the
+   window would travel with the content and show nothing. It belongs on
+   an ancestor that never moves.
+
+   --screen is still measured, for the drag threshold and for spotting
+   a pinch-zoom. Nothing is SIZED from it. */
 html.js body{position:fixed;top:0;left:0;right:0;bottom:0}
 
 .deck{position:relative}
@@ -462,30 +425,22 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   mask-image:var(--feath);
 }
 
-/* AND A THIRD THING, WHICH IS THE DARK ROUND THE OUTSIDE OF HER.
-   The page is black and the photographs are dark, so the frame and
-   the picture run into each other at the corners; a little more dark
-   out there settles the picture into the page and leaves the eye
-   nothing to do but find her. It has to be LESS where she is, or it
-   is just the wash again with extra steps.
+/* AND A THIRD THING, THE DARK ROUND THE OUTSIDE OF HER, which has to
+   be LESS where she is or it is the wash again with extra steps.
 
-   It is a mask and not a layer over the top, for the same reason the
-   wash is a filter: a layer would be a rectangle over a letterboxed
-   picture and would have to be masked to the picture anyway. And a
-   mask darkens here in the most literal way available — the page
+   A mask, not a layer, for the same reason the wash is a filter — and
+   a mask darkens here in the most literal way available: the page
    behind is #000, so taking alpha off the photograph composites it
-   against black. .72 at the far edge is a 28% dark overlay, and #000
-   over her is none at all.
+   against black. .72 at the edge is a 28% overlay; #000 over her is
+   none at all.
 
-   --her is where the lit figure actually lands inside the IMG'S OWN
-   BOX, which is not where she is in the file: on a phone the artists
-   figure is object-fit:cover and object-position slides the crop
-   under it. scratchpad/her.js shoots each image's box at six layouts
-   and reads the centre of the lit region out of it, which is why
-   there is a value for the cropped case and another for the whole
-   one. --spot is the ellipse the falloff runs over, and a radial
-   gradient holds its last stop past its own edge, so the corners sit
-   at --shade rather than running darker still. */
+   --her is where the lit figure lands inside the IMG'S OWN BOX, which
+   is not where she is in the file: on a phone the artists figure is
+   object-fit:cover and object-position slides the crop under it. Hence
+   one value for the cropped case and another for the whole one —
+   test/tools/her.js measures both. --spot is the ellipse the falloff
+   runs over, and a radial gradient holds its last stop past its own
+   edge, so the corners sit at --shade rather than running darker. */
 .shot img,#artists .beside img{
   --shade:.72;
   --spot:76% 68%;
@@ -706,7 +661,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    hope.
 
    Both are constants of the strings, measured in place with
-   scratchpad/em.js: "each moment of all time gifted us" sets in
+   test/tools/em.js: "each moment of all time gifted us" sets in
    14.32em of the hand at its .4em word-spacing, and the headline sets
    in 35.79em of the micro face at .28em of tracking. The ratio between
    those is the ratio between the two sizes. It changes when the
@@ -714,47 +669,35 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    two-line setting carries the figure for its FIRST line alone.
 
    Re-measure both if either string or any tracking changes.
-   scratchpad/about.js asserts the two come out equal. */
+   test/about.js asserts the two come out equal. */
 #about{
   --hand-size:clamp(1.25rem,min(2.95vw,5svh),2.8rem);
   --lede-k:.4003;               /* 14.325 / 35.786 */
   --focus:50% 0%;               /* on a phone, keep her head, crop the floor */
 
   /* THE POEM IS CENTRED IN THE GAP BETWEEN THE SCREEN'S EDGE AND HER
-     SHIRT, rather than set at the page's standard inset. The words and
-     the figure are the whole of this section, so what the eye reads is
-     the space between them against the space outside them; left at the
-     inset those two were unequal by 83px at 1920.
+     SHIRT, not set at the page's standard inset — left at the inset
+     the space inside and outside the pair were unequal by 83px at
+     1920.
 
-     Where her shirt falls is worked out, not guessed. The figure is
-     height-limited until the screen gets square (720x1080 at 2:3, so
-     .6664 of the panel's height), width-limited after that at the 42%
-     the box is given, and on a screen taller than the photograph is it
-     stops at its own 719px — max-height limits, it never enlarges,
-     which is why min() has three terms and not two. It is flush to the
-     right edge and MIRRORED here, so the nearest part of her shirt on
-     screen is the FURTHEST part of it in the file — which measures at
-     .829 of the width, scanning for pixels that are bright and nearly
-     neutral, the cotton rather than the warm streaks across it.
+     Where her shirt falls is worked out. The figure is height-limited
+     until the screen goes square (720x1080 at 2:3, so .6664 of the
+     panel height), width-limited after that at its 42%, and capped at
+     its own 719px — three terms in the min(), because it never
+     enlarges. It is flush right and MIRRORED, so the nearest part of
+     her shirt on screen is the furthest in the file: .829 of the
+     width, found by scanning for bright neutral pixels, the cotton
+     rather than the warm streaks over it.
 
-     The block itself is 14.32em of the hand, the constant the headline
-     is also built from. Half of that off half the gap is where its
-     left edge goes. Checked against the rendered pixels at 1440x900:
-     the shirt lands at 940 and the formula says 943.
+     The block is 14.32em of the hand, the same constant the headline
+     is built from; half of that off half the gap puts its left edge.
+     Checked against rendered pixels at 1440x900: the shirt lands at
+     940, the formula says 943.
 
-     The floor is the GUTTER, not the inset. The inset is the larger of
-     the gutter and half the slack beside --measure, and on a wide
-     screen the second of those wins: 400px at 1920, against the 341
-     that centres the block. Floored at the inset the poem sat 119px
-     right of centre on exactly the screens where the gap is widest and
-     it shows most. The gutter is the real floor — it only has to stop
-     the block reaching the edge of the screen.
-
+     The floor is the GUTTER, not the inset — floored at the inset the
+     poem sat 119px right of centre on exactly the widest screens.
      This is the one place a section's words leave the shared left
-     line the rest of the page keeps. That line is worth more between
-     `amor` and `artists`, which are lists and a title; here the words
-     and the figure are a pair, and how they sit against each other is
-     what the section is. */
+     line; see README.md for why here and not elsewhere. */
   --figure:min(66.64svh,42vw,719px);
   --shirt:calc(100vw - var(--figure) * .829);
   padding-left:max(var(--gutter),
@@ -864,25 +807,19 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   font-size:clamp(.62rem,1.1vw,.74rem);
   letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;
   color:var(--mist);
-  /* THE HORIZON, drawn between her name and her role rather than under
-     the pair of them. It is a background rather than a pseudo-element
-     because ::before on this box is the dash the narrow setting puts
-     back on the line, and one box cannot have two of either.
+  /* THE HORIZON, between her name and her role rather than under the
+     pair. A background rather than a pseudo-element because ::before on
+     this box is the dash the narrow setting puts back on the line, and
+     one box cannot have two of either.
 
      It comes out the width of her NAME without being told to: the role
-     is a block inside a span that is shrink-wrapped to its widest
-     line, and a single word set this small is never that. The gradient
-     arrives out of nothing and leaves into nothing, so nothing has to
-     be anchored to an edge.
+     is a block inside a span shrink-wrapped to its widest line, and a
+     single word set this small is never that.
 
-     It sits close under the name and well clear of the role, so it
-     reads as belonging to the name and dividing the role off from it.
-     The two numbers are not the two gaps: the italic line above ends
-     at its baseline and carries about 16px of its own descender space
-     below that, so 4px of margin makes a 20px gap while 27px of
-     padding makes a 30px one. Measured off the pixels — see
-     scratchpad/lead.js, which hides the photograph, flattens the
-     reveal and scans the ink bands. */
+     The two numbers are not the two gaps — the italic line above ends
+     at its baseline and carries ~16px of descender space below it, so
+     4px of margin makes a 20px gap while 27px of padding makes a 30px
+     one. Measured off the pixels: test/tools/lead.js. */
   margin-top:clamp(.15rem,.5svh,.3rem);
   padding-top:clamp(1.1rem,3.2svh,1.7rem);
   background-image:linear-gradient(to right,
@@ -915,25 +852,29 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      the column is what is left over after a photograph sized by the
      screen's HEIGHT, so at 1440x900 it is 311px and at 1920x1080 it is
      478px, and no function of the width alone knows that. */
-  /* 4.33, not 4.05, and .10em of tracking rather than .14em. The
-     coefficient is 100 divided by the ems the longest credit sets in,
-     so tightening the tracking is what buys the size: measured in
-     place, KRISTOFFER BENCKERT — MUSIC, WEB DESIGN sets in 22.82em
-     here against the 24.7 it did, and the shipped size was 12.58px.
+  /* 4.34 / 4.10 / 4.38, not one 4.05, and .10em of tracking rather than
+     .14em. The coefficient is 100 divided by the ems the longest credit
+     sets in, so tightening the tracking is what buys the size:
+     KRISTOFFER BENCKERT — MUSIC, WEB DESIGN sets in 22.82em here
+     against the 24.7 it did, and the shipped size was 12.58px.
 
-     AND THE COEFFICIENT IS PER LAYOUT NOW, because the ems are: the
-     same credit sets in 22.82em on a wide screen and 24.14em stacked,
-     so one number for both has to serve the wider of the two and
-     leaves the other short. scratchpad/coeff.js measures each.
+     IT IS PER LAYOUT because the ems are — 22.82em on a wide screen,
+     24.14em stacked, 22.59em sideways — so one number for all three has
+     to serve the widest and leaves the others short.
+     test/tools/coeff.js measures each.
 
      A container query resolves against the CONTENT box, which is what
-     made the first attempt at this wrap at 320px: the column measures
-     320 with getBoundingClientRect and 275.2 as a container, and 4.33
-     of the wrong one is 8% too big.
+     wrapped the first attempt at 320px: the column measures 320 with
+     getBoundingClientRect and 275.2 as a container, and 4.33 of the
+     wrong one is 8% too big.
 
      Past this the column has to grow, and the column is what is left
-     over beside the photograph. scratchpad/colwidth.js prices that —
-     every 6% off the picture's width is worth about 1.6px of type. */
+     over beside the photograph — test/tools/colwidth.js prices that, at
+     about 1.6px of type for every 6% off the picture's width. That
+     trade was declined: the hero and the artists figure are the same
+     file letterboxed to the panel height, so they are the same width as
+     each other at every desktop size (test/tools/samewidth.js), and
+     narrowing one would break that. */
   font-size:clamp(.6rem,4.34cqw,.98rem);
   letter-spacing:.10em;text-indent:.10em;text-transform:uppercase;
   text-wrap:balance;
@@ -950,37 +891,21 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    pair has to sit on one line in a column beside a photograph. */
 .roster .r{color:var(--mist);font-size:.84em;letter-spacing:.08em}
 /* MOST OF THESE NAMES HAVE A PAGE OF THEIR OWN, AND THREE DO NOT, and
-   the mark for it is a tick in the margin. It is the fifth thing tried
-   and the reasons the other four went are worth keeping.
+   the mark is a tick in the margin — the fifth thing tried. Three of
+   the four before it were underlines, and two of those rendered on
+   Chromium and on nothing else that mattered.
 
-   An underline was three of them — a positioned box, a
-   text-decoration with skip-ink, a text-decoration without it — and
-   two of those rendered on Chromium and on nothing else that mattered.
-   The border finally rendered everywhere and was still eleven
-   full-width rules in a column of fourteen rows, which on a phone is a
-   lot of ink to say a small thing. A dot in the margin was quieter and
-   read as a bullet list. Stepping the three unlinked rows back instead
-   was quieter still, but it demoted three people for not having a
-   website and gave up any positive mark at all.
+   A tick never touches the letters: no descender to clear, no tracking
+   to run past, nothing under the J in ELIAS LJUNGBERG, which is where
+   those three attempts spent their effort. It is a background on a
+   positioned pseudo-element, the plainest thing in CSS, and there is
+   no version of that an engine can drop.
 
-   A tick says the same thing in one stroke. Every one lands on the
-   same vertical line whatever the row is set to, so the column reads
-   as a key down the side rather than as decoration following the type,
-   and it does not touch the letters: no descender to clear, no
-   tracking to run past, nothing under the J in ELIAS LJUNGBERG. It is
-   a background on a positioned pseudo-element, which is the plainest
-   thing in CSS — there is no version of this an engine can drop.
-
-   1.3em tall, between the .72em and the 2em that were looked at:
-   shorter reads as a stub, taller and the ticks on neighbouring rows
-   start to join into a continuous rule. .32 rather than .45, because
-   at this length it carries perfectly well and the roster is not a
-   navigation bar.
-
-   Centred on the CAPITALS rather than on the line box. The inline
-   box's bottom sits .318em under the baseline (scratchpad/jdepth.js)
-   and the middle of a capital is .3125em above it, so the middle of
-   the tick wants to be .63em up from that bottom. */
+   1.3em tall: shorter reads as a stub, taller and neighbouring ticks
+   join into a continuous rule. Centred on the CAPITALS, not the line
+   box — the inline box's bottom sits .318em under the baseline
+   (test/tools/jdepth.js) and a capital's middle is .3125em above it, so the
+   tick's middle wants to be .63em up from that bottom. */
 .roster a.n{
   color:inherit;text-decoration:none;position:relative;
   transition:color .32s var(--ease);
@@ -1010,7 +935,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    — the .14em the row carries would push the role a further step away.
    `top` is measured, not guessed: this row is set in capitals and a
    dash is drawn to cut lowercase, so left alone it sits low against
-   them. scratchpad/dash.js measures the two mid-points. */
+   them. test/tools/dash.js measures the two mid-points. */
 .roster .d,.lead-name .d{
   display:inline-block;position:relative;
   /* The space that follows the dash in the markup is what a row breaks
@@ -1067,28 +992,19 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   pointer-events:none;
   background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.38) 45%,rgba(0,0,0,0) 100%);
 }
-/* Nothing UNDER the links until it means something. The standing
-   underline under all three said what the words were already saying;
-   the rule the row carries now belongs to the section you are on.
+/* Nothing UNDER the links until it means something: the rule belongs
+   to the section you are on. The dividers stay — they separate, where
+   the old underline marked, and three of them marked nothing.
 
-   The dividers stay, because they are doing a different job from that
-   underline: the underline marked, and three of them marked nothing,
-   while these separate — three words in one face at one size, set a
-   couple of ems apart, otherwise read as a phrase.
-
-   The rule draws itself out from the middle by being UNCOVERED, not
-   by being scaled. Two reasons, and the first is measured: on
-   currentColor the rule rode the text's own colour transition, so it
-   brightened from 194 to 228 as it grew and arrived at full width and
-   full brightness at the same moment — which is the pop. It carries
-   its own colour now and only its width changes. The second is that a
-   scaled line is rasterised at one width and drawn at another; a clip
-   leaves it painted once, at full size, with nothing to re-raster
-   when the animation ends.
+   The rule is UNCOVERED, not scaled, and the first reason is measured:
+   on currentColor it rode the text's own colour transition, brightening
+   194 to 228 as it grew, arriving at full width and full brightness
+   together — which is the pop. It carries its own colour now. The
+   second is that a scaled line is rasterised at one width and drawn at
+   another; a clip leaves it painted once.
 
    The inset is held in --pad so the rule spans the WORD and not the
-   padding around it — written twice, they drift the moment either
-   changes. */
+   padding — written twice, the two drift the moment either changes. */
 .jump a.to{
   --pad:clamp(.7rem,2vw,1.15rem);
   position:relative;
@@ -1249,29 +1165,26 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   .jump .ticket .rim .lit{--L:4;--m:0;stroke:rgba(255,250,232,1)}
   .jump .ticket .rim .dim{--L:4;--m:50;stroke:rgba(255,246,220,.72)}
   @media (prefers-reduced-motion:no-preference){
-    /* THE SPEED FOLLOWS THE SHAPE, NOT THE CLOCK. It runs down the
-       long sides and dwells round the ends, which is what light on a
-       curved edge does — and it is a different thing from the bell
-       this had first, which was fastest in the middle of the LAP
-       wherever on the outline that happened to fall.
+    /* THE SPEED FOLLOWS THE SHAPE, NOT THE CLOCK: down the long sides,
+       dwelling round the ends, which is what light on a curved edge
+       does. The rate is a function of position — 1 + .5cos, fastest at
+       the middle of a straight, slowest at the middle of an arc, three
+       to one between them.
 
-       So the rate is a function of position: 1 + .5cos, fastest at
-       the middle of a straight, slowest at the middle of an arc,
-       three to one between them. A stadium is straight, arc,
-       straight, arc with the two of each equal, so that profile
-       repeats every half lap EXACTLY — which is also what keeps the
-       two lobes opposite, since they are half a lap apart.
+       A stadium is straight, arc, straight, arc with the two of each
+       equal, so that profile repeats every half lap EXACTLY — which is
+       also what keeps the two lobes opposite, since they are half a lap
+       apart.
 
-       The straight's share of the perimeter is 29.4% on a desktop
-       pill and 27.7% on the smallest phone one, so one profile
-       written for 29% is right to within 1.5% of the lap on every
-       screen — about five pixels, well inside the soft edge of a lobe
-       that is sixty long.
+       The straight's share of the perimeter runs 29.3% on a tablet pill
+       down to 27.2% on the smallest phone one, so one profile written
+       for 29% is right to within 1.8% of the lap on every screen: about
+       six pixels, well inside the soft edge of a lobe sixty long.
 
-       A cubic-bezier cannot say this: it has two control points and
-       this needs a whole curve. linear() can, and scratchpad/ramp.py
-       generates it — 96 points, which puts the biggest step in speed
-       between neighbours at 7.8%. */
+       A cubic-bezier cannot say this — two control points, and this
+       needs a whole curve. linear() can, and test/tools/ramp.py
+       generates it: 96 points, biggest step in speed between
+       neighbours 7.8%. */
     .jump .ticket .rim rect{
       animation-duration:10s;
       animation-iteration-count:infinite;
@@ -1411,7 +1324,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      and not an 81px one: the venue line on the landing ran into it and
      the last credit sat on it. Written on the same terms the row is —
      the button's own size and the row's bottom padding — so the two
-     cannot drift apart again. scratchpad/rail.js checks that what the
+     cannot drift apart again. test/rail.js checks that what the
      row occupies is never more than what this reserves. */
   :root{--gutter:clamp(1.4rem,3.2vw,2.75rem);
         --rail:calc(3.9 * clamp(.66rem,3vw,.92rem) + clamp(1.2rem,3.2svh,1.9rem))}
@@ -1726,7 +1639,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      is still bright — so the filter carries brightness as well, and it
      is the brightness that does the work. Its own background is
      darkened to match, and the pair are measured rather than guessed:
-     see scratchpad/cta.js.
+     see test/tools/cta.js.
 
      A backdrop-filter is the thing this stylesheet warns about
      elsewhere, and the warning is about a full-width layer under a
@@ -1771,7 +1684,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    characters level with 24 — an em figure, so it holds at every size
    the headline is set at. text-indent puts back the same amount, since
    tracking hangs off the last letter and would otherwise throw the
-   centring. scratchpad/about.js measures both lines. */
+   centring. test/about.js measures both lines. */
 @media (max-width:495px){
   .lede span{display:block}
   .lede span + span{letter-spacing:.364em;text-indent:.364em}
@@ -1954,7 +1867,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      browser's lazy margin counts the ones a swipe away as near enough
      the viewport: on a phone all three are fetched at first paint
      anyway, and on a desktop only `artists` is deferred.
-     scratchpad/lazycheck.js is that measurement.
+     test/tools/lazycheck.js is that measurement.
 
      So the attribute stays — it costs nothing and it does defer one
      picture on a wide screen — and fetchpriority does the work that
@@ -2002,7 +1915,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     <div class="says verse" data-reveal>
       <!-- Two spans so that where this takes two lines they can be
            made the same length. The break is the only even one the
-           phrase allows -- 24 characters against 18 -- and no amount of
+           phrase allows — 24 characters against 18 — and no amount of
            balancing changes that ratio, because tracking lands on both
            lines alike. What evens them is tracking the SHORTER line out
            to meet the longer, which needs the two to be addressable. -->
@@ -2045,28 +1958,22 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
     <div class="says who-company">
       <p class="company-label" data-reveal style="--d:.16s">with company</p>
-      <!-- Ordered shortest to longest by RENDERED WIDTH of the whole
-           row, name and role together, not by letter count: measured in
-           place, since the tracking and the capitals make the two
-           disagree. scratchpad/widths2.js does the measuring whenever
-           anyone is added.
-           The dash carries its own margins and there is no space
-           before it, so the row has exactly one place it could break
-           and it is after the dash. It should never come to that --
-           the type is sized from the column so the credit fits on one
-           line -- but if it ever does, it reads "ELIAS LJUNGBERG -"
-           and then the role, never a line that opens with a dash.
-           Vallerie is not in this list; she is the lead name in the
-           column opposite, with her own role under it.
+      <!-- Ordered shortest to longest by RENDERED WIDTH of the whole row,
+           name and role together, not by letter count — the tracking and
+           the capitals make the two disagree. test/tools/widths2.js
+           measures it whenever anyone is added.
 
-           Eleven of the fourteen names link to the artist's own page
-           and three do not, so the link is an <a> around the .n and
-           the other three keep the <span> — nothing here decides how a
-           name looks by whether it is a link. The Instagram addresses
-           are stripped of the share tracking they were copied with
-           (igsi, utm_source=qr, hl=en); the ticket link's `bref` is
-           kept because it is the promoter's own referral code, and
-           these are not that. -->
+           The dash carries its own margins and there is no space before
+           it, so the row has exactly one place it can break and it is
+           AFTER the dash: never a line opening with one. Vallerie is not
+           in this list; she is the lead name in the column opposite.
+
+           Eleven of the fourteen link out: an <a> around the .n, and the
+           other three keep the <span> — nothing decides how a name looks
+           by whether it is a link. Instagram addresses are stripped of
+           the share tracking they were copied with (igsi, utm_source=qr,
+           hl=en); the ticket link's `bref` stays, because that is the
+           promoter's own referral code and these are not. -->
       <p class="sr">Names with a mark beside them link to the artist's
         own page and open in a new tab; three have no page to link to.</p>
       <ul class="roster">
@@ -2327,60 +2234,32 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   }
 
   /* ── the wheel, and the long tail a trackpad leaves behind it ──
-     One section per gesture, however hard or long — and never stuck.
-     Those two have pulled against each other through several attempts,
-     because a flick keeps sending deltas for a second or more after
-     the fingers have lifted and the page has to tell that tail apart
-     from a hand that is still working.
+     One section per gesture, however hard, and never stuck. A flick
+     keeps sending deltas for a second after the fingers lift, and the
+     page has to tell that tail from a hand still working. Silence
+     cannot do it — a second flick arrives before the first tail dies —
+     and delta size cannot either, because a tail decays on average but
+     not monotonically. Two things a tail cannot do:
 
-     Silence alone cannot do it: a second flick arrives before the
-     first tail has died, so the stream never goes quiet and the page
-     locks until the pointer happens to move. Delta size alone cannot
-     either: a tail decays on average but not monotonically, so "it got
-     bigger" and "it is still big" both fire partway down a hard throw
-     and turn one flick into two.
+       1. TURN BACK UPWARD. Measured against the run's OWN low rather
+          than a fraction of the peak, which is what sees a second
+          flick thrown while the first is still loud. 2.2 is tuned and
+          the trade was measured both ways: under 2.0 a half-strength
+          nudge on a dying tail turns the page, over 2.2 a deliberate
+          second flick has to be further behind the first. Read off a
+          smoothed envelope about four events wide, never raw deltas —
+          those jitter enough that one flick turned two pages at 50%
+          noise.
+       2. TRAVEL FURTHER THAN IT HAS LEFT. A decaying tail's remaining
+          distance is bounded by peak/(1-decay): 22x the peak at the
+          usual rate, 50x at the slowest worth allowing for, so the
+          budget is 90x with a floor under it. The floor stops a small
+          gesture getting a small budget.
 
-     What a tail cannot do is either of these:
-
-       1. TURN BACK UPWARD. Momentum only slows, so a stream that
-          stops falling and then climbs to well over twice its own low
-          has a finger behind it. Measured against the run's OWN low
-          rather than a fraction of the peak, which is what lets it see
-          a second flick thrown while the first is still loud — there
-          is no dip below any fixed fraction there, only a turn.
-
-          2.2x is a tuned number and the tuning is a straight
-          trade-off, measured both ways. Below 2.0 a half-strength
-          nudge on a decaying tail turns the page, which is the page
-          feeling trigger-happy. Above 2.2 a deliberate second flick
-          has to be further behind the first before it counts. It sits
-          at 2.2: a second flick registers from about 500ms after the
-          first, and nothing smaller than a real throw registers at
-          all.
-
-          Read off RAW DELTAS this is hopeless, and measurably so: real
-          trackpad deltas jitter, so any sample can be a low and the
-          next can be 75% above it, and a single flick turned two pages
-          every time at +/-50% jitter. It is read off a smoothed
-          envelope instead — an exponential average about four events
-          wide — which cannot turn upward on noise. The peak comes from
-          the same average, so one spike cannot inflate it, and a new
-          peak restarts the descent, so the climb at the START of a
-          throw is not a recovery from anything.
-       2. TRAVEL FURTHER THAN IT HAS LEFT IN IT. A decaying tail's
-          remaining distance is bounded: peak / (1 - decay). That is
-          22x the peak at the rate a trackpad usually decays and 50x at
-          the slowest rate worth allowing for, and the envelope above
-          reads a few per cent under the true peak, so the budget is
-          90x with a floor under it. Past that, whatever is still
-          arriving is being pushed. The floor is what stops a very
-          small gesture from having a very small budget.
-
-     (2) is what answers a steady scroll that never varies and never
-     stops: it keeps turning, about twice a second, instead of waiting
-     for a silence that is not coming. Plus the two cheap ones: the
-     stream going quiet for 220ms, and a pointer move, which ends any
-     gesture and cannot fire mid-flick because a two-finger scroll does
+     (2) is also what answers a steady scroll that never varies: it
+     keeps turning rather than waiting for a silence that is not
+     coming. Plus the two cheap ones — 220ms of quiet, and a pointer
+     move, which cannot fire mid-flick because a two-finger scroll does
      not move the cursor. */
   var armed = true, spin = 0, quiet;
   var peak = 0, avg = 0, low = Infinity, travel = 0;
@@ -2434,29 +2313,25 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   }, { passive: true });
 
   /* ── the finger ──
-     The deck follows it, one to one, and the release decides. Following
-     is not decoration: a page that only jumps on release gives the
-     reader nothing to read the gesture by, and a drag that goes
-     nowhere until it is over is exactly what "jumpy" describes. Past
-     the first and last section the pull is damped to a fifth rather
-     than stopped, so the end of the page announces itself.
+     The deck follows it one to one and the release decides. Following
+     is not decoration: a drag that goes nowhere until it is over is
+     exactly what "jumpy" describes. Past the first and last section
+     the pull is damped to a fifth rather than stopped, so the end of
+     the page announces itself.
 
      A drag starts from where the pixels ACTUALLY are — read off the
-     computed transform — and never from a resting place worked out
-     afresh. Two separate things used to shift the page out from under
-     the finger on the first millimetre of a drag:
+     computed transform — never from a resting place worked out afresh.
+     Two things used to shift the page out from under the finger on the
+     first millimetre:
 
-     The resting position is a percentage of the deck, so section n
-     sits at -n x deck-height. The drag used to place it at
-     -n x --screen instead. Those two agree on a desktop and on
-     section one, where both are nothing; on iOS anywhere else they
-     differ by the height of the toolbar, and the page jumped by that
-     much the moment a finger moved.
+     The resting position is -n x deck-height; the drag used to place
+     it at -n x --screen. Those agree on a desktop and on section one,
+     and on iOS anywhere else they differ by the height of the toolbar.
 
      And a finger landing during a glide used to call land(), which
-     drops the transition and snaps to the destination in a single
-     frame. Grabbing a moving page should stop it where it is, not
-     throw it the rest of the way first. */
+     snaps to the destination in one frame. Grabbing a moving page
+     should stop it where it is, not throw it the rest of the way
+     first. */
   var drag = 0, from = 0, began = 0, held = false, base = 0;
   function screen(){ return lastScreen || window.innerHeight; }
   function offsetNow(){
