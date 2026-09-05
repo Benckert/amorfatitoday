@@ -20,21 +20,108 @@
   venue, address and price live on that page, which is where anyone
   reading them is going anyway.
 
-  Photographs are shown WHOLE — see images/README.txt. A photograph is
+  Photographs are shown WHOLE — see _reference/images.txt. A photograph is
   scaled to the full height of the screen at its own aspect ratio, so
   the section fills the screen without the picture being cut.
   ═══════════════════════════════════════════════════════════════════
 -->
 
 <title>amor fati — Vallerie with Company</title>
-<meta name="description" content="Live immersion in sound, movement, and togetherness. September 16–17.">
-<meta property="og:title" content="AMOR FATI">
-<meta property="og:description" content="Vallerie live with company. September 16–17, 7–9 pm.">
-<meta property="og:image" content="images/hero.jpg">
+<meta name="description" content="Live immersion in sound, movement, presence. Vallerie with Company at Mindepartementet, Skeppsholmen. September 17, 7–9 pm.">
+<link rel="canonical" href="https://amorfati.today/">
+
+<!-- The date is here in three places and on the page in one, and they
+     have disagreed before: these two said the 16th to the 17th for as
+     long as the page has said the 17th, so every shared link advertised
+     a night that does not exist. If the date ever moves, it moves in
+     all four. -->
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://amorfati.today/">
+<meta property="og:site_name" content="amor fati">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="AMOR FATI">
+<meta property="og:description" content="Vallerie live with company. September 17, 7–9 pm, Mindepartementet, Skeppsholmen.">
+<!-- ABSOLUTE, and that is the whole point: og:image is fetched by a
+     scraper that has no page to resolve a relative path against, so
+     `images/hero.jpg` produced a preview with no picture in it
+     everywhere a link was shared. The dimensions let a scraper lay the
+     card out before the image arrives. -->
+<meta property="og:image" content="https://amorfati.today/images/hero.jpg">
+<meta property="og:image:width" content="720">
+<meta property="og:image:height" content="1080">
+<meta property="og:image:alt" content="A dancer arched backwards, arms reaching upward, lit warm against a black room.">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AMOR FATI">
+<meta name="twitter:description" content="Vallerie live with company. September 17, 7–9 pm, Mindepartementet, Skeppsholmen.">
+<meta name="twitter:image" content="https://amorfati.today/images/hero.jpg">
+
 <meta name="theme-color" content="#000000">
 
+<!-- WHAT THIS PAGE IS, IN THE ONE FORM A SEARCH ENGINE READS. Every
+     fact here is on the page too; nothing is claimed that a visitor
+     cannot see. The performer is Vallerie and the company rather than
+     the fourteen names in the roster — half of those are crew, and
+     sorting who "performs" from who does not would put a judgement
+     into machine-readable data that the page itself does not make.
+
+     The offer carries no price because the page does not know one;
+     Billetto does. A search engine may ignore an offer without a
+     price, which is the correct outcome — better than a guess.
+
+     +02:00 is Stockholm in September. If the date moves, it moves here
+     and in the three meta tags above and in the page itself. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "DanceEvent",
+  "name": "amor fati",
+  "url": "https://amorfati.today/",
+  "startDate": "2026-09-17T19:00:00+02:00",
+  "endDate": "2026-09-17T21:00:00+02:00",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+  "description": "Live immersion in sound, movement, presence.",
+  "image": ["https://amorfati.today/images/hero.jpg"],
+  "location": {
+    "@type": "Place",
+    "name": "Mindepartementet",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Skeppsholmen",
+      "addressRegion": "Stockholm",
+      "addressCountry": "SE"
+    }
+  },
+  "performer": [
+    { "@type": "Person", "name": "Vallerie O" },
+    { "@type": "PerformingGroup", "name": "Vallerie with Company" }
+  ],
+  "organizer": { "@type": "PerformingGroup", "name": "Vallerie with Company" },
+  "offers": {
+    "@type": "Offer",
+    "url": "https://billetto.se/e/amor-fati-biljetter-1988017",
+    "availability": "https://schema.org/InStock",
+    "validFrom": "2026-08-01T00:00:00+02:00"
+  }
+}
+</script>
+
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23d9a441' stroke-width='1'/%3E%3Ccircle cx='16' cy='16' r='1.6' fill='%23f6e3bd'/%3E%3C/svg%3E">
+<!-- iOS will not take an SVG here, so the same mark is drawn once as a
+     PNG. Without it, saving the site to a home screen produces a
+     screenshot of whatever was on the page. -->
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+<!-- THE TWO FACES THE FIRST SCREEN NEEDS, fetched alongside the
+     stylesheet rather than after it: the title is Jost and everything
+     under it is Cormorant, so without these there is a beat of
+     fallback type on the one screen that is entirely typography.
+     crossorigin is required even same-origin — a font fetched without
+     it is fetched a second time. The other three faces belong to
+     sections a swipe away and can wait. -->
+<link rel="preload" as="font" type="font/woff2" href="fonts/jost-300-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/cormgar-400-latin.woff2" crossorigin>
 
 
 <!-- Set before the stylesheet, not at the end of the body: the whole
@@ -101,22 +188,6 @@
   font-weight: 300;
   font-display: swap;
   src: url(fonts/cormgar-300i-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url(fonts/cormgar-300-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url(fonts/cormgar-300-latin-ext.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
@@ -1298,27 +1369,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 @keyframes lap-near{to{stroke-dashoffset:-98px}}
 @keyframes lap-far {to{stroke-dashoffset:-148px}}
 
-/* ──────────────────────────  sound toggle  ────────────────────────── */
-.sound{
-  position:fixed;z-index:8;left:clamp(.8rem,2vw,1.7rem);
-  bottom:calc(var(--rail) + .2rem);
-  appearance:none;background:none;border:0;cursor:pointer;
-  display:flex;align-items:center;gap:.55rem;
-  color:rgba(246,227,189,.5);
-  font-family:var(--micro);font-size:.56rem;font-weight:300;
-  letter-spacing:.24em;text-transform:uppercase;
-  transition:color .5s var(--ease);
-}
-/* display:flex on the button outranks the UA's [hidden]{display:none},
-   so without this the toggle stays on screen with nothing to play */
-.sound[hidden]{display:none}
-.sound:hover{color:var(--cream)}
-.sound .bars{display:flex;align-items:flex-end;gap:2px;height:9px}
-.sound .bars b{width:2px;height:3px;background:currentColor;transition:height .3s var(--ease)}
-.sound[aria-pressed="true"] .bars b:nth-child(1){height:5px}
-.sound[aria-pressed="true"] .bars b:nth-child(2){height:9px}
-.sound[aria-pressed="true"] .bars b:nth-child(3){height:4px}
-
 /* ───────────────────────────  the opening  ──────────────────────────
    The title arrives letter by letter and the lines under it rise, once
    a visit. On any later load in the same tab .settled is set before the
@@ -1645,7 +1695,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
   /* the links wrap out to the screen edges here, so the toggle cannot
      keep the bottom-left corner */
-  .sound{bottom:auto;top:calc(env(safe-area-inset-top) + .8rem);left:.9rem}
   /* the dots take over the navigation here, and the three named links
      stand down — see the note on .dots above */
   .dots{display:flex;gap:.9rem;right:.6rem}
@@ -1851,20 +1900,25 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
 <body>
 
+<!-- Turning the deck replaces the whole screen and, until this, said
+     nothing: there is no scroll position for a screen reader to infer
+     from, because the document never scrolls. Polite, so it waits for
+     a pause rather than interrupting. -->
+<p class="sr" id="whereami" aria-live="polite" aria-atomic="true"></p>
+
 <nav class="dots" aria-label="Sections">
   <button type="button" data-to="amor" aria-label="Amor fati"><i></i></button>
   <button type="button" data-to="about" aria-label="About"><i></i></button>
   <button type="button" data-to="artists" aria-label="Artists"><i></i></button>
 </nav>
 
-<button class="sound" id="sound" type="button" aria-pressed="false" aria-label="Play ambient sound" hidden>
-  <span class="bars" aria-hidden="true"><b></b><b></b><b></b></span>
-  <span>sound</span>
-</button>
-<audio id="ambient" src="audio/ambient.mp3" loop preload="metadata"></audio>
 
 <!-- One nav, fixed to the foot of the viewport for the whole page. -->
-<nav class="jump" aria-label="Sections">
+<!-- Not "Sections", which the dots are already called: two landmarks
+     with one name between them is what a screen reader had to choose
+     from, and on a phone the one named for sections held nothing but
+     the ticket button. -->
+<nav class="jump" aria-label="Sections and tickets">
   <a class="to" href="#amor">Amor</a>
   <a class="to" href="#about">About</a>
   <a class="to" href="#artists">Artists</a>
@@ -1894,12 +1948,28 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   </a>
 </nav>
 
+<!-- LAZY HERE BUYS LESS THAN IT LOOKS LIKE IT SHOULD, and the
+     measurement is why the priorities are here as well. Every section
+     is in the document at once and moved with a transform, so the
+     browser's lazy margin counts the ones a swipe away as near enough
+     the viewport: on a phone all three are fetched at first paint
+     anyway, and on a desktop only `artists` is deferred.
+     scratchpad/lazycheck.js is that measurement.
+
+     So the attribute stays — it costs nothing and it does defer one
+     picture on a wide screen — and fetchpriority does the work that
+     matters on a phone, which is not WHETHER the other two load but
+     whether they take bandwidth from the one being looked at.
+     Deferring them properly would mean holding their src in script and
+     setting it on arrival, which trades a blank figure for anyone
+     whose script fails. That is a bigger decision than a loading
+     hint. -->
 <main class="deck" id="deck">
 
   <!-- ══════════════════  I. amor  ══════════════════ -->
   <section class="panel" id="amor">
     <div class="shot">
-      <img src="images/hero.jpg" width="720" height="1080"
+      <img src="images/hero.jpg" width="720" height="1080" decoding="async" fetchpriority="high"
            alt="A dancer arched backwards, arms reaching upward, lit warm against a black room.">
     </div>
     <div class="veil veil-foot"></div>
@@ -1924,7 +1994,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   <!-- The verse in the company's own hand. The words live in the alt
        text, so screen readers and link previews still get them. -->
   <section class="panel split" id="about">
-    <!-- Type, not a photograph of type. It was images/text-cropped.png,
+    <!-- Type, not a photograph of type. It was _reference/text-cropped.png,
          a scan of the verse in Vallerie's hand: 1001x854, soft at any
          size the layout wanted, and invisible to anything that reads a
          page. Allura was picked by holding nine scripts against that
@@ -1951,7 +2021,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
       </blockquote>
     </div>
     <div class="beside" data-reveal style="--d:.2s">
-      <img src="images/dancer.jpg" width="719" height="1079" alt="">
+      <img src="images/dancer.jpg" width="719" height="1079" alt="" loading="lazy" decoding="async" fetchpriority="low">
     </div>
   </section>
 
@@ -2018,7 +2088,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     </div>
 
     <div class="beside">
-      <img src="images/artists.jpeg" width="720" height="1080"
+      <img src="images/artists.jpeg" width="720" height="1080" loading="lazy" decoding="async" fetchpriority="low"
            alt="A dancer turning by candlelight, a pale cloth trailing through the air.">
     </div>
   </section>
@@ -2198,6 +2268,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
     jumpLinks.forEach(function(a, k){ a.setAttribute("aria-current", k === i ? "true" : "false"); });
   }
 
+  var where = document.getElementById("whereami");
   var at = 0;
   var gliding = false;
   var settle;
@@ -2212,6 +2283,14 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
       /* replace rather than push: the section links are navigation
          within one screen, not a stack of pages to back out of */
       try { history.replaceState(null, "", "#" + ids[i]); } catch (e) {}
+      /* Only on a real change, so a plain load announces nothing and
+         arriving on #artists announces that. The name is the page's
+         own word for the section rather than a second set written
+         here, which would be one more thing to keep in step. */
+      if (where) {
+        var name = (jumpLinks[i] && jumpLinks[i].textContent.trim()) || ids[i];
+        where.textContent = name;
+      }
     }
     light(i);
     lastStep = Date.now();     /* every input's cooldown reads this one */
@@ -2475,112 +2554,9 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   var opening = ids.indexOf(location.hash.slice(1));
   show(opening > -1 ? opening : 0, true);
 
-  /* ── ambient sound: off until asked, hidden if the file isn't there ── */
-  var audio = document.getElementById("ambient");
-  var btn = document.getElementById("sound");
-  var fade;
-  audio.addEventListener("canplay", function(){ btn.hidden = false; }, { once: true });
-  audio.addEventListener("error", function(){ btn.hidden = true; });
-
-  function fadeTo(target, done){
-    clearInterval(fade);
-    var step = (target - audio.volume) / 40;          // ~2s at 50ms
-    fade = setInterval(function(){
-      var v = audio.volume + step;
-      if ((step > 0 && v >= target) || (step < 0 && v <= target)) {
-        clearInterval(fade);
-        audio.volume = Math.min(1, Math.max(0, target));
-        if (done) done();
-      } else {
-        audio.volume = Math.min(1, Math.max(0, v));
-      }
-    }, 50);
-  }
-  btn.addEventListener("click", function(){
-    if (btn.getAttribute("aria-pressed") === "true") {
-      fadeTo(0, function(){ audio.pause(); });
-      btn.setAttribute("aria-pressed", "false");
-      btn.setAttribute("aria-label", "Play ambient sound");
-    } else {
-      audio.volume = 0;
-      var p = audio.play();
-      if (p && p.catch) p.catch(function(){ btn.hidden = true; });
-      fadeTo(0.45);
-      btn.setAttribute("aria-pressed", "true");
-      btn.setAttribute("aria-label", "Mute ambient sound");
-    }
-  });
 })();
 </script>
 
-<!-- ─────────────────────────────────────────────────────────────────
-     TEMPORARY. Add ?debug to the URL and this prints, on the device
-     itself, every number this page depends on. It is the only way to
-     see what a phone is actually doing: a desktop browser has no
-     dynamic toolbar and cannot reproduce any of it. Delete this block
-     once the layout is settled.
-     ───────────────────────────────────────────────────────────────── -->
-<script>
-(function(){
-  if (!/[?&]debug/.test(location.search)) return;
-  var BUILD = "2026-09-02-deck";        // bump when publishing, to prove what is live
-
-  var box = document.createElement("pre");
-  box.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;margin:0;padding:6px 8px;" +
-    "background:rgba(0,0,0,.86);color:#7CFC9A;font:11px/1.35 ui-monospace,Menlo,monospace;" +
-    "white-space:pre;pointer-events:none;border-bottom:1px solid #2a2a2a";
-  document.body.appendChild(box);
-
-  function unit(u){                   // what does the browser say this unit is?
-    var d = document.createElement("div");
-    d.style.cssText = "position:absolute;left:-9999px;top:0;height:100" + u + ";width:1px";
-    document.body.appendChild(d);
-    var h = d.getBoundingClientRect().height;
-    d.parentNode.removeChild(d);
-    return Math.round(h);
-  }
-
-  function draw(){
-    var vp = window.visualViewport;
-    var deck = document.getElementById("deck");
-    var ps = [].slice.call(document.querySelectorAll(".panel"));
-    var css = getComputedStyle(document.documentElement);
-    var screenVar = css.getPropertyValue("--screen").trim() || "(unset)";
-    var h = window.innerHeight;
-    var short = ps.map(function(p){ return Math.round(p.getBoundingClientRect().height) - h; });
-    var here = -1;
-    ps.forEach(function(p, i){
-      var t = p.getBoundingClientRect().top;
-      if (Math.abs(t) < 2) here = i;
-    });
-    box.textContent =
-      "build " + BUILD + "   js OK   doc scroll " + document.documentElement.scrollHeight +
-        "/" + h + "\n" +
-      "innerHeight " + h +
-      "   visualVP " + (vp ? Math.round(vp.height) : "n/a") +
-      "   scale " + (vp && vp.scale ? vp.scale.toFixed(2) : "-") + "\n" +
-      "svh " + unit("svh") + "   lvh " + unit("lvh") + "   dvh " + unit("dvh") +
-      "   --screen " + screenVar + "\n" +
-      "deck " + Math.round(deck.getBoundingClientRect().height) +
-      "   --at " + (getComputedStyle(deck).getPropertyValue("--at").trim() || "0") +
-      "   at panel " + here + "\n" +
-      "panels " + ps.map(function(p){
-          return Math.round(p.getBoundingClientRect().height); }).join("/") +
-      "   tops " + ps.map(function(p){
-          return Math.round(p.getBoundingClientRect().top); }).join("/") + "\n" +
-      "SHORT BY " + short.join("/") +
-      "   covers " + short.every(function(d){ return d >= 0; });
-  }
-  draw();
-  addEventListener("scroll", draw, { passive:true });
-  addEventListener("resize", draw, { passive:true });
-  if (window.visualViewport) {
-    visualViewport.addEventListener("resize", draw, { passive:true });
-    visualViewport.addEventListener("scroll", draw, { passive:true });
-  }
-  setInterval(draw, 400);
-})();
-</script>
 
 </body>
 </html>

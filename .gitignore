@@ -1,0 +1,7 @@
+# node_modules without a trailing slash: with one, the pattern matches
+# directories only, and a symlinked node_modules is a FILE to git — which
+# is exactly how a link into /tmp very nearly got committed.
+node_modules
+.DS_Store
+*.log
+test/screens/

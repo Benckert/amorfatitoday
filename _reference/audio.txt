@@ -1,0 +1,26 @@
+Optional. Put an ambient clip here as:
+
+  ambient.mp3
+
+A minute or two, quiet, loopable — a held note, room tone, a fragment
+of the piece. It loops seamlessly and fades in over two seconds.
+
+It never plays on its own: there is a small "sound" toggle in the
+bottom-left corner, off by default.
+
+If this file does not exist, the toggle hides itself and the page is
+simply silent. Nothing breaks.
+
+--- note, September 2026 ---
+The feature was removed. The audio/ folder held only this note, the
+clip was never made, and the page requested audio/ambient.mp3 on every
+visit to discover that — one 404 per visitor for a button that never
+appeared.
+
+What went with it: the <button class="sound"> markup and its <audio>
+element, the .sound CSS block, the forty lines of script that faded it
+in and out, and fonts/cormgar-300-latin.woff2 and its -ext pair, which
+nothing else on the page set.
+
+Bringing it back is a revert of the commit that removed it, plus the
+clip at audio/ambient.mp3. The description above still applies.
