@@ -20,6 +20,29 @@ environment's git gateway refuses tag pushes — `git push origin
 <tag>` comes back with "the remote end hung up unexpectedly" while
 branch pushes succeed — so the checkpoint is a branch.)
 
+### Looking at `develop` on a phone
+
+GitHub Pages serves one branch, and that branch is `main`, so `develop`
+needs somewhere else to be looked at. Every path in the page is
+relative — no `/images/...`, nothing absolute pointing at
+amorfati.today — so the whole site works from any subpath, which makes
+a raw-file CDN enough:
+
+    https://raw.githack.com/Benckert/amorfatitoday/develop/index.html
+
+That serves the files straight off the branch with the right content
+types, caches for about five minutes, and needs nothing set up. Push to
+`develop` and reload. `https://cdn.jsdelivr.net/gh/Benckert/amorfatitoday@develop/index.html`
+does the same with a longer cache if githack is ever down. Both need
+the repository to be public, which it is for Pages to serve it.
+
+Two things behave differently there and are worth knowing before
+reading anything into them. It is not the custom domain, so anything
+that depends on the origin — a service worker, if one is ever added —
+will not match. And the browser will have cached the real site under
+amorfati.today separately, so the preview never shows you a stale
+version of the live one or the other way round.
+
 ## Editing it
 
 Nothing in the page is a placeholder any more. The ticket button in
