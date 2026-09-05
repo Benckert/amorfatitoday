@@ -6,7 +6,10 @@
     "test": "node run.js",
     "test:layout": "node run.js layout",
     "test:gesture": "node run.js gesture",
-    "test:perf": "node run.js perf"
+    "test:perf": "node run.js perf",
+    "serve": "node serve.js"
   },
-  "devDependencies": { "playwright-core": "1.49.0" }
+  "devDependencies": {
+    "playwright-core": "1.49.0"
+  }
 }
