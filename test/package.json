@@ -1,0 +1,12 @@
+{
+  "name": "amorfati-tests",
+  "private": true,
+  "description": "Browser-driven checks for amorfati.today. Not a build step — the site has none.",
+  "scripts": {
+    "test": "node run.js",
+    "test:layout": "node run.js layout",
+    "test:gesture": "node run.js gesture",
+    "test:perf": "node run.js perf"
+  },
+  "devDependencies": { "playwright-core": "1.49.0" }
+}

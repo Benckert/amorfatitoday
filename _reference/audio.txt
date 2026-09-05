@@ -10,3 +10,10 @@ bottom-left corner, off by default.
 
 If this file does not exist, the toggle hides itself and the page is
 simply silent. Nothing breaks.
+
+--- note, September 2026 ---
+The audio/ folder was removed when this file moved here: it held only
+this note, and the clip it describes has never existed. index.html
+still points <audio> at audio/ambient.mp3, so dropping the file back in
+at that path is all it takes — create the folder, put the clip in it,
+and the button appears on its own.

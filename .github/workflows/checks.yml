@@ -1,0 +1,40 @@
+# Runs the suites in test/ when develop moves, and on any pull request.
+#
+# It does NOT run on main. main is what is live, and a check that fails
+# after the fact tells you something you would rather have known before
+# — the point of the develop branch is that this runs first.
+name: checks
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  suites:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # playwright-core does not bring a browser with it, which is the
+      # point: the download is one explicit step rather than a surprise
+      # in every npm install.
+      - name: Install
+        working-directory: test
+        run: |
+          npm install --no-audit --no-fund
+          npx --yes playwright@1.49.0 install --with-deps chromium
+
+      - name: Layout
+        working-directory: test
+        run: node run.js layout
+
+      - name: Gesture
+        working-directory: test
+        run: node run.js gesture
