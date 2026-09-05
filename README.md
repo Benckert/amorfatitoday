@@ -20,6 +20,44 @@ environment's git gateway refuses tag pushes — `git push origin
 <tag>` comes back with "the remote end hung up unexpectedly" while
 branch pushes succeed — so the checkpoint is a branch.)
 
+### Running the checks
+
+    cd test && npm install && npx playwright install chromium
+    npm test                # layout and gesture, about six minutes
+    npm run test:layout     # just the shapes
+    npm run test:gesture    # just the finger, wheel and trackpad
+    npm run test:perf       # frame counts; a measurement, not a gate
+    node run.js credits     # or any suite by name
+
+`run.js` serves the repository itself on :8137 and runs the suites
+against it, so there is no way to test a stale copy by accident, and it
+exits non-zero if any of them fail. `PORT=` moves the server; `SITE=`
+points the suites somewhere else entirely — the preview URL below, or
+amorfati.today — instead of the local copy. `CHROME=` names a browser
+if the one `test/browser.js` finds is not the one you want.
+
+Seventeen suites, in three groups. `layout` is whether everything fits:
+the deck's geometry at seventeen screen sizes, the credits on one line
+at twenty-one, the CTA's box, the poem, the link marks, and a faked iOS
+viewport. `gesture` is how it answers a finger, a wheel and a trackpad
+— one page-turn per swipe however hard, the drag that has to hold the
+page under the finger, and the no-script path. `perf` counts frames
+against the same page with an effect removed, and is deliberately not
+in `npm test`: it reports numbers rather than pass or fail.
+
+Four older harnesses were left behind on purpose. `pulse` and `sheen`
+test CTA designs that no longer exist, `grab-old` is superseded by
+`grab`, and `flick` fails only because it waits 300 ms after load where
+the working suites wait 1 400 — `touch` runs the identical flick and
+passes.
+
+GitHub Actions runs `layout` and `gesture` on every push to `develop`
+and on pull requests, and deliberately not on `main`: a check that
+fails after the fact tells you something you would rather have known
+before. Pages serves `test/` along with everything else; renaming it
+`_test/` would hide it the way `_reference/` is hidden, if that ever
+matters.
+
 ### Looking at `develop` on a phone
 
 GitHub Pages serves one branch, and that branch is `main`, so `develop`
@@ -368,7 +406,7 @@ which shifts the line off-centre. Every tracked line here carries a
 
 ## Sound
 
-Optional, off by default — see `audio/README.txt`. If the file isn't
+Optional, off by default — see `_reference/audio.txt`. If the file isn't
 there the toggle hides itself and the page is simply silent.
 
 ## Publishing
@@ -403,7 +441,7 @@ and one word set against the grain reads as a mark rather than as more
 text. Full capitals, tracked to .24em; `lowercase` is the other reading
 and the letterforms take it — a one-word change on `.title`.
 
-**The verse is set, not photographed.** It was `images/text-cropped.png`,
+**The verse is set, not photographed.** It was `_reference/text-cropped.png`,
 a 1001x854 scan of the verse in Vallerie's hand: soft at any size the
 layout wanted, and invisible to anything that reads a page. Allura was
 chosen by holding nine scripts against that scan — its letterforms are
@@ -674,7 +712,7 @@ rather than a full line and a single word under it.
 **The verse ranges left, and its spacing is measured off the
 photograph rather than chosen.** Centring turned the stanza into a
 funnel; every line now starts on one edge, as every line does in
-`images/text.jpg`. The old objection to ranging it left — that a ragged
+`_reference/text.jpg`. The old objection to ranging it left — that a ragged
 right edge would hang in the middle of the column — is answered by the
 block shrinking to its longest line (`width:max-content`), so the left
 edge is the edge of the text and it is the whole block the layout
