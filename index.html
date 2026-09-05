@@ -193,22 +193,6 @@
 @font-face {
   font-family: 'Cormorant Garamond';
   font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url(fonts/cormgar-300-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url(fonts/cormgar-300-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
   font-weight: 400;
   font-display: swap;
   src: url(fonts/cormgar-400-latin.woff2) format('woff2');
@@ -1385,27 +1369,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 @keyframes lap-near{to{stroke-dashoffset:-98px}}
 @keyframes lap-far {to{stroke-dashoffset:-148px}}
 
-/* ──────────────────────────  sound toggle  ────────────────────────── */
-.sound{
-  position:fixed;z-index:8;left:clamp(.8rem,2vw,1.7rem);
-  bottom:calc(var(--rail) + .2rem);
-  appearance:none;background:none;border:0;cursor:pointer;
-  display:flex;align-items:center;gap:.55rem;
-  color:rgba(246,227,189,.5);
-  font-family:var(--micro);font-size:.56rem;font-weight:300;
-  letter-spacing:.24em;text-transform:uppercase;
-  transition:color .5s var(--ease);
-}
-/* display:flex on the button outranks the UA's [hidden]{display:none},
-   so without this the toggle stays on screen with nothing to play */
-.sound[hidden]{display:none}
-.sound:hover{color:var(--cream)}
-.sound .bars{display:flex;align-items:flex-end;gap:2px;height:9px}
-.sound .bars b{width:2px;height:3px;background:currentColor;transition:height .3s var(--ease)}
-.sound[aria-pressed="true"] .bars b:nth-child(1){height:5px}
-.sound[aria-pressed="true"] .bars b:nth-child(2){height:9px}
-.sound[aria-pressed="true"] .bars b:nth-child(3){height:4px}
-
 /* ───────────────────────────  the opening  ──────────────────────────
    The title arrives letter by letter and the lines under it rise, once
    a visit. On any later load in the same tab .settled is set before the
@@ -1732,7 +1695,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
   /* the links wrap out to the screen edges here, so the toggle cannot
      keep the bottom-left corner */
-  .sound{bottom:auto;top:calc(env(safe-area-inset-top) + .8rem);left:.9rem}
   /* the dots take over the navigation here, and the three named links
      stand down — see the note on .dots above */
   .dots{display:flex;gap:.9rem;right:.6rem}
@@ -1950,11 +1912,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   <button type="button" data-to="artists" aria-label="Artists"><i></i></button>
 </nav>
 
-<button class="sound" id="sound" type="button" aria-pressed="false" aria-label="Play ambient sound" hidden>
-  <span class="bars" aria-hidden="true"><b></b><b></b><b></b></span>
-  <span>sound</span>
-</button>
-<audio id="ambient" src="audio/ambient.mp3" loop preload="metadata"></audio>
 
 <!-- One nav, fixed to the foot of the viewport for the whole page. -->
 <!-- Not "Sections", which the dots are already called: two landmarks
@@ -2597,41 +2554,6 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   var opening = ids.indexOf(location.hash.slice(1));
   show(opening > -1 ? opening : 0, true);
 
-  /* ── ambient sound: off until asked, hidden if the file isn't there ── */
-  var audio = document.getElementById("ambient");
-  var btn = document.getElementById("sound");
-  var fade;
-  audio.addEventListener("canplay", function(){ btn.hidden = false; }, { once: true });
-  audio.addEventListener("error", function(){ btn.hidden = true; });
-
-  function fadeTo(target, done){
-    clearInterval(fade);
-    var step = (target - audio.volume) / 40;          // ~2s at 50ms
-    fade = setInterval(function(){
-      var v = audio.volume + step;
-      if ((step > 0 && v >= target) || (step < 0 && v <= target)) {
-        clearInterval(fade);
-        audio.volume = Math.min(1, Math.max(0, target));
-        if (done) done();
-      } else {
-        audio.volume = Math.min(1, Math.max(0, v));
-      }
-    }, 50);
-  }
-  btn.addEventListener("click", function(){
-    if (btn.getAttribute("aria-pressed") === "true") {
-      fadeTo(0, function(){ audio.pause(); });
-      btn.setAttribute("aria-pressed", "false");
-      btn.setAttribute("aria-label", "Play ambient sound");
-    } else {
-      audio.volume = 0;
-      var p = audio.play();
-      if (p && p.catch) p.catch(function(){ btn.hidden = true; });
-      fadeTo(0.45);
-      btn.setAttribute("aria-pressed", "true");
-      btn.setAttribute("aria-label", "Mute ambient sound");
-    }
-  });
 })();
 </script>
 

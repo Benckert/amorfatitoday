@@ -406,8 +406,19 @@ which shifts the line off-centre. Every tracked line here carries a
 
 ## Sound
 
-Optional, off by default — see `_reference/audio.txt`. If the file isn't
-there the toggle hides itself and the page is simply silent.
+There is none, and the code for it is gone. It was built to be
+optional: a toggle at the foot of the screen that appeared only if
+`audio/ambient.mp3` loaded, and hid itself if it did not. The clip was
+never made, so the toggle never appeared — and the page asked for the
+file on every single visit to find that out, because there is no way to
+know a file exists without requesting it. One 404 per visitor, for a
+button nobody ever saw.
+
+So it came out: the markup, twenty lines of CSS, forty of script, and
+the two Cormorant 300 upright font files that nothing else on the page
+used. `_reference/audio.txt` keeps the description of what was
+intended, and `git log` keeps the implementation — it is one revert
+away if a clip is ever recorded.
 
 ## Publishing
 
