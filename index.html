@@ -878,11 +878,23 @@ picture{display:contents}
      of names and start being fine print.
 
      So the coefficients are the ones the list had before that name
-     arrived, and .long carries a --scale instead. 22.82/28.28 = .807
-     on a wide screen, 24.14/29.97 = .806 stacked, 22.59/28.01 = .807
-     sideways — the same number three times, because the extra length
-     is one name and the layouts differ in what surrounds it, not in
-     the name. .79 leaves a little under the tightest of them.
+     arrived, and .long carries a --scale instead. The scale that makes
+     the row exactly fill the column is 22.82/28.28 = .8069 on a wide
+     screen, 24.14/29.97 = .8055 stacked, 22.59/28.01 = .8065 sideways
+     — the same number three times, because the extra length is one
+     name and the layouts differ in what surrounds it, not in the name.
+     .804 sits just under the tightest of them, which puts the row's
+     ink within a pixel of KRISTOFFER BENCKERT's rather than the 6.4px
+     short that .79 left it.
+
+     THE ROLE STAYS AT .84 OF THE NAME, and making it match would work
+     against the thing it looks like it would fix. Every one of these
+     options ends at the same place — the column's edge is the limit,
+     so a longer row is not available at any of them. What differs is
+     the NAME: .84 needs a .807 scale and sets the name at 10.87px, a
+     full-size role needs .760 and sets it at 10.23. The role stepping
+     back is also the rule every other row keeps.
+     test/tools/longrow.js measures the three.
 
      The scale multiplies the clamp rather than replacing it, so there
      is still one place the size is decided and the exception is
@@ -918,7 +930,7 @@ picture{display:contents}
 .roster .r{color:var(--mist);font-size:.84em;letter-spacing:.08em}
 /* the one row too long to sit on a line at the size the rest are set
    at — see the note above the clamp */
-.roster li.long{--scale:.79}
+.roster li.long{--scale:.804}
 /* MOST OF THESE NAMES HAVE A PAGE OF THEIR OWN, AND THREE DO NOT, and
    the mark is a tick in the margin — the fifth thing tried. Three of
    the four before it were underlines, and two of those rendered on
