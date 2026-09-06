@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""The light should run down the long sides and dwell round the ends,
-so its speed is a function of WHERE IT IS on the outline, not of how
-far through the lap it is. Emits the linear() easing that does it.
+"""The light should snap round the ends and dwell down the long
+sides, so its speed is a function of WHERE IT IS on the outline, not
+of how far through the lap it is. Emits the linear() easing that does
+it. (MID=S/2 instead of S/2+25 gives the opposite, which is what the
+page ran before.)
 
 A stadium's outline is straight, arc, straight, arc, and the two of
 each are equal, so the profile repeats every half lap exactly — which
@@ -15,7 +17,7 @@ for w,h in ((133,41),(182,55),(139,45),(121,41)):
     print(f"  {w}x{h}: straight {s/per*100:5.2f}%  arc {arc/per*100:5.2f}%  perimeter {per:.0f}px")
 S=29.0            # the straight's share, one profile for all four
 AMP=0.5           # speed swings 1 +/- AMP, so fastest/slowest = 3.0
-MID=S/2           # fastest at the middle of a straight
+MID=S/2+25        # fastest at the middle of an arc
 def v(d): return 1+AMP*math.cos(2*math.pi*(d-MID)/50)
 
 N=20000
