@@ -400,6 +400,13 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
 
 .says{position:relative;z-index:2;min-width:0}
 
+/* display:contents so the <picture> does not become the flex item the
+   <img> was — every rule that positions a figure targets the img, and
+   the letterboxing depends on it being the thing the flex container
+   sizes. Without this the pictures stop being letterboxed and start
+   being stretched. */
+picture{display:contents}
+
 /* A WASH, AND EDGES THAT STOP RATHER THAN END. Both figures on this
    page stand at their own proportions with the page's black either
    side of them, which left a one-pixel step from 0 to 18 where the
@@ -681,10 +688,17 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      1920.
 
      Where her shirt falls is worked out. The figure is height-limited
-     until the screen goes square (720x1080 at 2:3, so .6664 of the
-     panel height), width-limited after that at its 42%, and capped at
-     its own 719px — three terms in the min(), because it never
-     enlarges. It is flush right and MIRRORED, so the nearest part of
+     until the screen goes square (2:3, so .6664 of the panel height),
+     width-limited after that at its 42%, and capped at the widest
+     source there is — three terms in the min(), because it never
+     enlarges past the file.
+
+     That third term was 719px while 719px was what the file measured,
+     and higher-resolution photographs quietly broke it: above 1920 the
+     figure grew to 960 while the formula still said 719, and the poem
+     was centred against a shirt that was no longer there. It is 1440
+     now, the widest in the srcset. test/tools/figure.js compares the
+     two at five widths. It is flush right and MIRRORED, so the nearest part of
      her shirt on screen is the furthest in the file: .829 of the
      width, found by scanning for bright neutral pixels, the cotton
      rather than the warm streaks over it.
@@ -698,7 +712,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      poem sat 119px right of centre on exactly the widest screens.
      This is the one place a section's words leave the shared left
      line; see README.md for why here and not elsewhere. */
-  --figure:min(66.64svh,42vw,719px);
+  --figure:min(66.64svh,42vw,1440px);
   --shirt:calc(100vw - var(--figure) * .829);
   padding-left:max(var(--gutter),
                    calc(var(--shirt) / 2 - 7.16 * var(--hand-size)));
@@ -852,20 +866,27 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      the column is what is left over after a photograph sized by the
      screen's HEIGHT, so at 1440x900 it is 311px and at 1920x1080 it is
      478px, and no function of the width alone knows that. */
-  /* 3.52 / 2.92 / 3.55, one per layout, and .10em of tracking rather
+  /* 4.34 / 4.10 / 4.38, one per layout, and .10em of tracking rather
      than .14em. The coefficient is 100 divided by the ems the longest credit
      sets in, so tightening the tracking is what buys the size:
-     The longest credit is SIMON SÖDERSTRAND NYSTRÖM — EVENT
-     PRODUCTION, and it is 24% longer than the one before it: 28.28em
-     on a wide screen where KRISTOFFER BENCKERT sets in 22.82. Every
-     other row pays for it, because the size is what makes the longest
-     one fit — 11.0px at 1440x900 against the 13.48 the list held
-     before that name arrived.
+     ONE ROW IS SET SMALLER THAN THE REST, and it is the only way the
+     other thirteen keep their size. SIMON SÖDERSTRAND NYSTRÖM — EVENT
+     PRODUCTION sets in 28.28em on a wide screen where KRISTOFFER
+     BENCKERT, the longest before it, sets in 22.82. Sizing every row
+     so that one fits took the list from 13.48px to 10.93 at 1440x900,
+     and to 8.96 at 320 — which is small enough to stop being a list
+     of names and start being fine print.
 
-     IT IS PER LAYOUT because the ems are — 28.28em on a wide screen,
-     29.97em stacked, 28.01em sideways — so one number for all three has
-     to serve the widest and leaves the others short.
-     test/tools/coeff.js measures each.
+     So the coefficients are the ones the list had before that name
+     arrived, and .long carries a --scale instead. 22.82/28.28 = .807
+     on a wide screen, 24.14/29.97 = .806 stacked, 22.59/28.01 = .807
+     sideways — the same number three times, because the extra length
+     is one name and the layouts differ in what surrounds it, not in
+     the name. .79 leaves a little under the tightest of them.
+
+     The scale multiplies the clamp rather than replacing it, so there
+     is still one place the size is decided and the exception is
+     visibly an exception. test/tools/coeff.js measures the ems.
 
      A container query resolves against the CONTENT box, which is what
      wrapped the first attempt at 320px: the column measures 320 with
@@ -879,7 +900,8 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      file letterboxed to the panel height, so they are the same width as
      each other at every desktop size (test/tools/samewidth.js), and
      narrowing one would break that. */
-  font-size:clamp(.6rem,3.52cqw,.98rem);
+  --scale:1;
+  font-size:calc(clamp(.6rem,4.34cqw,.98rem) * var(--scale));
   letter-spacing:.10em;text-indent:.10em;text-transform:uppercase;
   text-wrap:balance;
   color:var(--cream);
@@ -894,6 +916,9 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
    width the role costs — a credit is a name AND a role now, and the
    pair has to sit on one line in a column beside a photograph. */
 .roster .r{color:var(--mist);font-size:.84em;letter-spacing:.08em}
+/* the one row too long to sit on a line at the size the rest are set
+   at — see the note above the clamp */
+.roster li.long{--scale:.79}
 /* MOST OF THESE NAMES HAVE A PAGE OF THEIR OWN, AND THREE DO NOT, and
    the mark is a tick in the margin — the fifth thing tried. Three of
    the four before it were underlines, and two of those rendered on
@@ -1474,7 +1499,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      size — 12.8px on a 768px screen was the whole list whispering. The
      row's air comes from svh and was capped at .46rem, which a tall
      screen hit immediately; the cap is raised to let it breathe. */
-  .roster li{font-size:clamp(.56rem,2.92cqw,clamp(.8rem,1.4vw + .35rem,1.15rem));
+  .roster li{font-size:calc(clamp(.56rem,4.10cqw,clamp(.8rem,1.4vw + .35rem,1.15rem)) * var(--scale));
              letter-spacing:.16em;text-indent:.16em;
              padding:var(--row-pad) 0}
 
@@ -1790,7 +1815,7 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
      is fourteen rows now, so the row padding is what pays for the
      fourteenth. At .1rem the column overran its box by 6px at 844x390
      and had nothing left at 667x375. */
-  .roster li{font-size:clamp(.5rem,3.55cqw,.72rem);padding:.04rem 0;
+  .roster li{font-size:calc(clamp(.5rem,4.38cqw,.72rem) * var(--scale));padding:.04rem 0;
              letter-spacing:.09em;text-indent:.09em}
 }
 
@@ -1865,7 +1890,30 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   </a>
 </nav>
 
-<!-- LAZY HERE BUYS LESS THAN IT LOOKS LIKE IT SHOULD, and the
+<!-- THREE WIDTHS EACH IN TWO FORMATS, and the browser picks.
+     WebP first, JPEG behind it — 57% smaller across the nine files,
+     which is what dark photographs do under it. The <img> keeps its
+     own jpeg srcset, so anything that cannot read the <source> gets a
+     correctly-sized jpeg rather than nothing.
+
+     THREE WIDTHS EACH, and the browser picks. The masters are
+     2732x4096 and live in _reference/masters/, which Jekyll does not
+     publish — what is served is 720, 1080 and 1440 derived from them.
+     1440 is the widest any screen this page meets actually asks for:
+     a 430px phone at three times density wants 1290.
+
+     Re-encoding them from the masters was worth more than the extra
+     widths were. The files that had been shipping were badly over-
+     encoded — hero.jpg was 297 KB for 720px, where 1440px of the same
+     photograph is 120 KB. The three 720s went from 629 KB together to
+     135, at the same resolution.
+
+     `sizes` says 42vw past the stacking breakpoint and 100vw below it:
+     the figure is height-limited on a wide screen, so it comes out
+     around 42% of the viewport there, and runs the full width once the
+     section stacks.
+
+     LAZY HERE BUYS LESS THAN IT LOOKS LIKE IT SHOULD, and the
      measurement is why the priorities are here as well. Every section
      is in the document at once and moved with a transform, so the
      browser's lazy margin counts the ones a swipe away as near enough
@@ -1886,8 +1934,20 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
   <!-- ══════════════════  I. amor  ══════════════════ -->
   <section class="panel" id="amor">
     <div class="shot">
-      <img src="images/hero.jpg" width="720" height="1080" decoding="async" fetchpriority="high"
-           alt="A dancer arched backwards, arms reaching upward, lit warm against a black room.">
+      <picture>
+        <source type="image/webp"
+                srcset="images/hero.webp 720w,
+                        images/hero-1080.webp 1080w,
+                        images/hero-1440.webp 1440w"
+                sizes="(min-width:1240px) 42vw, 100vw">
+        <img
+             srcset="images/hero.jpg 720w,
+                     images/hero-1080.jpg 1080w,
+                     images/hero-1440.jpg 1440w"
+             sizes="(min-width:1240px) 42vw, 100vw"
+             src="images/hero.jpg" width="720" height="1079" decoding="async" fetchpriority="high"
+             alt="A dancer arched backwards, arms reaching upward, lit warm against a black room.">
+      </picture>
     </div>
     <div class="veil veil-foot"></div>
 
@@ -1938,7 +1998,19 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
       </blockquote>
     </div>
     <div class="beside" data-reveal style="--d:.2s">
-      <img src="images/dancer.jpg" width="719" height="1079" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      <picture>
+        <source type="image/webp"
+                srcset="images/dancer.webp 720w,
+                        images/dancer-1080.webp 1080w,
+                        images/dancer-1440.webp 1440w"
+                sizes="(min-width:1240px) 42vw, 100vw">
+        <img
+             srcset="images/dancer.jpg 720w,
+                     images/dancer-1080.jpg 1080w,
+                     images/dancer-1440.jpg 1440w"
+             sizes="(min-width:1240px) 42vw, 100vw"
+             src="images/dancer.jpg" width="720" height="1079" alt="" loading="lazy" decoding="async" fetchpriority="low">
+      </picture>
     </div>
   </section>
 
@@ -1994,13 +2066,25 @@ html.js .panel{flex:0 0 100%;height:100%;min-height:0}
         <li data-reveal style="--d:0.62s"><a class="n" href="https://www.eliasljungberg.com/" target="_blank" rel="noopener noreferrer">Elias Ljungberg</a><span class="d">&#8211;</span> <span class="r">Photography</span></li>
         <li data-reveal style="--d:0.66s"><a class="n" href="https://antarchitecturemusic.com/" target="_blank" rel="noopener noreferrer">Andreas Frantz</a><span class="d">&#8211;</span> <span class="r">Sound Design</span></li>
         <li class="nolink" data-reveal style="--d:0.70s"><span class="n">Kristoffer Benckert</span><span class="d">&#8211;</span> <span class="r">Music, Web Design</span></li>
-        <li class="nolink" data-reveal style="--d:0.74s"><span class="n">Simon S&#246;derstrand Nystr&#246;m</span><span class="d">&#8211;</span> <span class="r">Event Production</span></li>
+        <li class="nolink long" data-reveal style="--d:0.74s"><span class="n">Simon S&#246;derstrand Nystr&#246;m</span><span class="d">&#8211;</span> <span class="r">Event Production</span></li>
       </ul>
     </div>
 
     <div class="beside">
-      <img src="images/artists.jpeg" width="720" height="1080" loading="lazy" decoding="async" fetchpriority="low"
-           alt="A dancer turning by candlelight, a pale cloth trailing through the air.">
+      <picture>
+        <source type="image/webp"
+                srcset="images/artists.webp 720w,
+                        images/artists-1080.webp 1080w,
+                        images/artists-1440.webp 1440w"
+                sizes="(min-width:1240px) 42vw, 100vw">
+        <img
+             srcset="images/artists.jpeg 720w,
+                     images/artists-1080.jpg 1080w,
+                     images/artists-1440.jpg 1440w"
+             sizes="(min-width:1240px) 42vw, 100vw"
+             src="images/artists.jpeg" width="720" height="1079" loading="lazy" decoding="async" fetchpriority="low"
+             alt="A dancer turning by candlelight, a pale cloth trailing through the air.">
+      </picture>
     </div>
   </section>
 
