@@ -443,8 +443,10 @@ presentation.
 
 **Three faces, each with one job.** Cormorant Garamond carries the
 page — roman 400 for text, italic 300 for exactly one thing, her name.
-Jost 300 sets the title and nothing else. Allura sets the verse on
-`about`. All self-hosted in `fonts/`, latin and latin-ext.
+Jost 300 sets the title and nothing else. Tangerine sets the verse on
+`about`. All self-hosted in `fonts/` — latin and latin-ext, except
+Tangerine, which Google ships as latin alone and whose verse is ASCII
+throughout.
 
 **The title is a geometric sans against a page of serif, on purpose.**
 Jost is drawn with a compass where everything else is drawn with a pen,
@@ -455,10 +457,13 @@ and the letterforms take it — a one-word change on `.title`.
 **The verse is set, not photographed.** It was `_reference/text-cropped.png`,
 a 1001x854 scan of the verse in Vallerie's hand: soft at any size the
 layout wanted, and invisible to anything that reads a page. Allura was
-chosen by holding nine scripts against that scan — its letterforms are
-the ones that match, round and barely slanted and evenly stroked, where
-Herr Von Muellerhoff leans much further and Cedarville Cursive is a
-school hand rather than a formal one. Sized against both axes,
+chosen first, by holding nine scripts against that scan — its
+letterforms are the ones that match, round and barely slanted and
+evenly stroked, where Herr Von Muellerhoff leans much further and
+Cedarville Cursive is a school hand rather than a formal one. The hand
+is **Tangerine** now, by choice rather than by that comparison; it is
+narrower on the body and more sharply pointed, a written hand where
+Allura is a drawn one. Sized against both axes,
 `min(vw, svh)`, so it keeps its proportion to the column without a
 short screen pushing it past the foot of the panel. Checked at 15 sizes
 from 320x568 to 1920x1080 for spill, and for collision with the rail
@@ -733,16 +738,24 @@ The numbers come from measuring the original against its own x-height,
 which is what makes them survive a change of size. In the scan the word
 gaps run 41-53px against a 21px x-height, the lines advance 177px, the
 signature sits 208px below the last line and 145px in from the left.
-That is 2.15 x-heights between words, 8.4 between lines, 1.175 of an
-advance before the name and 6.9 in from the edge. Allura's x-height is
-.30em, which turns those into ems: `word-spacing:.4em` once the .219em
-the font already puts in a space and the .03em of tracking that lands
-on it are taken off, an advance of 2.53em, a signature 2.97em below the
-last line and 2.07em in.
+That is 2.15 x-heights between words and 8.4 between lines.
 
-Held as three custom properties — `--lh`, `--adv`, `--sign` — because a
-phone has to close the leading up to fit five lines and the ratio
-between the two gaps should not drift when it does. The margins are the
+**The x-height is the unit, and that is what let the hand change face
+without any of it being measured again.** Allura's is .30em and
+Tangerine's .26em, so every em derived above was multiplied by .30/.26
+— a bigger em carrying a smaller letter, the same size on the page.
+The tracking and the word gap came down by that ratio too, and the word
+gap is then 2.15 x-heights less the .15em Tangerine puts in a space,
+a different subtraction from Allura's .219em: `word-spacing:.383em`
+where it was .4em.
+
+The signature is gone. It was `Vallerie with Company` set 1.175 of an
+advance below the last line and 6.9 x-heights in from the edge; the
+verse ends on a full stop instead, and `--sign`, `--sign-in` and the
+`.sign` rules went with it, in all three layouts.
+
+Held as two custom properties — `--lh` and `--adv` — because a
+phone has to close the leading up to fit. The margins are the
 difference between the advance and the line box, so setting the three
 per breakpoint is the whole adjustment. A phone runs 2.25 and a sideways
 phone 2.0, against the photograph's 2.53.

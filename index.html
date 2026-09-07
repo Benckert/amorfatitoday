@@ -133,8 +133,8 @@
 
 <style>
 /* ───────────────────────────  the faces  ────────────────────────────
-   Cormorant Garamond in two cuts, Jost 300 for the title alone, Allura
-   for the verse. Self-hosted, so the page depends on no third party
+   Cormorant Garamond in two cuts, Jost 300 for the title alone,
+   Tangerine for the verse. Self-hosted, so the page depends on no third party
    being up and the face is there on the first paint.
 
    latin-ext is NOT optional: the Ć in Amina Avdić's name is U+0106 and
@@ -177,21 +177,15 @@
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+/* Google ships Tangerine as one latin subset and no latin-ext, which
+   the verse does not need: every letter of it is ASCII. */
 @font-face {
-  font-family: 'Allura';
+  font-family: 'Tangerine';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(fonts/allura-400-latin.woff2) format('woff2');
+  src: url(fonts/tangerine-400-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Allura';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(fonts/allura-400-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
   font-family: 'Jost';
@@ -228,7 +222,7 @@
      than the sans it replaced. Do not "restore" those numbers. */
   --display:"Jost",Futura,"Century Gothic","Avenir Next",Avenir,sans-serif;
   --micro:"Cormorant Garamond",Cormorant,Garamond,Georgia,"Times New Roman",serif;
-  --hand:"Allura","Snell Roundhand","Apple Chancery",cursive;
+  --hand:"Tangerine","Snell Roundhand","Apple Chancery",cursive;
 
   --gutter:clamp(1.25rem,5vw,5rem);
   /* On :root, not on .panel: the link rail is fixed to the viewport and
@@ -611,31 +605,37 @@ picture{display:contents}
 /* Set from the photograph rather than by eye. Measuring the original
    against its own x-height gives numbers that survive a change of
    size: the word gaps run 41-53px against a 21px x-height, so 2.15
-   x-heights; the lines advance 177px, so 8.4; the signature sits 1.175
-   advances below the last line and 6.9 x-heights in from the left.
-   Allura's x-height is .30em, which converts all of those to ems.
+   x-heights, and the lines advance 177px, so 8.4.
 
-   Held as three custom properties, because a short screen has to close
-   the leading up and the ratio between the two gaps should not drift
-   when it does. --lh is the line box, --adv the distance from one line
-   to the next, and the margins are the difference. */
+   THE X-HEIGHT IS THE UNIT, which is what let the hand change face
+   without any of that being measured again. Allura's is .30em and
+   Tangerine's is .26em, so every one of these ems was multiplied by
+   .30/.26 and the setting is the same size on the page as it was —
+   a bigger em carrying a smaller letter. The tracking and the word
+   gap came down by the same ratio; the word gap is then 2.15 x-heights
+   less the .15em Tangerine already puts in a space, which is a
+   different subtraction from Allura's .219em, so it is .383em now
+   rather than .4em.
+
+   Held as two custom properties, because a short screen has to close
+   the leading up. --lh is the line box, --adv the distance from one
+   line to the next, and the margins are the difference. */
 .hand{
-  --lh:1.75;
+  --lh:1.517;
   /* The photograph's own leading is 2.53, and the hand was set at the
      size that left room for it. Read on a screen the hand wants to be
      larger than that, so the lines come closer together to pay for it
      -- 2.25 here, 2 on a phone, 1.55 sideways -- and the signature is
      held at 1.3 of an advance rather than the photograph's 1.175, so
      the pause before the name survives the lines closing up. */
-  --adv:2.25;
-  --sign:2.925;
+  --adv:1.95;
   margin:0;
   font-family:var(--hand);font-weight:400;
   font-size:var(--hand-size);
   line-height:var(--lh);
   /* 2.15 x-heights between words, less the .219em the font already
      puts there and the .03em of tracking that lands on the space */
-  letter-spacing:.03em;word-spacing:.4em;
+  letter-spacing:.026em;word-spacing:.383em;
   /* Every line starts on the same left edge, as it does in the
      photograph — centring turned the stanza into a funnel. The old
      objection to ranging it left, that a ragged right edge would hang
@@ -652,14 +652,7 @@ picture{display:contents}
    and roughly half of what it puts between words. A bare span, because
    the mark is not emphasis and is not being marked up as anything —
    there is simply nowhere else to hang a margin. */
-.hand span{margin-left:.28em}
-/* 2.07em in from the left, which is where the photograph puts it —
-   see the measurements above. Held as a property because a stacked
-   screen centres it instead: with the figure below rather than beside,
-   the block sits in the middle of the panel and a signature indented
-   from its left edge reads as sitting off to one side of it. */
-.hand{--sign-in:2.07em}
-.hand .sign{margin:calc((var(--sign) - var(--lh)) * 1em) 0 0 var(--sign-in)}
+.hand span{margin-left:.243em}
 #about .beside img{--flip:scaleX(-1)}
 /* ONE SIZE, and the headline is derived from it. The headline is set
    to the same length as the verse's longest line -- not merely no
@@ -678,8 +671,8 @@ picture{display:contents}
    Re-measure both if either string or any tracking changes.
    test/about.js asserts the two come out equal. */
 #about{
-  --hand-size:clamp(1.25rem,min(2.95vw,5svh),2.8rem);
-  --lede-k:.4003;               /* 14.325 / 35.786 */
+  --hand-size:clamp(1.442rem,min(3.404vw,5.769svh),3.231rem);
+  --lede-k:.2881;               /* 10.314 / 35.798 */
   --focus:50% 0%;               /* on a phone, keep her head, crop the floor */
 
   /* THE POEM IS CENTRED IN THE GAP BETWEEN THE SCREEN'S EDGE AND HER
@@ -715,7 +708,7 @@ picture{display:contents}
   --figure:min(66.64svh,42vw,1440px);
   --shirt:calc(100vw - var(--figure) * .829);
   padding-left:max(var(--gutter),
-                   calc(var(--shirt) / 2 - 7.16 * var(--hand-size)));
+                   calc(var(--shirt) / 2 - 5.157 * var(--hand-size)));
 }
 
 /* ────────────────────────────  III. artists  ───────────────────────── */
@@ -879,20 +872,22 @@ picture{display:contents}
 
      So the coefficients are the ones the list had before that name
      arrived, and .long carries a --scale instead. The scale that makes
-     the row exactly fill the column is 22.82/28.28 = .8069 on a wide
-     screen, 24.14/29.97 = .8055 stacked, 22.59/28.01 = .8065 sideways
+     the row exactly fill the column is 22.82/27.52 = .8293 on a wide
+     screen, 24.16/29.22 = .8268 stacked, 22.59/27.23 = .8297 sideways
      — the same number three times, because the extra length is one
      name and the layouts differ in what surrounds it, not in the name.
-     .804 sits just under the tightest of them, which puts the row's
-     ink within a pixel of KRISTOFFER BENCKERT's rather than the 6.4px
-     short that .79 left it.
+     .825 sits just under the tightest of them, which puts the row's
+     ink within a pixel of KRISTOFFER BENCKERT's. Re-measure whenever
+     the row's own words change: these read .8069/.8055/.8065 while the
+     role said EVENT PRODUCTION, and PUBLIC RELATIONS is the shorter
+     string, so .804 left the row 9.2px short again.
 
      THE ROLE STAYS AT .84 OF THE NAME, and making it match would work
      against the thing it looks like it would fix. Every one of these
      options ends at the same place — the column's edge is the limit,
      so a longer row is not available at any of them. What differs is
-     the NAME: .84 needs a .807 scale and sets the name at 10.87px, a
-     full-size role needs .760 and sets it at 10.23. The role stepping
+     the NAME: .84 needs a .829 scale and sets the name at 11.17px, a
+     full-size role needs .783 and sets it at 10.55. The role stepping
      back is also the rule every other row keeps.
      test/tools/longrow.js measures the three.
 
@@ -930,7 +925,7 @@ picture{display:contents}
 .roster .r{color:var(--mist);font-size:.84em;letter-spacing:.08em}
 /* the one row too long to sit on a line at the size the rest are set
    at — see the note above the clamp */
-.roster li.long{--scale:.804}
+.roster li.long{--scale:.825}
 /* MOST OF THESE NAMES HAVE A PAGE OF THEIR OWN, AND THREE DO NOT, and
    the mark is a tick in the margin — the fifth thing tried. Three of
    the four before it were underlines, and two of those rendered on
@@ -1415,7 +1410,7 @@ picture{display:contents}
      is set on its own curve and comes out narrower than the poem and a
      good deal smaller than it — which is what a line standing over a
      poem should be. */
-  #about .lede{font-size:clamp(.72rem,3.1vw,.9rem);
+  #about .lede{font-size:clamp(.72rem,3.1vw,.75rem);
                letter-spacing:.18em;text-indent:.18em;text-align:center;
                margin-bottom:clamp(1rem,3.2svh,1.8rem)}
   /* Tighter than the photograph on purpose: five lines of its leading
@@ -1430,14 +1425,9 @@ picture{display:contents}
   /* padding-left is a desktop rule — the figure is beside the words
      there, and there is a gap between them to centre in. Stacked, the
      figure is below and the words carry their own inset. */
-  #about{--hand-size:clamp(1.05rem,min(5.85vw,3.6svh),2.2rem);
+  #about{--hand-size:clamp(1.212rem,min(6.75vw,4.154svh),2.538rem);
          padding-left:0}
-  #about .hand{--lh:1.6;--adv:2;--sign:2.6}
-  /* Stacked, the block sits in the middle of the panel; a signature
-     indented from its left edge would read as sitting off to one side
-     of it. Centred on the widest line instead. */
-  #about .hand{--sign-in:0}
-  #about .hand .sign{text-align:center}
+  #about .hand{--lh:1.386;--adv:1.733}
   /* align-self, and it is load-bearing: .split centres its items, which
      leaves this box sized by its content rather than by its row. With
      no definite height, height:100% on the image below resolves to
@@ -1765,10 +1755,7 @@ picture{display:contents}
   #about .beside::before{
     background:linear-gradient(to right,#000 0%,rgba(0,0,0,.45) 6%,rgba(0,0,0,0) 14%);
   }
-  /* side by side again, so the signature is indented again */
-  #about .hand{--sign-in:2.07em}
-  #about .hand .sign{text-align:left}
-  #about .lede{font-size:clamp(.6rem,1.3vw,.75rem);
+  #about .lede{font-size:clamp(.45rem,1.082vw,.75rem);
                letter-spacing:.14em;text-indent:.14em;
                margin-bottom:clamp(.7rem,2.6svh,1.2rem)}
   /* The size comes up and the leading comes down to pay for it. At
@@ -1776,8 +1763,8 @@ picture{display:contents}
      link rail, which is not clearance, it is luck; at 1.85 it is
      around 28px and the type is the size that made it worth doing.
      The ratio between the two gaps is kept, as everywhere else. */
-  #about{--hand-size:clamp(1.05rem,min(3.05vw,6.2svh),1.9rem)}
-  #about .hand{--lh:1.5;--adv:1.55;--sign:2.02}
+  #about{--hand-size:clamp(1.212rem,min(3.519vw,7.154svh),2.192rem)}
+  #about .hand{--lh:1.3;--adv:1.343}
 
   #artists{
     grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
@@ -1986,8 +1973,9 @@ picture{display:contents}
     <!-- Type, not a photograph of type. It was _reference/text-cropped.png,
          a scan of the verse in Vallerie's hand: 1001x854, soft at any
          size the layout wanted, and invisible to anything that reads a
-         page. Allura was picked by holding nine scripts against that
-         scan; see "the faces" at the top of the stylesheet. -->
+         page. The hand is Tangerine, set to the x-height the scan
+         measures rather than to its own em; see "the faces" at the top
+         of the stylesheet. -->
     <div class="says verse" data-reveal>
       <!-- Two spans so that where this takes two lines they can be
            made the same length. The break is the only even one the
@@ -2005,8 +1993,7 @@ picture{display:contents}
         <p>each moment of all time gifted us</p>
         <p>movement<span>,</span> music<span>,</span> togetherness<span>!</span></p>
         <p>come<span>,</span> bask in this aliveness<span>!</span></p>
-        <p>we honour your attention</p>
-        <p class="sign">Vallerie with Company</p>
+        <p>we honour your attention<span>.</span></p>
       </blockquote>
     </div>
     <div class="beside" data-reveal style="--d:.2s">
@@ -2078,7 +2065,7 @@ picture{display:contents}
         <li data-reveal style="--d:0.62s"><a class="n" href="https://www.eliasljungberg.com/" target="_blank" rel="noopener noreferrer">Elias Ljungberg</a><span class="d">&#8211;</span> <span class="r">Photography</span></li>
         <li data-reveal style="--d:0.66s"><a class="n" href="https://antarchitecturemusic.com/" target="_blank" rel="noopener noreferrer">Andreas Frantz</a><span class="d">&#8211;</span> <span class="r">Sound Design</span></li>
         <li class="nolink" data-reveal style="--d:0.70s"><span class="n">Kristoffer Benckert</span><span class="d">&#8211;</span> <span class="r">Music, Web Design</span></li>
-        <li class="nolink long" data-reveal style="--d:0.74s"><span class="n">Simon S&#246;derstrand Nystr&#246;m</span><span class="d">&#8211;</span> <span class="r">Event Production</span></li>
+        <li class="nolink long" data-reveal style="--d:0.74s"><span class="n">Simon S&#246;derstrand Nystr&#246;m</span><span class="d">&#8211;</span> <span class="r">Public Relations</span></li>
       </ul>
     </div>
 
