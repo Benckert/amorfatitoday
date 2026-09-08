@@ -949,17 +949,35 @@ function's name could see.
 **A cubic-bezier cannot say this and `linear()` can.** Two control
 points do not describe a curve that turns twice; `linear()` takes as
 many points as it needs, and `test/tools/ramp.py` generates them — 96,
-which puts the biggest step in speed between neighbours at 7.8%. The
-straight's share of the perimeter runs 29.3% on a tablet pill down to
-27.2% on the smallest phone one, so one profile written for 29% is
-right to within 1.8% of the lap everywhere: about six pixels, well
-inside the soft edge of a lobe that is sixty long. Those numbers moved
-a little when the button's word changed from Tickets to Attend — a
-shorter word is a shorter pill, and a shorter pill is proportionally
-more end and less side; re-measured on it, the ramp is unchanged at
-17.3 against 5.8. Anything that
-cannot parse `linear()` gets `animation-timing-function:linear` and a
-constant rate, which is the version that shipped for months.
+which puts the biggest step in speed between neighbours at 7.8%.
+
+One profile has to serve every pill, and the figure it is written for
+is the midpoint of their range rather than a round number near it. The
+straight's share runs 27.18% on the smallest phone pill up to 29.08%
+on the tablet one; 29.0 sat 1.82% of the lap from the narrowest, and
+28.13 is 0.95 from the furthest of the six. That halves the worst-case
+phase error for a change of one constant. Nothing about the look turns
+on it either way — it is well inside the soft edge of a lobe sixty
+long — but it is free to get right now and awkward to revisit later.
+`ramp.py` derives `S` from the measured pills instead of carrying it as
+a constant, and from the list the page actually renders: the four
+shapes it used to hold were stale, and not one of them is on the page.
+
+**What the eye reads is the time split, not the speed ratio.** The
+straights are 56% of the outline and take 39% of the lap; the arcs are
+44% and take 61%. Running the profile the other way round — fast on
+the arcs, slow on the sides — does not mirror that, it compounds it,
+because the slow region becomes the longer one: the straights then take
+73% of the lap, which is a crawl rather than a dwell. That was built
+and looked at on `develop` and set aside; what came back from it is
+this measurement, the corrected `S`, and an assertion in `navcheck`
+that the light spends materially less of the lap on the straights than
+they occupy of the outline. Two extreme samples cannot see that, and
+re-running the inverted profile against it reports 73% and fails.
+
+Anything that cannot parse `linear()` gets
+`animation-timing-function:linear` and a constant rate, which is the
+version that shipped for months.
 
 **The two lobes are held apart by their offsets, not by a delay.**
 Under a constant rate `animation-delay:-5s` puts the second lobe

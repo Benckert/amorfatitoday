@@ -1260,10 +1260,28 @@ picture{display:contents}
        also what keeps the two lobes opposite, since they are half a lap
        apart.
 
-       The straight's share of the perimeter runs 29.3% on a tablet pill
-       down to 27.2% on the smallest phone one, so one profile written
-       for 29% is right to within 1.8% of the lap on every screen: about
-       six pixels, well inside the soft edge of a lobe sixty long.
+       ONE PROFILE SERVES SIX PILLS, and the figure it is written for is
+       the midpoint of their range rather than a round number near it.
+       The straight's share runs 27.18% on the smallest phone pill to
+       29.08% on the tablet one; 29.0 sat 1.82% of the lap from the
+       narrowest, and 28.13 is 0.95 from the furthest of the six. Half
+       the worst-case phase error for a change of one constant, which
+       came out of running this profile backwards and re-reading the
+       geometry on the way. Either way it is inside the soft edge of a
+       lobe sixty long, so nothing about the look turns on it — it is
+       the sort of thing that is free to get right and awkward to
+       revisit later. ramp.py derives S from the measured pills now
+       instead of carrying it as a constant, and the list it derives it
+       from is the one the page actually renders: the four shapes it
+       used to hold were stale, and none of them is on the page.
+
+       WHAT THE EYE READS IS THE TIME SPLIT, not the speed ratio. The
+       straights are 56% of the outline and take 39% of the lap; the
+       arcs are 44% and take 61%. Running the profile the other way
+       round does not mirror that, it compounds it — the slow region
+       becomes the longer one and the straights take 73% of the lap,
+       which is a crawl rather than a dwell. That is why this direction
+       is the one that stayed.
 
        A cubic-bezier cannot say this — two control points, and this
        needs a whole curve. linear() can, and test/tools/ramp.py
@@ -1280,31 +1298,28 @@ picture{display:contents}
     @supports (animation-timing-function:linear(0,1)){
       .jump .ticket .rim rect{
         animation-timing-function:
-          linear(0, 0.0109 1.042%, 0.0227 2.083%, 0.0354 3.125%,
-            0.0491 4.167%, 0.0638 5.208%, 0.0794 6.25%, 0.0960 7.292%,
-            0.1132 8.333%, 0.1310 9.375%, 0.1490 10.42%, 0.1670 11.46%,
-            0.1846 12.5%, 0.2015 13.54%, 0.2177 14.58%, 0.2329 15.62%,
-            0.2471 16.67%, 0.2604 17.71%, 0.2727 18.75%, 0.2841 19.79%,
-            0.2946 20.83%, 0.3045 21.88%, 0.3137 22.92%, 0.3223 23.96%,
-            0.3304 25%, 0.3381 26.04%, 0.3454 27.08%, 0.3524 28.12%,
-            0.3591 29.17%, 0.3656 30.21%, 0.3720 31.25%, 0.3782 32.29%,
-            0.3843 33.33%, 0.3903 34.38%, 0.3963 35.42%, 0.4024 36.46%,
-            0.4084 37.5%, 0.4146 38.54%, 0.4208 39.58%, 0.4273 40.62%,
-            0.4339 41.67%, 0.4407 42.71%, 0.4478 43.75%, 0.4553 44.79%,
-            0.4632 45.83%, 0.4715 46.88%, 0.4804 47.92%, 0.4898 48.96%,
-            0.5000 50%, 0.5109 51.04%, 0.5227 52.08%, 0.5354 53.12%,
-            0.5491 54.17%, 0.5638 55.21%, 0.5794 56.25%, 0.5960 57.29%,
-            0.6132 58.33%, 0.6310 59.38%, 0.6490 60.42%, 0.6670 61.46%,
-            0.6846 62.5%, 0.7015 63.54%, 0.7177 64.58%, 0.7329 65.62%,
-            0.7471 66.67%, 0.7604 67.71%, 0.7727 68.75%, 0.7841 69.79%,
-            0.7946 70.83%, 0.8045 71.88%, 0.8137 72.92%, 0.8223 73.96%,
-            0.8304 75%, 0.8381 76.04%, 0.8454 77.08%, 0.8524 78.12%,
-            0.8591 79.17%, 0.8656 80.21%, 0.8720 81.25%, 0.8782 82.29%,
-            0.8843 83.33%, 0.8903 84.38%, 0.8963 85.42%, 0.9024 86.46%,
-            0.9084 87.5%, 0.9146 88.54%, 0.9208 89.58%, 0.9273 90.62%,
-            0.9339 91.67%, 0.9407 92.71%, 0.9478 93.75%, 0.9553 94.79%,
-            0.9632 95.83%, 0.9715 96.88%, 0.9804 97.92%, 0.9898 98.96%,
-            1);
+          linear(0, 0.0113 1.042%, 0.0234 2.083%, 0.0365 3.125%, 0.0506 4.167%,
+            0.0657 5.208%, 0.0817 6.25%, 0.0986 7.292%, 0.1161 8.333%, 0.1340
+            9.375%, 0.1520 10.42%, 0.1698 11.46%, 0.1872 12.5%, 0.2039 13.54%,
+            0.2197 14.58%, 0.2345 15.62%, 0.2483 16.67%, 0.2611 17.71%, 0.2731
+            18.75%, 0.2841 19.79%, 0.2944 20.83%, 0.3039 21.88%, 0.3129
+            22.92%, 0.3213 23.96%, 0.3292 25%, 0.3368 26.04%, 0.3439 27.08%,
+            0.3508 28.12%, 0.3575 29.17%, 0.3639 30.21%, 0.3702 31.25%, 0.3763
+            32.29%, 0.3824 33.33%, 0.3884 34.38%, 0.3944 35.42%, 0.4005
+            36.46%, 0.4066 37.5%, 0.4128 38.54%, 0.4191 39.58%, 0.4256 40.62%,
+            0.4323 41.67%, 0.4392 42.71%, 0.4465 43.75%, 0.4541 44.79%, 0.4622
+            45.83%, 0.4707 46.88%, 0.4798 47.92%, 0.4895 48.96%, 0.5000 50%,
+            0.5113 51.04%, 0.5234 52.08%, 0.5365 53.12%, 0.5506 54.17%, 0.5657
+            55.21%, 0.5817 56.25%, 0.5986 57.29%, 0.6161 58.33%, 0.6340
+            59.38%, 0.6520 60.42%, 0.6698 61.46%, 0.6872 62.5%, 0.7039 63.54%,
+            0.7197 64.58%, 0.7345 65.62%, 0.7483 66.67%, 0.7611 67.71%, 0.7731
+            68.75%, 0.7841 69.79%, 0.7944 70.83%, 0.8039 71.88%, 0.8129
+            72.92%, 0.8213 73.96%, 0.8292 75%, 0.8368 76.04%, 0.8439 77.08%,
+            0.8508 78.12%, 0.8575 79.17%, 0.8639 80.21%, 0.8702 81.25%, 0.8763
+            82.29%, 0.8824 83.33%, 0.8884 84.38%, 0.8944 85.42%, 0.9005
+            86.46%, 0.9066 87.5%, 0.9128 88.54%, 0.9191 89.58%, 0.9256 90.62%,
+            0.9323 91.67%, 0.9392 92.71%, 0.9465 93.75%, 0.9541 94.79%, 0.9622
+            95.83%, 0.9707 96.88%, 0.9798 97.92%, 0.9895 98.96%, 1);
       }
     }
     .jump .ticket .rim .lit{animation-name:lap-near}
