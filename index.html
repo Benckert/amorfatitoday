@@ -605,10 +605,13 @@ picture{display:contents}
      .28em of tracking, which is what a text face wants when it is
      asked to be a label. Tangerine's capitals are swash forms drawn to
      open a word, and a line of them is decoration rather than a
-     sentence: AN IMMERSION IN VIBRATION sets 18.63em against this
-     line's 7.68, which is 143% wider for the same words, and 67% wider
-     even at the .28em the Cormorant setting used. Sentence case, and
-     the tracking comes almost all the way
+     sentence: AN IMMERSION IN VIBRATION measures 17.98em against this
+     line's 7.03, two and a half times the width for the same words.
+     Measure that on a canvas and not off the element — capitals wrap
+     the headline, and the extent of a wrapped line is the width of its
+     widest row, not of the string, which reports the difference as 27%
+     and is the wrong number. Sentence case, and the tracking comes
+     almost all the way
      off: a script's letters are joined by their own shapes and pulling
      them apart is the one thing that makes a hand look typeset. */
   font-family:var(--hand);font-weight:700;
@@ -645,11 +648,12 @@ picture{display:contents}
   /* The photograph's own leading is 2.53, and the hand was set at the
      size that left room for it. Read on a screen the hand wants to be
      larger than that, so the lines come closer together to pay for it
-     -- 2.25 here, 2 on a phone, 1.55 sideways -- and the signature is
-     held at 1.3 of an advance rather than the photograph's 1.175, so
-     the pause before the name survives the lines closing up. */
-  --adv:1.95;
-  margin:0;
+     -- 1.72 here, 1.733 on a phone, 1.343 sideways, against the
+     photograph's 2.53. Six lines is a taller block than four and the
+     leading is what pays for it: at 1.95 the last line ran under the
+     link rail on every wide screen that was not also tall. */
+  --adv:1.72;
+  margin:0 0 0 calc(var(--verse-in) * 1em);
   font-family:var(--hand);font-weight:400;
   font-size:var(--hand-size);
   line-height:var(--lh);
@@ -684,10 +688,11 @@ picture{display:contents}
    gaps against --stanza and fails on the difference. */
 .hand{--stanza:.5}
 .hand p.br{margin-top:calc((var(--adv) * (1 + var(--stanza)) - var(--lh)) * 1em)}
-/* .95 of an x-height before a mark, which is what the photograph has
-   and roughly half of what it puts between words. A bare span, because
-   the mark is not emphasis and is not being marked up as anything —
-   there is simply nowhere else to hang a margin. */
+/* .95 of an x-height before an exclamation mark, which is what the
+   photograph has and roughly half of what it puts between words. A
+   bare span, because the mark is not emphasis and is not being marked
+   up as anything — there is simply nowhere else to hang a margin. Only
+   the exclamation marks are wrapped now, so this reaches only them. */
 .hand span{margin-left:.243em}
 #about .beside img{--flip:scaleX(-1)}
 /* ONE SIZE, and the headline is derived from it. The headline is set
@@ -707,7 +712,7 @@ picture{display:contents}
    Re-measure both if either string or any tracking changes.
    test/about.js asserts the two come out equal. */
 #about{
-  --hand-size:clamp(1.442rem,min(2.92vw,5.769svh),3.231rem);
+  --hand-size:clamp(1.442rem,min(2.92vw,5.1svh),3.231rem);
   /* ONE RULE AT EVERY SIZE NOW. The headline used to match the verse
      on a desktop and be set narrower and smaller everywhere else, on
      its own absolute curve — which it had to be, because it was a
@@ -720,7 +725,26 @@ picture{display:contents}
      the same letterforms at a smaller size are just quieter, where
      capitals at .28em of tracking could carry a heading however small
      they got. */
-  --lede-k:1.509;               /* 11.583 / 7.676 */
+  --lede-k:1.4455;              /* 11.097 / 7.677 */
+
+  /* THE VERSE IS INDENTED AND THE HEADLINE IS NOT, which is what sets
+     the two apart now that they are the same hand — flush on one edge
+     they read as one block that changes weight halfway down. The indent
+     is in hand-sizes, so it holds at every width, and the padding below
+     gives back exactly as much as the indent takes: the poem's left
+     edge lands where the centring formula puts it, and it is the
+     HEADLINE that hangs left of it. Centring the poem in the gap beside
+     her shirt is a measured relationship; setting it off from its
+     headline is not a reason to give that up.
+
+     DECLARED HERE AND NOT ON .hand, because the padding that
+     compensates for it is on this element and a custom property
+     inherits downwards only. Read from .hand it was simply missing
+     here, which made the calc() invalid, which made the whole
+     padding-left declaration invalid at computed-value time — and an
+     invalid padding is 0, so the block sat hard against the left edge
+     at every width with nothing in the layout suite to say so. */
+  --verse-in:1.4;
   --focus:50% 0%;               /* on a phone, keep her head, crop the floor */
 
   /* THE POEM IS CENTRED IN THE GAP BETWEEN THE SCREEN'S EDGE AND HER
@@ -756,7 +780,8 @@ picture{display:contents}
   --figure:min(66.64svh,42vw,1440px);
   --shirt:calc(100vw - var(--figure) * .829);
   padding-left:max(var(--gutter),
-                   calc(var(--shirt) / 2 - 5.792 * var(--hand-size)));
+                   calc(var(--shirt) / 2
+                        - (5.549 + var(--verse-in)) * var(--hand-size)));
 }
 
 /* ────────────────────────────  III. artists  ───────────────────────── */
@@ -1487,7 +1512,13 @@ picture{display:contents}
      there, and there is a gap between them to centre in. Stacked, the
      figure is below and the words carry their own inset. */
   #about{--hand-size:clamp(1.212rem,min(6.75vw,4.154svh),2.538rem);
-         padding-left:0}
+         padding-left:0;
+         /* and no indent: the block is centred in the panel with the
+            headline centred over it, so there is nothing for an indent
+            to set it apart from — it would only push the poem off the
+            centre it sits on. Set here rather than on .hand so that the
+            padding above and the margin on .hand read the same value. */
+         --verse-in:0}
   #about .hand{--lh:1.386;--adv:1.733}
   /* align-self, and it is load-bearing: .split centres its items, which
      leaves this box sized by its content rather than by its row. With
@@ -2043,18 +2074,22 @@ picture{display:contents}
          of the stylesheet. -->
     <div class="says verse" data-reveal>
       <h2 class="lede">An immersion in vibration</h2>
-      <!-- The hand in the photograph sets its commas and its
-           exclamation marks off from the word before, about half a word
-           gap. It is done here with a margin rather than with a space
-           in the text, so that what is copied, read aloud or indexed
-           is ordinary punctuation. -->
+      <!-- The hand in the photograph sets its marks off from the word
+           before, about half a word gap. ONLY THE EXCLAMATION MARKS
+           KEEP IT HERE. On four lines of verse the gap read as the
+           hand's own manner; on a six-line stanza carrying seven commas
+           and a full stop it read as a fault in the setting, and the
+           list in the middle came apart into pieces. An exclamation is
+           a breath and wants the room; a comma is a join and does not.
+           It is a margin rather than a space in the text, so that what
+           is copied, read aloud or indexed is ordinary punctuation. -->
       <blockquote class="hand">
         <p>Each moment of all time gifted us</p>
-        <p>movement<span>,</span> music<span>,</span> togetherness<span>!</span></p>
-        <p class="br">Performances with harp<span>,</span> sonic stories<span>,</span></p>
-        <p>contemporary dance<span>,</span> sensual rope art<span>,</span></p>
-        <p>raw voices<span>,</span> and deep presence<span>.</span></p>
-        <p class="br">Come<span>,</span> bask in this aliveness<span>!</span></p>
+        <p>movement, music, togetherness<span>!</span></p>
+        <p class="br">Performances with harp, sonic stories,</p>
+        <p>contemporary dance, sensual rope art,</p>
+        <p>raw voices, and deep presence.</p>
+        <p class="br">Come, bask in this aliveness<span>!</span></p>
       </blockquote>
     </div>
     <div class="beside" data-reveal style="--d:.2s">

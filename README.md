@@ -730,9 +730,13 @@ when it is asked to be a label.
 
 Not capitals here. Tangerine's capitals are swash forms drawn to open a
 word, and a line of them is decoration rather than a sentence: AN
-IMMERSION IN VIBRATION sets in 18.63em against the sentence-case
-7.68 — 143% wider for the same words, and 67% wider even at the .28em
-the Cormorant setting used. The tracking comes almost all the way off
+IMMERSION IN VIBRATION measures 17.98em against the sentence-case 7.03,
+two and a half times the width for the same words. Measure that on a
+canvas rather than off the element: capitals wrap the headline, and the
+extent of a wrapped line is the width of its widest row and not of the
+string, which reports the difference as 27% and is simply the wrong
+number — it was first recorded here as 143% for the same reason. The
+tracking comes almost all the way off
 too, to .026em, the verse's own figure: a script's letters are joined
 by their own shapes, and pulling them apart is the one thing that makes
 a hand look typeset.
@@ -763,15 +767,61 @@ out 1.28 advances where 1.5 was asked for. What the opener carries is
 the whole gap less the line box. `verse.js` measures both gaps against
 `--stanza` and fails on the difference.
 
+**The gap before a mark is kept for exclamation marks only.** The hand
+in the photograph sets its marks off from the word before, about half a
+word gap, and on four lines of verse that read as the hand's own manner.
+On a six-line stanza carrying seven commas and a full stop it read as a
+fault in the setting, and the list in the middle came apart into pieces.
+An exclamation is a breath and wants the room; a comma is a join and
+does not. Only the exclamation marks are wrapped in a span now, so the
+rule reaches only them.
+
+**The verse is indented and the headline is not.** Flush on one edge
+they read as one block that changes weight halfway down, which is what
+the two being the same hand costs. The indent is 1.4 hand-sizes, so it
+holds at every width, and the section's padding gives back exactly as
+much as the indent takes: the poem's left edge lands where the centring
+formula puts it and the HEADLINE hangs left of it. Centring the poem in
+the gap beside her shirt is a measured relationship; setting it off from
+its headline is not a reason to give that up. Stacked, both are centred
+and there is nothing for an indent to separate, so it is 0 there.
+
+`--verse-in` is declared on `#about` and not on `.hand`, because the
+padding that compensates for it is on `#about` and a custom property
+inherits downwards only. Read from `.hand` it was simply missing there,
+which made the `calc()` invalid, which made the whole `padding-left`
+declaration invalid at computed-value time — and an invalid padding is
+0, so the block sat hard against the left edge at every width with all
+ten suites still green. `about.js` measures the poem's centre against
+the rendered figure now, and asks the stylesheet's own media condition
+whether the rule is in force rather than inferring it from the padding
+that came out: keyed to the outcome, the check disabled itself on
+exactly the failure it exists to catch, and passed with the fault put
+back deliberately.
+
 **Six lines cost the type about a tenth of its size.** The block plus a
 headline set to match it ran under the link rail by 42px at 1440 and by
 up to 58px on a sideways phone. Everything in the section scales from
 one `--hand-size`, so the fix is one coefficient per layout rather than
 a set of adjustments: 3.404vw to 2.92 on a desktop, and sideways from
 min(3.519vw, 7.154svh) capped at 2.192rem to min(2.27vw, 4.33svh)
-capped at 1.47rem. The clearance to the rail runs 17px at the tightest
-— 812x375, where the hand is already down to 16px and buying more room
-would cost more legibility than it is worth — and 19 to 60 elsewhere.
+capped at 1.47rem. The leading came down with it, `--adv` from 1.95 to
+1.72 on the wide layout, which is what pays for six lines where four
+used to sit.
+
+**And the desktop sizes in `fits.js` were the wrong four.** They were
+1024x768, 1280x800, 1440x900 and 1920x1080 — every one of them roughly
+16:10, every one of them passing while the verse ran up to 84px under
+the link rail on most of the desktops in between. What overflows is a
+screen that is WIDE AND NOT TALL, because the hand takes min(vw, svh)
+and the vw term keeps growing while the height does not: 1440x800,
+1600x900, 1716x930 and 1920x900 are what a laptop with a dock, or a
+browser with tabs and a bookmarks bar, actually presents. The svh
+coefficient goes 5.769 to 5.1 so height governs sooner, and the
+short-and-wide row is now the point of that list rather than the round
+numbers. Clearance runs 17px at the tightest — 812x375, where the hand
+is already down to 16px and buying more room would cost more legibility
+than it is worth — and 19 to 60 elsewhere.
 
 **The verse ranges left, and its spacing is measured off the
 photograph rather than chosen.** Centring turned the stanza into a

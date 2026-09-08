@@ -55,12 +55,13 @@ const T={adv:0.180};
            together to pay for that — so what is checked is that the
            rendering matches what the CSS asks for, not the scan's own
            2.53. Expressed against the longest line, which is a
-           constant 11.583em of the hand — measured by test/tools/em.js
-           for the verse as it now reads. It was 10.314 for the shorter
-           verse in the same face and 14.32 while the hand was Allura;
-           nothing about the advance itself changed on either move. */
+           constant 11.097em of the hand — measured by test/tools/em.js
+           for the verse as it now reads. It was 11.583 while every mark
+           carried a .243em gap before it, 10.314 for the four-line
+           verse, and 14.32 while the hand was Allura; nothing about the
+           advance itself changed on any of those moves. */
         wantAdv:(()=>{const cs=getComputedStyle(document.querySelector('.hand'));
-          return parseFloat(cs.getPropertyValue('--adv'))/11.583;})(),
+          return parseFloat(cs.getPropertyValue('--adv'))/11.097;})(),
         stanza:getComputedStyle(document.querySelector('.hand'))
                  .getPropertyValue('--stanza').trim(),
         photo:0.180        /* what the photograph itself measures at */
