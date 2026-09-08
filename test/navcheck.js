@@ -114,14 +114,12 @@ const { launch, SITE } = require("./browser");
   if(!okTrav) bad++;
   console.log(`${okTrav?'PASS':'FAIL'} it interpolates, a whole lap, lobes locked opposite: ${note}`);
 
-  /* AND THE SPEED FOLLOWS THE SHAPE. The light is meant to snap round
-     the ends and dwell down the long sides, so the fastest sample has
-     to fall on an arc and the slowest on a straight — a property of
+  /* AND THE SPEED FOLLOWS THE SHAPE. The light is meant to run down
+     the long sides and dwell round the ends, so the fastest sample has
+     to fall on a straight and the slowest on an arc — a property of
      WHERE it is, which a check on the timing function's name could not
      see. The straight's share of the lap is computed from the pill the
-     browser actually laid out, not assumed. Assert the direction, not
-     just that there IS one: a sign flip in ramp.py is invisible to a
-     check that only asks whether the speed varies. */
+     browser actually laid out, not assumed. */
   const ramp=await pg2.evaluate(()=>{
     const rect=document.querySelector('.jump .ticket .rim .lit');
     const a=rect.getAnimations()[0]; if(!a) return null;
@@ -145,14 +143,14 @@ const { launch, SITE } = require("./browser");
     const fast=ramp.v.indexOf(Math.max(...ramp.v));
     const slow=ramp.v.indexOf(Math.min(...ramp.v));
     const ratio=Math.max(...ramp.v)/Math.min(...ramp.v);
-    okRamp = !onStraight(ramp.at[fast]) && onStraight(ramp.at[slow]) && ratio>2;
+    okRamp = onStraight(ramp.at[fast]) && !onStraight(ramp.at[slow]) && ratio>2;
     rnote=`pill ${ramp.w}x${ramp.h}, straight is ${ramp.st}% of the lap; `+
-          `fastest at ${ramp.at[fast].toFixed(1)} (${onStraight(ramp.at[fast])?'STRAIGHT':'arc'}), `+
-          `slowest at ${ramp.at[slow].toFixed(1)} (${onStraight(ramp.at[slow])?'straight':'ARC'}), `+
+          `fastest at ${ramp.at[fast].toFixed(1)} (${onStraight(ramp.at[fast])?'straight':'ARC'}), `+
+          `slowest at ${ramp.at[slow].toFixed(1)} (${onStraight(ramp.at[slow])?'STRAIGHT':'arc'}), `+
           `ratio ${ratio.toFixed(2)}`;
   }
   if(!okRamp) bad++;
-  console.log(`${okRamp?'PASS':'FAIL'} fast round the ends, slow down the sides: ${rnote}`);
+  console.log(`${okRamp?'PASS':'FAIL'} fast down the sides, slow round the ends: ${rnote}`);
 
   /* THE REGRESSION THAT MATTERS. The version before this paused the
      shimmer while the deck carried .glide, on the assumption that the
