@@ -178,7 +178,16 @@
 }
 
 /* Google ships Tangerine as one latin subset and no latin-ext, which
-   the verse does not need: every letter of it is ASCII. */
+   neither the verse nor the headline needs: both are ASCII. 700 sets
+   the headline, 400 the verse under it. */
+@font-face {
+  font-family: 'Tangerine';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/tangerine-700-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 @font-face {
   font-family: 'Tangerine';
   font-style: normal;
@@ -587,13 +596,24 @@ picture{display:contents}
    would talk over it. Gold, because it is the one line here that is
    the company speaking plainly. */
 .lede{
-  font-family:var(--micro);font-weight:400;
-  /* Capitals, tracked wider than the lowercase setting was and set a
-     step smaller: capitals at the same nominal size stand about a
-     third taller and read that much louder, and this line stands over
-     the verse, which is the voice on this section. */
+  /* THE SAME HAND AS THE VERSE, ONE WEIGHT HEAVIER. Tangerine ships a
+     700, and against the 400 under it the difference is stroke weight
+     alone — the letterforms are the same, so the two lines read as one
+     voice saying two things rather than as two voices.
+
+     NOT CAPITALS. The Cormorant setting this replaces was uppercase at
+     .28em of tracking, which is what a text face wants when it is
+     asked to be a label. Tangerine's capitals are swash forms drawn to
+     open a word, and a line of them is decoration rather than a
+     sentence: AN IMMERSION IN VIBRATION sets 18.63em against this
+     line's 7.68, which is 143% wider for the same words, and 67% wider
+     even at the .28em the Cormorant setting used. Sentence case, and
+     the tracking comes almost all the way
+     off: a script's letters are joined by their own shapes and pulling
+     them apart is the one thing that makes a hand look typeset. */
+  font-family:var(--hand);font-weight:700;
   font-size:calc(var(--hand-size) * var(--lede-k));
-  letter-spacing:.28em;text-indent:.28em;text-transform:uppercase;
+  letter-spacing:.026em;text-indent:.026em;
   /* On a phone it takes two lines. Balanced, so it breaks into two
      even ones rather than a full line and a single word under it. */
   text-wrap:balance;
@@ -648,6 +668,22 @@ picture{display:contents}
   text-shadow:0 1px 10px rgba(0,0,0,.95),0 2px 26px rgba(0,0,0,.8);
 }
 .hand p{margin:0 0 calc((var(--adv) - var(--lh)) * 1em)}
+/* THREE STANZAS NOW, and the gap between them is a proportion of the
+   advance rather than a length of its own, so it closes up with the
+   leading when a short screen closes that up. Half an advance: enough
+   that the three groups read as three, small enough that the block
+   still reads as one poem.
+
+   THE MARGIN DOES NOT ADD, IT COLLAPSES. Two adjacent vertical margins
+   resolve to the larger of the pair, never to their sum, so a top
+   margin of half an advance did not sit on top of the line's own
+   bottom margin of (--adv - --lh) — it replaced it, and the gap came
+   out 1.28 advances where 1.5 was asked for. What the stanza opener
+   has to carry is therefore the WHOLE gap less the line box, the same
+   shape as the ordinary margin above it. test/verse.js measures both
+   gaps against --stanza and fails on the difference. */
+.hand{--stanza:.5}
+.hand p.br{margin-top:calc((var(--adv) * (1 + var(--stanza)) - var(--lh)) * 1em)}
 /* .95 of an x-height before a mark, which is what the photograph has
    and roughly half of what it puts between words. A bare span, because
    the mark is not emphasis and is not being marked up as anything —
@@ -671,8 +707,20 @@ picture{display:contents}
    Re-measure both if either string or any tracking changes.
    test/about.js asserts the two come out equal. */
 #about{
-  --hand-size:clamp(1.442rem,min(3.404vw,5.769svh),3.231rem);
-  --lede-k:.2881;               /* 10.314 / 35.798 */
+  --hand-size:clamp(1.442rem,min(2.92vw,5.769svh),3.231rem);
+  /* ONE RULE AT EVERY SIZE NOW. The headline used to match the verse
+     on a desktop and be set narrower and smaller everywhere else, on
+     its own absolute curve — which it had to be, because it was a
+     different face in a different case and there was no ratio between
+     them to hold. In the same hand there is: this is the same phrase
+     at the same weight at every width, so one ratio serves, and the
+     headline is exactly as long as the verse's longest line
+     everywhere. Set smaller than the verse instead, as the old rule
+     had it off the desktop, it stopped reading as a headline at all —
+     the same letterforms at a smaller size are just quieter, where
+     capitals at .28em of tracking could carry a heading however small
+     they got. */
+  --lede-k:1.509;               /* 11.583 / 7.676 */
   --focus:50% 0%;               /* on a phone, keep her head, crop the floor */
 
   /* THE POEM IS CENTRED IN THE GAP BETWEEN THE SCREEN'S EDGE AND HER
@@ -708,7 +756,7 @@ picture{display:contents}
   --figure:min(66.64svh,42vw,1440px);
   --shirt:calc(100vw - var(--figure) * .829);
   padding-left:max(var(--gutter),
-                   calc(var(--shirt) / 2 - 5.157 * var(--hand-size)));
+                   calc(var(--shirt) / 2 - 5.792 * var(--hand-size)));
 }
 
 /* ────────────────────────────  III. artists  ───────────────────────── */
@@ -1410,9 +1458,7 @@ picture{display:contents}
      is set on its own curve and comes out narrower than the poem and a
      good deal smaller than it — which is what a line standing over a
      poem should be. */
-  #about .lede{font-size:clamp(.72rem,3.1vw,.75rem);
-               letter-spacing:.18em;text-indent:.18em;text-align:center;
-               margin-bottom:clamp(1rem,3.2svh,1.8rem)}
+  #about .lede{text-align:center;margin-bottom:clamp(1rem,3.2svh,1.8rem)}
   /* Tighter than the photograph on purpose: five lines of its leading
      do not fit a phone. The ratio between the two gaps is kept. */
   /* Both axes still, but a little more of the height: at 320x568 the
@@ -1707,19 +1753,23 @@ picture{display:contents}
    out at its natural 716x1074. Sections stay one screen here like
    everywhere else; the shape is wide, so three columns suit it, and
    everything is simply smaller. */
-/* The width below which the headline over the verse cannot hold one
-   line, and so is set as two even ones. 495px is measured, not chosen:
-   at 496 the line comes to 448px inside 451px of column and fits, and
-   every width under that it does not. The second line carries .184em
-   of tracking over the first, which is what it takes to bring 18
-   characters level with 24 — an em figure, so it holds at every size
-   the headline is set at. text-indent puts back the same amount, since
-   tracking hangs off the last letter and would otherwise throw the
-   centring. test/about.js measures both lines. */
-@media (max-width:495px){
-  .lede span{display:block}
-  .lede span + span{letter-spacing:.364em;text-indent:.364em}
-}
+/* THE HEADLINE IS ONE LINE EVERYWHERE NOW, and the breakpoint that set
+   it as two is gone with the phrase that needed it.
+
+   "live immersion in sound, movement, presence" ran out of column below
+   496px, so under that it was split into two spans set as blocks, and
+   the second carried .184em of tracking over the first to bring its 18
+   characters level with the other's 24. "An immersion in vibration"
+   measures 215.5px inside a 300px column — narrower than the verse it
+   stands over, at every width the page goes down to — so none of that
+   machinery has anything left to do. The spans went too: a span pair
+   whose only purpose was to be addressed by a rule that no longer
+   exists is not markup, it is residue.
+
+   text-wrap:balance stays on .lede, which is what would break a longer
+   phrase into even lines if one ever replaced this. test/about.js
+   asserts the headline stays narrower than the verse and, where it
+   does take two lines, that they come out level. */
 
 @media (orientation:landscape) and (max-height:540px){
   .panel{padding-block:clamp(.5rem,3svh,1rem)}
@@ -1755,16 +1805,16 @@ picture{display:contents}
   #about .beside::before{
     background:linear-gradient(to right,#000 0%,rgba(0,0,0,.45) 6%,rgba(0,0,0,0) 14%);
   }
-  #about .lede{font-size:clamp(.45rem,1.082vw,.75rem);
-               letter-spacing:.14em;text-indent:.14em;
-               margin-bottom:clamp(.7rem,2.6svh,1.2rem)}
+  #about .lede{margin-bottom:clamp(.7rem,2.6svh,1.2rem)}
   /* The size comes up and the leading comes down to pay for it. At
      844x390 the larger hand left 11px between the last line and the
      link rail, which is not clearance, it is luck; at 1.85 it is
      around 28px and the type is the size that made it worth doing.
      The ratio between the two gaps is kept, as everywhere else. */
-  #about{--hand-size:clamp(1.212rem,min(3.519vw,7.154svh),2.192rem)}
-  #about .hand{--lh:1.3;--adv:1.343}
+  #about{--hand-size:clamp(1rem,min(2.27vw,4.33svh),1.47rem)}
+  /* and the stanza gaps close up with everything else on a screen
+     this short -- .35 of an advance rather than .5 */
+  #about .hand{--lh:1.3;--adv:1.343;--stanza:.35}
 
   #artists{
     grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
@@ -1977,23 +2027,19 @@ picture{display:contents}
          measures rather than to its own em; see "the faces" at the top
          of the stylesheet. -->
     <div class="says verse" data-reveal>
-      <!-- Two spans so that where this takes two lines they can be
-           made the same length. The break is the only even one the
-           phrase allows — 24 characters against 18 — and no amount of
-           balancing changes that ratio, because tracking lands on both
-           lines alike. What evens them is tracking the SHORTER line out
-           to meet the longer, which needs the two to be addressable. -->
-      <h2 class="lede"><span>live immersion in sound,</span> <span>movement, presence</span></h2>
+      <h2 class="lede">An immersion in vibration</h2>
       <!-- The hand in the photograph sets its commas and its
            exclamation marks off from the word before, about half a word
            gap. It is done here with a margin rather than with a space
            in the text, so that what is copied, read aloud or indexed
            is ordinary punctuation. -->
       <blockquote class="hand">
-        <p>each moment of all time gifted us</p>
+        <p>Each moment of all time gifted us</p>
         <p>movement<span>,</span> music<span>,</span> togetherness<span>!</span></p>
-        <p>come<span>,</span> bask in this aliveness<span>!</span></p>
-        <p>we honour your attention<span>.</span></p>
+        <p class="br">Performances with harp<span>,</span> sonic stories<span>,</span></p>
+        <p>contemporary dance<span>,</span> sensual rope art<span>,</span></p>
+        <p>raw voices<span>,</span> and deep presence<span>.</span></p>
+        <p class="br">Come<span>,</span> bask in this aliveness<span>!</span></p>
       </blockquote>
     </div>
     <div class="beside" data-reveal style="--d:.2s">

@@ -35,7 +35,8 @@ const { launch, SITE } = require("./browser");
         lens=spans.map(sp=>{const g=document.createRange();g.selectNodeContents(sp);
           const rs=[...g.getClientRects()].filter(x=>x.width>0);
           return Math.round(Math.max(...rs.map(x=>x.right))-Math.min(...rs.map(x=>x.left)));});
-      const ps=[...document.querySelectorAll('.hand p')].slice(0,4);
+      /* every line of the verse — it is six now, in three stanzas */
+      const ps=[...document.querySelectorAll('.hand p')];
       const widest=Math.max(...ps.map(p=>p.getBoundingClientRect().width));
       const hand=getComputedStyle(document.querySelector('.hand'));
       return {lens, ledeFs:+parseFloat(getComputedStyle(lede).fontSize).toFixed(1),
@@ -44,20 +45,21 @@ const { launch, SITE } = require("./browser");
     });
     const hl=Math.max(...r.lens);
     const spread=hl-Math.min(...r.lens);
-    /* Matching the verse's longest line is a DESKTOP rule -- there the
-       two are the whole of the section and an unequal pair reads as a
-       mistake. Off it the headline is set on its own curve: narrower
-       than the verse, and always smaller than it. Either way, where it
-       takes two lines those two are the same length as each other. */
-    const desk = w>1240 && w>h && h>540;
-    const match = desk ? Math.abs(hl-r.verse)<=2
-                       : (hl<=r.verse+2 && r.ledeFs<r.handFs);
+    /* THE HEADLINE MATCHES THE VERSE'S LONGEST LINE AT EVERY SIZE. It
+       was a desktop-only rule while the headline was Cormorant capitals
+       and the verse a script -- two faces in two cases with no ratio
+       between them to hold, so off the desktop the headline was set on
+       its own absolute curve, narrower than the verse and smaller. In
+       the same hand at one weight up there IS a ratio, so one --lede-k
+       serves every width and the rule is the same everywhere. Where the
+       headline takes two lines, those two are still level. */
+    const match = Math.abs(hl-r.verse)<=2;
     const even=r.lens.length===1||spread<=2;
     if(!(match&&even)) bad++;
     console.log(`${match&&even?'PASS':'FAIL'} ${(w+'x'+h).padEnd(10)} `+
       `headline ${String(hl).padStart(4)}px @${String(r.ledeFs).padStart(5)}  `+
       `verse ${String(r.verse).padStart(4)}px @${String(r.handFs).padStart(5)} adv ${r.adv}  `+
-      `${match?(desk?'match':'narrower, smaller'):'FAILS THE RULE'}  `+
+      `${match?'match':'FAILS THE RULE'}  `+
       `${r.lens.length>1?`two lines ${r.lens.join(' / ')} spread ${spread}`:'one line'}`);
     await ctx.close();
   }

@@ -30,6 +30,12 @@ const T={adv:0.180};
       const panel=document.querySelector('#about').getBoundingClientRect();
       const lh=parseFloat(getComputedStyle(ps[0]).lineHeight);
       return {
+        /* THE STANZA BREAKS ARE NOT ADVANCES. Three stanzas now, and
+           the first line of the second and third carries an extra half
+           advance on top. Averaging every gap between consecutive lines
+           would fold those two in and report a leading that is set
+           nowhere. Each line says whether it opens a stanza, and only
+           the gaps inside a stanza are measured. */
         lines:ps.map(p=>{const b=p.getBoundingClientRect();
           /* Distinct line tops, not the number of rects: a range over
              content holding inline elements returns one rect per run, so
@@ -38,7 +44,7 @@ const T={adv:0.180};
           const rg=document.createRange();rg.selectNodeContents(p);
           const tops=new Set([...rg.getClientRects()].map(r=>Math.round(r.top)));
           return {left:+b.left.toFixed(1),width:+b.width.toFixed(1),top:+b.top.toFixed(1),
-                  rows:tops.size};}),
+                  rows:tops.size,opens:p.classList.contains('br')};}),
         box:{left:+box.left.toFixed(1),width:+box.width.toFixed(1),
              top:+box.top.toFixed(1),height:+box.height.toFixed(1)},
         panel:{left:+panel.left.toFixed(1),width:+panel.width.toFixed(1),
@@ -49,21 +55,32 @@ const T={adv:0.180};
            together to pay for that — so what is checked is that the
            rendering matches what the CSS asks for, not the scan's own
            2.53. Expressed against the longest line, which is a
-           constant 10.314em of the hand — Tangerine's figure, measured
-           by test/tools/em.js. It was 14.32 while the hand was Allura,
-           and nothing about the advance itself changed when it moved. */
+           constant 11.583em of the hand — measured by test/tools/em.js
+           for the verse as it now reads. It was 10.314 for the shorter
+           verse in the same face and 14.32 while the hand was Allura;
+           nothing about the advance itself changed on either move. */
         wantAdv:(()=>{const cs=getComputedStyle(document.querySelector('.hand'));
-          return parseFloat(cs.getPropertyValue('--adv'))/10.314;})(),
+          return parseFloat(cs.getPropertyValue('--adv'))/11.583;})(),
+        stanza:getComputedStyle(document.querySelector('.hand'))
+                 .getPropertyValue('--stanza').trim(),
         photo:0.180        /* what the photograph itself measures at */
       };
     });
-    const L=r.lines, verse=L.slice(0,4);
+    const L=r.lines, verse=L;
     const longest=Math.max(...verse.map(l=>l.width));
     const edges=verse.map(l=>l.left);
     const flush=Math.max(...edges)-Math.min(...edges) < 0.6;
     const advs=[];
-    for(let i=1;i<4;i++) advs.push(verse[i].top-verse[i-1].top);
+    for(let i=1;i<verse.length;i++)
+      if(!verse[i].opens) advs.push(verse[i].top-verse[i-1].top);
     const adv=advs.reduce((a,c)=>a+c,0)/advs.length;
+    /* and the stanza gaps are the larger ones, by the ratio the CSS
+       asks for -- .5 of an advance on top of the advance itself */
+    const want=1+parseFloat(r.stanza);
+    const gaps=[];
+    for(let i=1;i<verse.length;i++)
+      if(verse[i].opens) gaps.push((verse[i].top-verse[i-1].top)/adv);
+    const stanzasOK = gaps.length===2 && gaps.every(g=>Math.abs(g-want)<0.06);
     const wrapped=L.filter(l=>l.rows!==1).length;
     const spill=Math.round(Math.max(r.panel.left-r.box.left,
                 (r.box.left+r.box.width)-(r.panel.left+r.panel.width),
@@ -71,14 +88,15 @@ const T={adv:0.180};
                 (r.box.top+r.box.height)-(r.panel.top+r.panel.height)));
     const advR=adv/longest;
     const ok = flush && wrapped===0 && spill<=1 && errs.length===0 &&
-               L.length===4 &&
+               L.length===6 && stanzasOK &&
                Math.abs(advR-r.wantAdv)<0.004;
     if(!ok) bad++;
     console.log(`${ok?'PASS':'FAIL'} ${label.padEnd(11)} ${(w+'x'+h).padEnd(9)} `+
       `flush ${flush?'yes':'NO '}  wrapped ${wrapped}  spill ${String(spill).padStart(4)}  `+
       `adv/line ${advR.toFixed(3)}(want ${r.wantAdv.toFixed(3)}, `+
       `photograph ${r.photo})  `+
-      `lines ${L.length}`+
+      `lines ${L.length}  stanza gaps ${gaps.map(g=>g.toFixed(2)).join('/')}`+
+      `(want ${want.toFixed(2)})${stanzasOK?'':' WRONG'}`+
       (errs.length?'  ERR '+errs[0]:''));
     await ctx.close();
   }

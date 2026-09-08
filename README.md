@@ -640,26 +640,31 @@ pixels rather than re-deriving the formula, at ten desktop shapes from
 1280x800 to 2560x1440: within a pixel at all of them. 2560x1440 is in
 that list because it is the one that caught the missing 719px term.
 
-**The headline is exactly as long as the verse's longest line — on a
-desktop.** There the two are the whole of the section and an unequal
-pair reads as a mistake. Stacked or sideways the headline is set on
-its own curve, narrower than the verse and a good deal smaller, which
-is what a line standing over a poem should be; `about.js` checks the
-match on a desktop and narrower-and-smaller everywhere else.
+**The headline is exactly as long as the verse's longest line, at every
+size.** The two are the whole of the section and an unequal pair reads
+as a mistake. This used to be a desktop-only rule, with the headline
+set on its own absolute curve everywhere else — narrower than the verse
+and smaller — because a Cormorant capital and a script had no ratio
+between them to hold. In the same hand one weight up there is one, so
+one `--lede-k` serves every width. Set smaller than the verse, as the
+old rule had it off the desktop, the headline stopped reading as a
+headline at all: the same letterforms at a smaller size are just
+quieter, where capitals at .28em of tracking could carry a heading
+however small they got. `about.js` checks the match everywhere.
 
 Holding the match needs one size computed from the other. Curving them
 separately and hoping is what left the verse 112px shorter than its
 headline on a tablet and 46-75px shorter on a sideways phone. Both
-lengths are constants of their strings: "each moment of all time gifted
-us" sets in 14.32em of the hand at its .4em word-spacing, and the
-headline in 35.79em of the micro face at .28em of tracking. So `#about`
-carries one `--hand-size`, the hand takes it, and the headline takes
+lengths are constants of their strings: "Performances with harp, sonic
+stories," sets in 11.583em of the hand, and "An immersion in vibration"
+in 7.676em of the same hand at 700. So `#about` carries one
+`--hand-size`, the hand takes it, and the headline takes
 `calc(var(--hand-size) * var(--lede-k))` where `--lede-k` is the ratio
 of those two em-widths.
 
-`--lede-k` is .4003, the ratio at the desktop's .28em of tracking.
-Re-measure it with `test/tools/em.js` if either string or that
-tracking changes.
+`--lede-k` is 1.509 — over one, because the headline is now the shorter
+string and matching a longer line means setting it larger. Re-measure
+with `test/tools/em.js` if either string changes.
 
 **The leading pays for the size.** The hand is set larger than the
 photograph has it — read on a screen it wants to be — so the lines come
@@ -671,19 +676,17 @@ closing up. `verse.js` therefore checks the rendered advance against
 what the CSS asks for rather than against the scan's own figure — the
 scan's is still printed beside it, so the departure stays visible.
 
-**Where the headline takes two lines, they are the same length.** The
-break is the only even one the phrase allows — "live immersion in
-sound," is 24 characters, "movement, presence" is 18 — and balancing
-cannot change that ratio, because tracking lands on both lines alike.
-What evens them is tracking the shorter line out to meet the longer:
-.184em over the first, an em figure, so it holds at every size the
-headline is set at. `text-indent` puts the same amount back, since
-tracking hangs off the last letter and would otherwise throw the
-centring. It needs the two halves to be addressable, so they are
-spans, set as blocks below 495px — measured, not chosen: at 496 the
-line comes to 448px inside 451px of column and fits, and under that it
-does not. The two come out within a pixel of each other from 320 to
-430.
+**The headline is one line everywhere, and the machinery for two is
+gone.** "live immersion in sound, movement, presence" ran out of column
+below 496px, so under that it was split into two spans set as blocks,
+and the second carried .184em of tracking over the first to bring its
+18 characters level with the other's 24. "An immersion in vibration"
+measures 215.5px inside a 300px column, so none of that has anything
+left to do — and left in, the compensating tracking made the second
+line the longer one and pushed it out of the column, which is a wrap,
+not a headline. The breakpoint, the tracking rule and the span pair all
+went. `text-wrap:balance` stays on `.lede`, which is what would break a
+longer phrase evenly if one ever replaced this.
 
 **The verse holds a readable size on the small screens.** It is sized
 against both axes, and on the short ones the `svh` term is what binds:
@@ -718,12 +721,57 @@ rule has to sit *after* the sideways-phone block, not before it: that
 block sets `max-height:100%` on the same element, and source order
 decides.
 
-**The headline over the verse is capitals**, tracked to .28em and set a
-step smaller than the lowercase setting was — capitals at the same
-nominal size stand about a third taller and read that much louder, and
-this line stands over the verse, which is the voice on that section. It
-takes two lines on a phone, balanced, so it breaks into two even ones
-rather than a full line and a single word under it.
+**The headline is the same hand as the verse, one weight heavier.**
+Tangerine ships a 700, and against the 400 under it the difference is
+stroke weight alone — the letterforms are identical, so the two read as
+one voice saying two things rather than as two voices. It was Cormorant
+capitals at .28em of tracking before, which is what a text face wants
+when it is asked to be a label.
+
+Not capitals here. Tangerine's capitals are swash forms drawn to open a
+word, and a line of them is decoration rather than a sentence: AN
+IMMERSION IN VIBRATION sets in 18.63em against the sentence-case
+7.68 — 143% wider for the same words, and 67% wider even at the .28em
+the Cormorant setting used. The tracking comes almost all the way off
+too, to .026em, the verse's own figure: a script's letters are joined
+by their own shapes, and pulling them apart is the one thing that makes
+a hand look typeset.
+
+**The verse is six lines in three stanzas.** It reads
+
+> Each moment of all time gifted us / movement, music, togetherness!
+>
+> Performances with harp, sonic stories, / contemporary dance, sensual
+> rope art, / raw voices, and deep presence.
+>
+> Come, bask in this aliveness!
+
+— the gift, then what is on offer, then the invitation, which is the
+shape the three sentences already had. The middle one is a list and
+too long for one line at any size the page goes to, so it takes three;
+the breaks fall on its commas, which is where the voice stops anyway.
+Sentence capitals, because three sentences of different kinds need
+their openings marked in a way four parallel fragments did not.
+
+**A stanza gap is a proportion of the advance, not a length**, so it
+closes up with the leading when a short screen closes that up: half an
+advance, and .35 sideways. THE MARGIN DOES NOT ADD, IT COLLAPSES —
+two adjacent vertical margins resolve to the larger of the pair and
+never to their sum, so a top margin of half an advance did not sit on
+top of the line's own bottom margin, it replaced it, and the gap came
+out 1.28 advances where 1.5 was asked for. What the opener carries is
+the whole gap less the line box. `verse.js` measures both gaps against
+`--stanza` and fails on the difference.
+
+**Six lines cost the type about a tenth of its size.** The block plus a
+headline set to match it ran under the link rail by 42px at 1440 and by
+up to 58px on a sideways phone. Everything in the section scales from
+one `--hand-size`, so the fix is one coefficient per layout rather than
+a set of adjustments: 3.404vw to 2.92 on a desktop, and sideways from
+min(3.519vw, 7.154svh) capped at 2.192rem to min(2.27vw, 4.33svh)
+capped at 1.47rem. The clearance to the rail runs 17px at the tightest
+— 812x375, where the hand is already down to 16px and buying more room
+would cost more legibility than it is worth — and 19 to 60 elsewhere.
 
 **The verse ranges left, and its spacing is measured off the
 photograph rather than chosen.** Centring turned the stanza into a
