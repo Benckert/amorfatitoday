@@ -5,18 +5,51 @@ far through the lap it is. Emits the linear() easing that does it.
 
 A stadium's outline is straight, arc, straight, arc, and the two of
 each are equal, so the profile repeats every half lap exactly — which
-is also what keeps the two lobes opposite."""
+is also what keeps the two lobes opposite.
+
+MID=S/2 puts the fastest point in the middle of a straight, which is
+this. MID=S/2+25 puts it in the middle of an arc and runs the whole
+thing backwards; that was tried and set aside."""
 import math
 
-# The straight's share of the perimeter, in per cent, at the four pill
-# shapes the page actually renders (w x h, measured by pillbox.js):
-for w,h in ((133,41),(182,55),(139,45),(121,41)):
-    s=w-h; r=h/2; arc=math.pi*r; per=2*s+2*arc
-    print(f"  {w}x{h}: straight {s/per*100:5.2f}%  arc {arc/per*100:5.2f}%  perimeter {per:.0f}px")
-S=29.0            # the straight's share, one profile for all four
+# Every pill the page renders, measured rather than remembered — the
+# list this replaced held four shapes, none of which it renders any
+# more. Regenerate with the sweep in test/tools/ (a pill per distinct
+# rounded size) when the button's type or padding changes.
+PILLS=((117.7,41),(124.9,41.8),(135,44.9),(148.4,49.1),(176.7,55.5),(128.7,41.4))
+shares=[]
+for w,h in PILLS:
+    st=w-h; arc=math.pi*h/2; per=2*st+2*arc
+    shares.append(st/per*100)
+    print(f"  {w}x{h}: straight {st/per*100:5.2f}%  arc {arc/per*100:5.2f}%  perimeter {per:.0f}px")
+
+# ONE PROFILE HAS TO SERVE ALL OF THEM, and the figure that is least
+# wrong everywhere is the midpoint of the range, not a round number
+# near it. 29.0 was the round number: it sat 1.82% of the lap from the
+# narrowest pill, where the midpoint is 0.95 from the furthest of them.
+S=(min(shares)+max(shares))/2
+print(f"\n  straight runs {min(shares):.2f} to {max(shares):.2f}, so S={S:.2f}")
+print(f"  worst phase error  S=29.00 {max(abs(x-29) for x in shares):.2f}%"
+      f"   S={S:.2f} {max(abs(x-S) for x in shares):.2f}%")
 AMP=0.5           # speed swings 1 +/- AMP, so fastest/slowest = 3.0
 MID=S/2           # fastest at the middle of a straight
 def v(d): return 1+AMP*math.cos(2*math.pi*(d-MID)/50)
+
+# WHAT THE EYE READS IS THE TIME SPLIT, not the speed ratio -- the
+# lesson of running this backwards. The straights are the longer part
+# of the outline, so a profile that is fast on them compresses their
+# share of the lap and one that is slow on them compounds it: the same
+# amplitude reads as a mild dwell one way round and a crawl the other.
+def split():
+    n=200000; dd=100/n; ts=ta=0.0
+    for i in range(n):
+        d=i*dd+dd/2; dt=dd/v(d)
+        if (d%50)<S: ts+=dt
+        else: ta+=dt
+    return ts/(ts+ta)*100, ta/(ts+ta)*100
+_ts,_ta=split()
+print(f"  distance: straights {2*S:.0f}% of the outline, arcs {100-2*S:.0f}%")
+print(f"  time:     straights {_ts:.1f}%, arcs {_ta:.1f}%")
 
 N=20000
 dd=100/N
