@@ -143,11 +143,25 @@ const { launch, SITE } = require("./browser");
     const fast=ramp.v.indexOf(Math.max(...ramp.v));
     const slow=ramp.v.indexOf(Math.min(...ramp.v));
     const ratio=Math.max(...ramp.v)/Math.min(...ramp.v);
-    okRamp = onStraight(ramp.at[fast]) && !onStraight(ramp.at[slow]) && ratio>2;
+    /* AND THE TIME SPLIT, which is what the eye actually reads and the
+       thing two extreme samples cannot tell you. The samples are evenly
+       spaced in TIME, so the share of them that lands on a straight is
+       the share of the lap spent there. The straights are the longer
+       part of the outline, so a light that runs down them and dwells
+       round the ends must spend a SMALLER fraction of the lap on them
+       than they occupy of the distance -- and by a wide margin, not by
+       a rounding error. Running the profile backwards compounds that
+       gap instead of mirroring it, which is how this was found. */
+    const distShare=2*ramp.st;
+    const timeShare=ramp.at.filter(onStraight).length/ramp.at.length*100;
+    const dwell = distShare-timeShare > 10;
+    okRamp = onStraight(ramp.at[fast]) && !onStraight(ramp.at[slow])
+             && ratio>2 && dwell;
     rnote=`pill ${ramp.w}x${ramp.h}, straight is ${ramp.st}% of the lap; `+
           `fastest at ${ramp.at[fast].toFixed(1)} (${onStraight(ramp.at[fast])?'straight':'ARC'}), `+
           `slowest at ${ramp.at[slow].toFixed(1)} (${onStraight(ramp.at[slow])?'STRAIGHT':'arc'}), `+
-          `ratio ${ratio.toFixed(2)}`;
+          `ratio ${ratio.toFixed(2)}; straights are ${distShare.toFixed(0)}% of the `+
+          `outline and take ${timeShare.toFixed(0)}% of the lap${dwell?'':' -- NO DWELL'}`;
   }
   if(!okRamp) bad++;
   console.log(`${okRamp?'PASS':'FAIL'} fast down the sides, slow round the ends: ${rnote}`);

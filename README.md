@@ -443,8 +443,10 @@ presentation.
 
 **Three faces, each with one job.** Cormorant Garamond carries the
 page — roman 400 for text, italic 300 for exactly one thing, her name.
-Jost 300 sets the title and nothing else. Allura sets the verse on
-`about`. All self-hosted in `fonts/`, latin and latin-ext.
+Jost 300 sets the title and nothing else. Tangerine sets the verse on
+`about`. All self-hosted in `fonts/` — latin and latin-ext, except
+Tangerine, which Google ships as latin alone and whose verse is ASCII
+throughout.
 
 **The title is a geometric sans against a page of serif, on purpose.**
 Jost is drawn with a compass where everything else is drawn with a pen,
@@ -455,10 +457,13 @@ and the letterforms take it — a one-word change on `.title`.
 **The verse is set, not photographed.** It was `_reference/text-cropped.png`,
 a 1001x854 scan of the verse in Vallerie's hand: soft at any size the
 layout wanted, and invisible to anything that reads a page. Allura was
-chosen by holding nine scripts against that scan — its letterforms are
-the ones that match, round and barely slanted and evenly stroked, where
-Herr Von Muellerhoff leans much further and Cedarville Cursive is a
-school hand rather than a formal one. Sized against both axes,
+chosen first, by holding nine scripts against that scan — its
+letterforms are the ones that match, round and barely slanted and
+evenly stroked, where Herr Von Muellerhoff leans much further and
+Cedarville Cursive is a school hand rather than a formal one. The hand
+is **Tangerine** now, by choice rather than by that comparison; it is
+narrower on the body and more sharply pointed, a written hand where
+Allura is a drawn one. Sized against both axes,
 `min(vw, svh)`, so it keeps its proportion to the column without a
 short screen pushing it past the foot of the panel. Checked at 15 sizes
 from 320x568 to 1920x1080 for spill, and for collision with the rail
@@ -635,26 +640,31 @@ pixels rather than re-deriving the formula, at ten desktop shapes from
 1280x800 to 2560x1440: within a pixel at all of them. 2560x1440 is in
 that list because it is the one that caught the missing 719px term.
 
-**The headline is exactly as long as the verse's longest line — on a
-desktop.** There the two are the whole of the section and an unequal
-pair reads as a mistake. Stacked or sideways the headline is set on
-its own curve, narrower than the verse and a good deal smaller, which
-is what a line standing over a poem should be; `about.js` checks the
-match on a desktop and narrower-and-smaller everywhere else.
+**The headline is exactly as long as the verse's longest line, at every
+size.** The two are the whole of the section and an unequal pair reads
+as a mistake. This used to be a desktop-only rule, with the headline
+set on its own absolute curve everywhere else — narrower than the verse
+and smaller — because a Cormorant capital and a script had no ratio
+between them to hold. In the same hand one weight up there is one, so
+one `--lede-k` serves every width. Set smaller than the verse, as the
+old rule had it off the desktop, the headline stopped reading as a
+headline at all: the same letterforms at a smaller size are just
+quieter, where capitals at .28em of tracking could carry a heading
+however small they got. `about.js` checks the match everywhere.
 
 Holding the match needs one size computed from the other. Curving them
 separately and hoping is what left the verse 112px shorter than its
 headline on a tablet and 46-75px shorter on a sideways phone. Both
-lengths are constants of their strings: "each moment of all time gifted
-us" sets in 14.32em of the hand at its .4em word-spacing, and the
-headline in 35.79em of the micro face at .28em of tracking. So `#about`
-carries one `--hand-size`, the hand takes it, and the headline takes
+lengths are constants of their strings: "Performances with harp, sonic
+stories," sets in 11.583em of the hand, and "An immersion in vibration"
+in 7.676em of the same hand at 700. So `#about` carries one
+`--hand-size`, the hand takes it, and the headline takes
 `calc(var(--hand-size) * var(--lede-k))` where `--lede-k` is the ratio
 of those two em-widths.
 
-`--lede-k` is .4003, the ratio at the desktop's .28em of tracking.
-Re-measure it with `test/tools/em.js` if either string or that
-tracking changes.
+`--lede-k` is 1.509 — over one, because the headline is now the shorter
+string and matching a longer line means setting it larger. Re-measure
+with `test/tools/em.js` if either string changes.
 
 **The leading pays for the size.** The hand is set larger than the
 photograph has it — read on a screen it wants to be — so the lines come
@@ -666,19 +676,17 @@ closing up. `verse.js` therefore checks the rendered advance against
 what the CSS asks for rather than against the scan's own figure — the
 scan's is still printed beside it, so the departure stays visible.
 
-**Where the headline takes two lines, they are the same length.** The
-break is the only even one the phrase allows — "live immersion in
-sound," is 24 characters, "movement, presence" is 18 — and balancing
-cannot change that ratio, because tracking lands on both lines alike.
-What evens them is tracking the shorter line out to meet the longer:
-.184em over the first, an em figure, so it holds at every size the
-headline is set at. `text-indent` puts the same amount back, since
-tracking hangs off the last letter and would otherwise throw the
-centring. It needs the two halves to be addressable, so they are
-spans, set as blocks below 495px — measured, not chosen: at 496 the
-line comes to 448px inside 451px of column and fits, and under that it
-does not. The two come out within a pixel of each other from 320 to
-430.
+**The headline is one line everywhere, and the machinery for two is
+gone.** "live immersion in sound, movement, presence" ran out of column
+below 496px, so under that it was split into two spans set as blocks,
+and the second carried .184em of tracking over the first to bring its
+18 characters level with the other's 24. "An immersion in vibration"
+measures 215.5px inside a 300px column, so none of that has anything
+left to do — and left in, the compensating tracking made the second
+line the longer one and pushed it out of the column, which is a wrap,
+not a headline. The breakpoint, the tracking rule and the span pair all
+went. `text-wrap:balance` stays on `.lede`, which is what would break a
+longer phrase evenly if one ever replaced this.
 
 **The verse holds a readable size on the small screens.** It is sized
 against both axes, and on the short ones the `svh` term is what binds:
@@ -713,12 +721,107 @@ rule has to sit *after* the sideways-phone block, not before it: that
 block sets `max-height:100%` on the same element, and source order
 decides.
 
-**The headline over the verse is capitals**, tracked to .28em and set a
-step smaller than the lowercase setting was — capitals at the same
-nominal size stand about a third taller and read that much louder, and
-this line stands over the verse, which is the voice on that section. It
-takes two lines on a phone, balanced, so it breaks into two even ones
-rather than a full line and a single word under it.
+**The headline is the same hand as the verse, one weight heavier.**
+Tangerine ships a 700, and against the 400 under it the difference is
+stroke weight alone — the letterforms are identical, so the two read as
+one voice saying two things rather than as two voices. It was Cormorant
+capitals at .28em of tracking before, which is what a text face wants
+when it is asked to be a label.
+
+Not capitals here. Tangerine's capitals are swash forms drawn to open a
+word, and a line of them is decoration rather than a sentence: AN
+IMMERSION IN VIBRATION measures 17.98em against the sentence-case 7.03,
+two and a half times the width for the same words. Measure that on a
+canvas rather than off the element: capitals wrap the headline, and the
+extent of a wrapped line is the width of its widest row and not of the
+string, which reports the difference as 27% and is simply the wrong
+number — it was first recorded here as 143% for the same reason. The
+tracking comes almost all the way off
+too, to .026em, the verse's own figure: a script's letters are joined
+by their own shapes, and pulling them apart is the one thing that makes
+a hand look typeset.
+
+**The verse is six lines in three stanzas.** It reads
+
+> Each moment of all time gifted us / movement, music, togetherness!
+>
+> Performances with harp, sonic stories, / contemporary dance, sensual
+> rope art, / raw voices, and deep presence.
+>
+> Come, bask in this aliveness!
+
+— the gift, then what is on offer, then the invitation, which is the
+shape the three sentences already had. The middle one is a list and
+too long for one line at any size the page goes to, so it takes three;
+the breaks fall on its commas, which is where the voice stops anyway.
+Sentence capitals, because three sentences of different kinds need
+their openings marked in a way four parallel fragments did not.
+
+**A stanza gap is a proportion of the advance, not a length**, so it
+closes up with the leading when a short screen closes that up: half an
+advance, and .35 sideways. THE MARGIN DOES NOT ADD, IT COLLAPSES —
+two adjacent vertical margins resolve to the larger of the pair and
+never to their sum, so a top margin of half an advance did not sit on
+top of the line's own bottom margin, it replaced it, and the gap came
+out 1.28 advances where 1.5 was asked for. What the opener carries is
+the whole gap less the line box. `verse.js` measures both gaps against
+`--stanza` and fails on the difference.
+
+**The gap before a mark is kept for exclamation marks only.** The hand
+in the photograph sets its marks off from the word before, about half a
+word gap, and on four lines of verse that read as the hand's own manner.
+On a six-line stanza carrying seven commas and a full stop it read as a
+fault in the setting, and the list in the middle came apart into pieces.
+An exclamation is a breath and wants the room; a comma is a join and
+does not. Only the exclamation marks are wrapped in a span now, so the
+rule reaches only them.
+
+**The verse is indented and the headline is not.** Flush on one edge
+they read as one block that changes weight halfway down, which is what
+the two being the same hand costs. The indent is 1.4 hand-sizes, so it
+holds at every width, and the section's padding gives back exactly as
+much as the indent takes: the poem's left edge lands where the centring
+formula puts it and the HEADLINE hangs left of it. Centring the poem in
+the gap beside her shirt is a measured relationship; setting it off from
+its headline is not a reason to give that up. Stacked, both are centred
+and there is nothing for an indent to separate, so it is 0 there.
+
+`--verse-in` is declared on `#about` and not on `.hand`, because the
+padding that compensates for it is on `#about` and a custom property
+inherits downwards only. Read from `.hand` it was simply missing there,
+which made the `calc()` invalid, which made the whole `padding-left`
+declaration invalid at computed-value time — and an invalid padding is
+0, so the block sat hard against the left edge at every width with all
+ten suites still green. `about.js` measures the poem's centre against
+the rendered figure now, and asks the stylesheet's own media condition
+whether the rule is in force rather than inferring it from the padding
+that came out: keyed to the outcome, the check disabled itself on
+exactly the failure it exists to catch, and passed with the fault put
+back deliberately.
+
+**Six lines cost the type about a tenth of its size.** The block plus a
+headline set to match it ran under the link rail by 42px at 1440 and by
+up to 58px on a sideways phone. Everything in the section scales from
+one `--hand-size`, so the fix is one coefficient per layout rather than
+a set of adjustments: 3.404vw to 2.92 on a desktop, and sideways from
+min(3.519vw, 7.154svh) capped at 2.192rem to min(2.27vw, 4.33svh)
+capped at 1.47rem. The leading came down with it, `--adv` from 1.95 to
+1.72 on the wide layout, which is what pays for six lines where four
+used to sit.
+
+**And the desktop sizes in `fits.js` were the wrong four.** They were
+1024x768, 1280x800, 1440x900 and 1920x1080 — every one of them roughly
+16:10, every one of them passing while the verse ran up to 84px under
+the link rail on most of the desktops in between. What overflows is a
+screen that is WIDE AND NOT TALL, because the hand takes min(vw, svh)
+and the vw term keeps growing while the height does not: 1440x800,
+1600x900, 1716x930 and 1920x900 are what a laptop with a dock, or a
+browser with tabs and a bookmarks bar, actually presents. The svh
+coefficient goes 5.769 to 5.1 so height governs sooner, and the
+short-and-wide row is now the point of that list rather than the round
+numbers. Clearance runs 17px at the tightest — 812x375, where the hand
+is already down to 16px and buying more room would cost more legibility
+than it is worth — and 19 to 60 elsewhere.
 
 **The verse ranges left, and its spacing is measured off the
 photograph rather than chosen.** Centring turned the stanza into a
@@ -733,16 +836,24 @@ The numbers come from measuring the original against its own x-height,
 which is what makes them survive a change of size. In the scan the word
 gaps run 41-53px against a 21px x-height, the lines advance 177px, the
 signature sits 208px below the last line and 145px in from the left.
-That is 2.15 x-heights between words, 8.4 between lines, 1.175 of an
-advance before the name and 6.9 in from the edge. Allura's x-height is
-.30em, which turns those into ems: `word-spacing:.4em` once the .219em
-the font already puts in a space and the .03em of tracking that lands
-on it are taken off, an advance of 2.53em, a signature 2.97em below the
-last line and 2.07em in.
+That is 2.15 x-heights between words and 8.4 between lines.
 
-Held as three custom properties — `--lh`, `--adv`, `--sign` — because a
-phone has to close the leading up to fit five lines and the ratio
-between the two gaps should not drift when it does. The margins are the
+**The x-height is the unit, and that is what let the hand change face
+without any of it being measured again.** Allura's is .30em and
+Tangerine's .26em, so every em derived above was multiplied by .30/.26
+— a bigger em carrying a smaller letter, the same size on the page.
+The tracking and the word gap came down by that ratio too, and the word
+gap is then 2.15 x-heights less the .15em Tangerine puts in a space,
+a different subtraction from Allura's .219em: `word-spacing:.383em`
+where it was .4em.
+
+The signature is gone. It was `Vallerie with Company` set 1.175 of an
+advance below the last line and 6.9 x-heights in from the edge; the
+verse ends on a full stop instead, and `--sign`, `--sign-in` and the
+`.sign` rules went with it, in all three layouts.
+
+Held as two custom properties — `--lh` and `--adv` — because a
+phone has to close the leading up to fit. The margins are the
 difference between the advance and the line box, so setting the three
 per breakpoint is the whole adjustment. A phone runs 2.25 and a sideways
 phone 2.0, against the photograph's 2.53.
@@ -888,17 +999,35 @@ function's name could see.
 **A cubic-bezier cannot say this and `linear()` can.** Two control
 points do not describe a curve that turns twice; `linear()` takes as
 many points as it needs, and `test/tools/ramp.py` generates them — 96,
-which puts the biggest step in speed between neighbours at 7.8%. The
-straight's share of the perimeter runs 29.3% on a tablet pill down to
-27.2% on the smallest phone one, so one profile written for 29% is
-right to within 1.8% of the lap everywhere: about six pixels, well
-inside the soft edge of a lobe that is sixty long. Those numbers moved
-a little when the button's word changed from Tickets to Attend — a
-shorter word is a shorter pill, and a shorter pill is proportionally
-more end and less side; re-measured on it, the ramp is unchanged at
-17.3 against 5.8. Anything that
-cannot parse `linear()` gets `animation-timing-function:linear` and a
-constant rate, which is the version that shipped for months.
+which puts the biggest step in speed between neighbours at 7.8%.
+
+One profile has to serve every pill, and the figure it is written for
+is the midpoint of their range rather than a round number near it. The
+straight's share runs 27.18% on the smallest phone pill up to 29.08%
+on the tablet one; 29.0 sat 1.82% of the lap from the narrowest, and
+28.13 is 0.95 from the furthest of the six. That halves the worst-case
+phase error for a change of one constant. Nothing about the look turns
+on it either way — it is well inside the soft edge of a lobe sixty
+long — but it is free to get right now and awkward to revisit later.
+`ramp.py` derives `S` from the measured pills instead of carrying it as
+a constant, and from the list the page actually renders: the four
+shapes it used to hold were stale, and not one of them is on the page.
+
+**What the eye reads is the time split, not the speed ratio.** The
+straights are 56% of the outline and take 39% of the lap; the arcs are
+44% and take 61%. Running the profile the other way round — fast on
+the arcs, slow on the sides — does not mirror that, it compounds it,
+because the slow region becomes the longer one: the straights then take
+73% of the lap, which is a crawl rather than a dwell. That was built
+and looked at on `develop` and set aside; what came back from it is
+this measurement, the corrected `S`, and an assertion in `navcheck`
+that the light spends materially less of the lap on the straights than
+they occupy of the outline. Two extreme samples cannot see that, and
+re-running the inverted profile against it reports 73% and fails.
+
+Anything that cannot parse `linear()` gets
+`animation-timing-function:linear` and a constant rate, which is the
+version that shipped for months.
 
 **The two lobes are held apart by their offsets, not by a delay.**
 Under a constant rate `animation-delay:-5s` puts the second lobe
