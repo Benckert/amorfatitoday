@@ -372,35 +372,20 @@ that is the ceiling to stay under.
 
 ### The lettering
 
-One family, in two cuts. **Alegreya Sans SC** sets the display in real
-small capitals; **Alegreya Sans**, the same design without them,
-carries every other line — so nothing on the page speaks in a different
-voice. Both are humanist, so the letterforms keep a little of the hand
-in them rather than being drawn with a compass, which is where the
-warmth at this size comes from.
+The three faces and what each is for are under **The type**, below;
+this is the mechanics of changing one.
 
-Alegreya Sans SC is a small-caps **family**, not a font with an `smcp`
-feature: its lowercase glyphs *are* the small capitals. So the title is
-written `Amor Fati` in the markup and left alone — no
-`text-transform`, because uppercasing it would throw the small caps
-away and hand back plain capitals. If you edit that text, keep the
-capitalisation you want to see.
-
-Both are **self-hosted**, in `fonts/` — 192K, six files. Nothing is fetched from Google,
-so the page does not depend on a third party being up, no visitor's
-request for it reaches one, and the display face is there on the first
-paint rather than a beat later. Only the latin and latin-ext subsets are
-included — latin-ext is not optional, it carries the Ć in Amina Avdić's
-name, and every candidate face was checked for that glyph (`fontTools`,
-`cmap`, U+0106) before being considered. To change a face: drop the `.woff2` files in `fonts/`,
-edit the `@font-face` blocks at the top of the stylesheet, and set
-`--display` or `--micro`.
-
-The one hand-lettered thing on the page is the verse, and that is the
-company's own artwork rather than a font. An earlier build set "Vallerie
-with Company" in a script face chosen to approximate that hand; it has
-been dropped, because an approximation of the lettering one section away
-from the lettering itself is a near-miss you cannot un-see.
+All of them are **self-hosted**, in `fonts/` — 224K, eight files.
+Nothing is fetched from Google, so the page does not depend on a third
+party being up, no visitor's request for it reaches one, and the
+display face is there on the first paint rather than a beat later. Only
+the latin and latin-ext subsets are included — latin-ext is not
+optional, it carries the Ć in Amina Avdić's name, and every candidate
+face was checked for that glyph (`fontTools`, `cmap`, U+0106) before
+being considered. Tangerine is the exception: Google ships it as latin
+alone, and the verse is ASCII throughout. To change a face: drop the
+`.woff2` files in `fonts/`, edit the `@font-face` blocks at the top of
+the stylesheet, and set `--display`, `--micro` or `--hand`.
 
 Tracked capitals add their spacing to the right of the last letter too,
 which shifts the line off-centre. Every tracked line here carries a
@@ -487,7 +472,7 @@ throughout.
 **The title is a geometric sans against a page of serif, on purpose.**
 Jost is drawn with a compass where everything else is drawn with a pen,
 and one word set against the grain reads as a mark rather than as more
-text. Full capitals, tracked to .24em; `lowercase` is the other reading
+text. Full capitals, tracked to .15em; `lowercase` is the other reading
 and the letterforms take it — a one-word change on `.title`.
 
 **The verse is set, not photographed.** It was `_reference/text-cropped.png`,
@@ -510,7 +495,7 @@ Small capitals stand about three quarters the height of full ones, so
 the same nominal size reads a third smaller: going from Cormorant small
 caps to Jost capitals meant `clamp(2.7rem,11.5vw,8rem)` down to
 `clamp(2.1rem,8.4vw,5.6rem)`, and the narrow setting from 12.6vw to
-8.6vw. One line at every width from 320px up. Change the case again and
+9.2vw. One line at every width from 320px up. Change the case again and
 re-measure rather than keeping the numbers.
 
 **Her name is set in the same cream as every other one.** What sets
