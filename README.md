@@ -36,10 +36,12 @@ points the suites somewhere else entirely — the preview URL below, or
 amorfati.today — instead of the local copy. `CHROME=` names a browser
 if the one `test/browser.js` finds is not the one you want.
 
-Seventeen suites, in three groups. `layout` is whether everything fits:
+Nineteen suites, in three groups. `layout` is whether everything fits:
 the deck's geometry at seventeen screen sizes, the credits on one line
-at twenty-one, the CTA's box, the poem, the link marks, and a faked iOS
-viewport. `gesture` is how it answers a finger, a wheel and a trackpad
+at twenty-one, the CTA's box, the poem, the link marks, a faked iOS
+viewport, the opening arriving at all, and the icons and the share card
+being the shapes they say they are. `gesture` is how it answers a
+finger, a wheel and a trackpad
 — one page-turn per swipe however hard, the drag that has to hold the
 page under the finger, and the no-script path. `perf` counts frames
 against the same page with an effect removed, and is deliberately not
@@ -419,6 +421,40 @@ the two Cormorant 300 upright font files that nothing else on the page
 used. `_reference/audio.txt` keeps the description of what was
 intended, and `git log` keeps the implementation — it is one revert
 away if a clip is ever recorded.
+
+## The mark, and what a shared link looks like
+
+**The mark is the page's own hand** — the lowercase `a` of Tangerine,
+the face the verse on `about` is set in, cream on the warm dark the
+photographs carry. It is not the letter A of the title and not a shape
+invented for the corner of a tab: the site's one signature is that the
+verse is written rather than typed, and the icon is that signature at
+16 pixels.
+
+It is carried as an **outline**, not as `<text>`. An SVG used as an
+icon is rendered with no access to a webfont, so a mark asking for
+Tangerine would arrive in whatever serif the browser reached for.
+`test/tools/mark.py` lifts the glyph out of the shipped `.woff2` with
+fontTools and fits it to the 32-unit box; paste what it prints into the
+`<link rel="icon">` data URI. The stroke on it is weight the hand does
+not have — .5 in the favicon, which is what keeps the counter of the
+`a` open at 16px, and .25 in the 180px PNG, where the hand can be close
+to the weight it was drawn at.
+
+**Three files carry it, and one of them is a card.** The favicon is a
+data URI in the head, so it costs no request. `images/apple-touch-icon.png`
+is a file because iOS will not take an SVG there. And `og:image` is
+`images/share-card.jpg`, 1200x630 — because a link preview is 1.91:1
+and every photograph here is 2:3, so pointed at the hero whole, every
+platform took its own crop out of the middle of her. The card is the
+landing screen laid out sideways: her whole and letterboxed at the
+right, feathered into the black, the words at the left in the faces
+they are set in here.
+
+`test/tools/icons.js` draws both files. The words on the card are
+pixels, not text, so **re-run it whenever the headline, the date or the
+venue change** — nothing does that automatically, and `test/marks.js`
+checks the shapes but cannot read them.
 
 ## Publishing
 

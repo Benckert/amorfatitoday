@@ -3,7 +3,9 @@ Where the numbers in index.html came from.
 These are not suites — nothing here passes or fails. They are the
 measurements that produced the constants the stylesheet is built on,
 kept because a number with no provenance is a number the next person
-tidies away.
+tidies away. Three of them generate rather than measure — ramp.py,
+mark.py and icons.js — and what they write is committed, so they are
+run when their source changes and not otherwise.
 
   coeff.js       the cqw coefficient each layout can take, per layout
   colwidth.js    roster type size against photograph width
@@ -25,6 +27,12 @@ tidies away.
   ramp.py        generates the linear() easing for that profile
   arc.py         arc length round the ring
   profile.py     brightness along the outline through one lobe
+  mark.py        the favicon's path, lifted out of the shipped Tangerine
+  icons.js       draws apple-touch-icon.png and share-card.jpg
 
 They take the same environment as the suites: run them from test/ with
 a server on :8137, or set SITE. `node tools/coeff.js`.
+
+Two do not: mark.py reads a font file and icons.js reads the repository
+off disk, so neither wants a server. mark.py needs fontTools and brotli
+(`pip install fonttools brotli`).
