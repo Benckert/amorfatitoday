@@ -20,6 +20,13 @@ environment's git gateway refuses tag pushes — `git push origin
 <tag>` comes back with "the remote end hung up unexpectedly" while
 branch pushes succeed — so the checkpoint is a branch.)
 
+The same gateway refuses DELETE pushes, with HTTP 403, so branches
+merged long ago accumulate rather than being tidied away from a
+session. `sh test/tools/prune-branches.sh` lists the ones whose commits
+are already on main or develop; run it with `--delete` from a clone
+with push rights. It works the list out each time rather than carrying
+one, and it never names a branch that still has a commit of its own.
+
 ### Running the checks
 
     cd test && npm install && npx playwright install chromium

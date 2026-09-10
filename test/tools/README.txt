@@ -29,6 +29,7 @@ run when their source changes and not otherwise.
   profile.py     brightness along the outline through one lobe
   mark.py        the favicon's path, lifted out of the shipped Tangerine
   icons.js       draws apple-touch-icon.png and share-card.jpg
+  prune-branches.sh  lists the remote branches already merged
 
 They take the same environment as the suites: run them from test/ with
 a server on :8137, or set SITE. `node tools/coeff.js`.
