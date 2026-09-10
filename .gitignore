@@ -5,3 +5,12 @@ node_modules
 .DS_Store
 *.log
 test/screens/
+
+# The one dependency is pinned to an exact version in test/package.json
+# and brings nothing with it — playwright-core has no dependencies of
+# its own, and the browser is a separate explicit step — so a lockfile
+# would restate what package.json already says exactly. CI installs
+# with `npm install` rather than `npm ci` for the same reason. It is
+# ignored rather than absent so `npm install` does not leave the tree
+# dirty every time the suites are run.
+test/package-lock.json
