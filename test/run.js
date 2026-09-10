@@ -18,7 +18,7 @@ const PORT = Number(process.env.PORT || 8137);
 const GROUPS = {
   /* the page's shape: does everything fit, on one line, inside its box */
   layout: ["deck", "fits", "credits", "rail", "pillbox", "about", "verse",
-           "navcheck", "linkmark", "ios"],
+           "navcheck", "linkmark", "ios", "opening"],
   /* the page's behaviour under a finger, a wheel and a trackpad */
   gesture: ["touch", "behave", "rapid", "trackpad", "grab", "sens", "noisy"],
   /* frames, measured against the same page with the effect removed */

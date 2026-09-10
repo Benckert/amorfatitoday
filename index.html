@@ -30,11 +30,12 @@
 <meta name="description" content="Live immersion in sound, movement, presence. Vallerie with Company at Mindepartementet, Skeppsholmen. September 17, 7–9 pm.">
 <link rel="canonical" href="https://amorfati.today/">
 
-<!-- The date is here in three places and on the page in one, and they
-     have disagreed before: these two said the 16th to the 17th for as
+<!-- The date is here in four places and on the page in one, and they
+     have disagreed before: two of them said the 16th to the 17th for as
      long as the page has said the 17th, so every shared link advertised
-     a night that does not exist. If the date ever moves, it moves in
-     all four. -->
+     a night that does not exist. The four are the description above,
+     og:description, twitter:description and the JSON-LD's start and end
+     below. If the date ever moves, it moves in all five. -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amorfati.today/">
 <meta property="og:site_name" content="amor fati">
@@ -341,7 +342,7 @@ a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 
 /* ─────────────────────────────  sections  ───────────────────────────
-   Each one is exactly one screen and never more, so the page is four
+   Each one is exactly one screen and never more, so the page is three
    screens and the snap is honest. Anything that would not fit is
    sized in svh so it shrinks with the screen instead of spilling. */
 .panel{
@@ -1065,14 +1066,11 @@ picture{display:contents}
    dash between things on separate lines divides nothing. */
 .lead-name .d{display:none}
 
-/* ────────────────────────  IV. attend  (tickets)  ──────────────────── */
-
-
 /* ────────────────  the section links, on every screen  ───────────────
-   The same row, in the same place, in all four sections — centred at
-   the foot, underlined, divided by a rule, exactly as on the live
-   site. It is written once as a <template> and stamped into each
-   section by script, so the four copies cannot drift apart. */
+   One row, centred at the foot of the viewport, underlined, divided by
+   a rule, exactly as on the live site — and the same row for all three
+   sections, because it is fixed to the viewport rather than repeated
+   inside them. */
 .jump{
   /* Fixed, not stamped into each section. It used to be one <template>
      cloned into all three panels so the copies could not drift; one
@@ -2270,7 +2268,16 @@ picture{display:contents}
        It is a width measurement rather than document.fonts, which stays
        empty here because Chrome does not expose faces from a
        cross-origin stylesheet, and fonts.check() answers "can this be
-       rendered" — true from the first frame, since the fallback can. */
+       rendered" — true from the first frame, since the fallback can.
+
+       `began` is this gate and nothing else. It used to be the drag's
+       start time as well — two `var`s, one function scope, one
+       variable — so a finger landing before the face arrived set it to
+       a timestamp, and a timestamp is truthy: the poll returned at its
+       guard, the 1 200 ms fallback returned at the same guard, and the
+       title stayed at opacity 0 for the rest of the visit. Reproduced
+       at 375x704 with the woff2 held back 700 ms. The drag's clock is
+       `grabbed` now; test/opening.js is that repro. */
     var began = false;
     function begin(){
       if (began) return;
@@ -2286,8 +2293,6 @@ picture{display:contents}
     probe.style.cssText = "position:absolute;left:-9999px;top:0;visibility:hidden;" +
       "white-space:pre;font-size:100px;font-weight:300";
     document.body.appendChild(probe);
-    /* Two families whose widths differ enough to tell apart at 100px:
-       Cormorant is markedly narrower than Georgia. */
     /* Two families whose widths differ enough to tell apart at 100px:
        Jost is markedly narrower than Georgia. */
     var fallback = 'Georgia,"Times New Roman",serif';
@@ -2515,7 +2520,7 @@ picture{display:contents}
      snaps to the destination in one frame. Grabbing a moving page
      should stop it where it is, not throw it the rest of the way
      first. */
-  var drag = 0, from = 0, began = 0, held = false, base = 0;
+  var drag = 0, from = 0, grabbed = 0, held = false, base = 0;
   function screen(){ return lastScreen || window.innerHeight; }
   function offsetNow(){
     var m = getComputedStyle(deck).transform, v;
@@ -2532,7 +2537,7 @@ picture{display:contents}
     deck.style.transform = "translate3d(0," + base + "px,0)";
     clearTimeout(settle);
     gliding = false;
-    held = true; drag = 0; from = e.touches[0].clientY; began = Date.now();
+    held = true; drag = 0; from = e.touches[0].clientY; grabbed = Date.now();
   }, { passive: true });
   window.addEventListener("touchmove", function(e){
     if (!held) return;
@@ -2551,7 +2556,7 @@ picture{display:contents}
        second is 0.04 px/ms — and well under a real flick, which runs
        past 1. */
     var far = Math.abs(drag) > screen() * 0.12;
-    var fast = Math.abs(drag) / Math.max(Date.now() - began, 1) > 0.25 && Math.abs(drag) > 24;
+    var fast = Math.abs(drag) / Math.max(Date.now() - grabbed, 1) > 0.25 && Math.abs(drag) > 24;
     if ((far || fast) && step(drag < 0 ? 1 : -1)) return;
     show(at);                              /* nowhere to go: settle back */
   }
